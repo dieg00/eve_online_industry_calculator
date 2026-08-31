@@ -20,7 +20,9 @@ web/node_modules/
 web/.next/
 web/out/
 web/public/data/
-web/public/engine/
+# web/public/engine/ SÍ se versiona: el wheel del motor tiene que estar en el
+# checkout para que el build de Vercel (sin dist/) lo sirva. Regenerar con:
+#   python -m pip wheel . --no-deps -w dist/  &&  node web/scripts/sync-assets.mjs
 
 # Python
 __pycache__/

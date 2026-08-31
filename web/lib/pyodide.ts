@@ -44,15 +44,28 @@ export async function getPyodide(onStatus?: (s: string) => void): Promise<Pyodid
     onStatus?.("Instalando el motor…");
     await pyodide.loadPackage("micropip");
     const micropip = pyodide.pyimport("micropip");
+
+    // Bajamos el wheel nosotros (no micropip) para dar un error claro si la ruta
+    // devuelve HTML/404 en vez del binario, y para evitarnos su fetch interno.
     let v = "";
     try {
       v = "?v=" + (await (await fetch(`${base()}/engine/version.txt`)).text()).trim();
     } catch {
-      /* sin manifiesto: se usa la URL a pelo */
+      /* sin manifiesto */
     }
-    await micropip.install(
-      `${location.origin}${base()}/engine/eveindustry-0.1.0-py3-none-any.whl${v}`,
-    );
+    const wheelUrl = `${base()}/engine/eveindustry-0.1.0-py3-none-any.whl${v}`;
+    const resp = await fetch(wheelUrl);
+    if (!resp.ok) throw new Error(`wheel del motor: HTTP ${resp.status} en ${wheelUrl}`);
+    const bytes = new Uint8Array(await resp.arrayBuffer());
+    if (bytes[0] !== 0x50 || bytes[1] !== 0x4b) {
+      throw new Error(
+        `wheel del motor: la respuesta no es un .whl (¿404 / SPA fallback?) en ${wheelUrl}`,
+      );
+    }
+    // micropip parsea la versión/tags del nombre: tiene que ser el nombre PEP 427.
+    const fsPath = "/tmp/eveindustry-0.1.0-py3-none-any.whl";
+    pyodide.FS.writeFile(fsPath, bytes);
+    await micropip.install(`emfs:${fsPath}`);
 
     cached = pyodide;
     return pyodide;
