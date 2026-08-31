@@ -20,6 +20,7 @@ import json
 import sys
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 import requests
 
@@ -122,8 +123,9 @@ def build(types_path: str, out_path: str, *, station: bool) -> None:
         },
         "prices": prices,
     }
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(doc, f, separators=(",", ":"))
+    out = Path(out_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(doc, separators=(",", ":")), encoding="utf-8")
     print(f"{out_path}: {len(prices)} typeIDs con precio (de {len(type_ids)} pedidos)")
 
 

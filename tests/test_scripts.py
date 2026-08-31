@@ -41,7 +41,7 @@ def test_build_indices_shape(tmp_path, monkeypatch):
         }
     ]
     monkeypatch.setattr(build_indices, "fetch_json", lambda url: fake)
-    out = tmp_path / "indices.json"
+    out = tmp_path / "out" / "indices.json"  # el directorio no existe todavía
     build_indices.build(str(out))
     doc = json.loads(out.read_text())
 

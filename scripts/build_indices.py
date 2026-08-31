@@ -14,6 +14,7 @@ import argparse
 import json
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 import requests
 
@@ -69,8 +70,9 @@ def build(out_path: str) -> None:
         "systems": systems,
         "constants": CONSTANTS,
     }
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(doc, f, separators=(",", ":"))
+    out = Path(out_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(doc, separators=(",", ":")), encoding="utf-8")
     print(f"{out_path}: {len(systems)} sistemas")
 
 
