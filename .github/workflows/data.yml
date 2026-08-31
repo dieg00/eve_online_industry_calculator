@@ -40,21 +40,19 @@ jobs:
           set -euo pipefail
           test -s out/indices.json
           test -s out/prices.json
-          git config user.name  "data-bot"
-          git config user.email "data-bot@users.noreply.github.com"
-          git fetch origin data || true
-          if git show-ref --verify --quiet refs/remotes/origin/data; then
-            git checkout data
-          else
-            git checkout --orphan data
-            git rm -rf . >/dev/null 2>&1 || true
-          fi
+
+          # La rama `data` es un snapshot desechable: un commit huérfano con solo
+          # los dos JSON, force-push cada vez. Evita el conflicto nombre-fichero
+          # vs nombre-rama (`git checkout data` con el dir data/ presente).
+          tmp="$(mktemp -d)"
+          cp out/indices.json out/prices.json "$tmp/"
+
+          # index vacío, todo pasa a untracked; solo añadimos los 2 ficheros.
+          git switch --orphan data
           mkdir -p data
-          cp out/indices.json out/prices.json data/
-          git add data/indices.json data/prices.json
-          if git diff --cached --quiet; then
-            echo "sin cambios en los datos"
-            exit 0
-          fi
-          git commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push origin HEAD:data
+          cp "$tmp/indices.json" "$tmp/prices.json" data/
+          git add -f data/indices.json data/prices.json
+
+          git -c user.name=data-bot -c user.email=data-bot@users.noreply.github.com \
+            commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -f origin data
