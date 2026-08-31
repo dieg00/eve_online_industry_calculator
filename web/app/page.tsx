@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import {
   getEngine,
   type Buildable,
+  type CalcOut,
   type Engine,
-  type FormState,
   type ResolveResult,
 } from "@/lib/engine";
 import { base } from "@/lib/pyodide";
@@ -15,7 +15,19 @@ const DEFAULT_QUERY = "t=20184&me=10&sys=30000142";
 const isk = (n: number | null | undefined) =>
   n == null ? "—" : Math.round(n).toLocaleString("en-US");
 
-type Out = { result: ResolveResult; state: FormState; query: string };
+type Out = CalcOut;
+
+type RigInfo = {
+  n: string;
+  activity: "manufacturing" | "reaction";
+  meBonus: number;
+  groups: number[];
+  categories: number[];
+};
+type RigsDoc = {
+  structures: Record<string, { n: string }>;
+  rigs: Record<string, RigInfo>;
+};
 
 export default function Page() {
   const [engine, setEngine] = useState<Engine | null>(null);
@@ -29,6 +41,8 @@ export default function Page() {
   const [out, setOut] = useState<Out | null>(null);
   const [buildables, setBuildables] = useState<Buildable[]>([]);
   const [systems, setSystems] = useState<Record<string, [string, number]>>({});
+  const [rigsDoc, setRigsDoc] = useState<RigsDoc | null>(null);
+  const [allRigs, setAllRigs] = useState(false);
   const [typeInput, setTypeInput] = useState("");
   const [sysInput, setSysInput] = useState("");
 
@@ -45,6 +59,10 @@ export default function Page() {
     fetch(`${base()}/data/systems.json`)
       .then((r) => r.json())
       .then((d) => alive && setSystems(d.systems))
+      .catch(() => {});
+    fetch(`${base()}/data/rigs.json`)
+      .then((r) => r.json())
+      .then((d) => alive && setRigsDoc(d))
       .catch(() => {});
     return () => {
       alive = false;
@@ -68,6 +86,25 @@ export default function Page() {
 
   const patch = (p: Record<string, string | number | boolean | null>) =>
     setQuery((q) => patchQuery(q, p));
+
+  // rigs relevantes al cálculo actual (por defecto se filtra a esos)
+  const rigList = useMemo(() => {
+    if (!rigsDoc) return [] as [string, RigInfo][];
+    const g = new Set(out?.tree_groups ?? []);
+    const c = new Set(out?.tree_categories ?? []);
+    const relevant = ([, rig]: [string, RigInfo]) =>
+      rig.groups.some((x) => g.has(x)) || rig.categories.some((x) => c.has(x));
+    return Object.entries(rigsDoc.rigs)
+      .filter((e) => allRigs || relevant(e))
+      .sort((a, b) => a[1].n.localeCompare(b[1].n));
+  }, [rigsDoc, out?.tree_groups, out?.tree_categories, allRigs]);
+
+  function toggleRig(id: string) {
+    if (!st) return;
+    const cur = new Set(st.rig_type_ids.map(String));
+    cur.has(id) ? cur.delete(id) : cur.add(id);
+    patch({ rigs: [...cur].join(",") || null });
+  }
 
   // sincroniza los inputs de texto con el estado resuelto
   useEffect(() => {
@@ -201,15 +238,102 @@ export default function Page() {
             </div>
 
             <div className="field">
-              <label>Seguridad (multiplicador de rigs)</label>
+              <label>Estructura</label>
               <select
-                value={st.security}
-                onChange={(e) => patch({ sec: e.target.value === "highsec" ? null : e.target.value })}
+                value={st.structure_type_id ?? ""}
+                onChange={(e) => patch({ struct: e.target.value || null })}
+              >
+                <option value="">Estación NPC (sin bonus)</option>
+                {rigsDoc &&
+                  Object.entries(rigsDoc.structures).map(([id, s]) => (
+                    <option key={id} value={id}>
+                      {s.n}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="field">
+              <label>
+                Rigs de ME{" "}
+                <button
+                  type="button"
+                  className="copy"
+                  style={{ marginLeft: 4, padding: "1px 6px" }}
+                  onClick={() => setAllRigs((v) => !v)}
+                >
+                  {allRigs ? "solo relevantes" : "ver todos"}
+                </button>
+              </label>
+              <div className="riglist">
+                {rigList.length === 0 && (
+                  <span className="muted">
+                    {rigsDoc ? "ningún rig relevante para este cálculo" : "cargando…"}
+                  </span>
+                )}
+                {rigList.map(([id, rig]) => (
+                  <label key={id} className="inline rigrow">
+                    <input
+                      type="checkbox"
+                      checked={st.rig_type_ids.map(String).includes(id)}
+                      onChange={() => toggleRig(id)}
+                    />
+                    <span>
+                      {rig.n}{" "}
+                      <span className="muted">
+                        −{(rig.meBonus * 100).toFixed(1)}%
+                      </span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="field">
+              <label>
+                Seguridad{" "}
+                <span className="muted">
+                  {st.security == null
+                    ? `derivada${sysInput ? ` de ${sysInput}` : ""}`
+                    : "manual"}
+                  {st.security != null && (
+                    <button
+                      type="button"
+                      className="copy"
+                      style={{ marginLeft: 6, padding: "1px 6px" }}
+                      onClick={() => patch({ sec: null })}
+                    >
+                      usar la del sistema
+                    </button>
+                  )}
+                </span>
+              </label>
+              <select
+                value={st.security ?? st.security_effective}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  patch({ sec: v === st.security_effective ? null : v });
+                }}
               >
                 <option value="highsec">Highsec ×1.0</option>
                 <option value="lowsec">Lowsec ×1.9</option>
                 <option value="nullsec">Null / WH ×2.1</option>
               </select>
+            </div>
+
+            <div className="field">
+              <label>Tax de instalación %</label>
+              <input
+                type="number"
+                min={0}
+                step={0.1}
+                value={st.facility_tax != null ? +(st.facility_tax * 100).toFixed(3) : ""}
+                placeholder="0.25 (NPC)"
+                onChange={(e) => {
+                  const v = e.target.value;
+                  patch({ tax: v === "" ? null : (+v / 100).toString() });
+                }}
+              />
             </div>
 
             <div className="field">
@@ -364,6 +488,10 @@ function Tree({ result }: { result: ResolveResult }) {
           {n.decision === "build"
             ? `jobs ${JSON.stringify(n.jobs)} · install ${isk(n.install_cost)}${
                 n.real_unit_cost != null ? ` · ud ${isk(n.real_unit_cost)}` : ""
+              }${
+                n.structure_factor != null && n.structure_factor < 0.9999
+                  ? ` · rig ×${n.structure_factor.toFixed(3)}`
+                  : ""
               }`
             : n.marginal_unit_cost != null && isFinite(n.marginal_unit_cost)
             ? `ud ${isk(n.marginal_unit_cost)}`

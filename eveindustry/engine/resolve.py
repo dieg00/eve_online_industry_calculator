@@ -35,6 +35,7 @@ class NodeResult:
     produced: int = 0
     install_cost: float = 0.0
     real_unit_cost: float | None = None
+    structure_factor: float = 1.0   # (1-role)*(1-Σ rig·secMult); <1 si un rig aplica
     children: dict[int, int] = field(default_factory=dict)   # child_type_id -> qty consumida
     flipped_to_buy: bool = False
     # invención (solo si assumptions.invention y el item es T2 invencionable):
@@ -155,6 +156,7 @@ def resolve(
             produced=built.produced if built else 0,
             install_cost=built.install_cost if built else 0.0,
             real_unit_cost=built.real_unit_cost if built else None,
+            structure_factor=built.structure_factor if built else 1.0,
             children=dict(built.child_consumption) if built else {},
             flipped_to_buy=t in flip_set,
             invention_decryptor=outcome.decryptor.name if outcome else None,

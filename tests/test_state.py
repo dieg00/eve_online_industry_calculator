@@ -4,7 +4,15 @@ import pytest
 
 from eveindustry.engine.policy import NodePolicy
 from eveindustry.prices.base import PriceKind
-from eveindustry.state import State, build_assumptions, price_override_map
+from eveindustry.state import (
+    State,
+    build_assumptions,
+    price_override_map,
+    resolve_security,
+    security_band,
+)
+
+_JITA_SYSTEMS = {"systems": {"30000142": ["Jita", 0.9], "30003802": ["Curnemare", -0.03]}}
 
 
 def test_parse_minimal():
@@ -81,3 +89,48 @@ def test_build_assumptions_unknown_system_leaves_zero_indices():
 def test_price_override_map_expands_all_kinds():
     st = State.parse("t=1&px.34=6.5")
     assert price_override_map(st) == {34: {"buy": 6.5, "sell": 6.5, "adjusted": 6.5, "average": 6.5}}
+
+
+# --- seguridad derivada del sistema ---------------------------------------
+@pytest.mark.parametrize(
+    "sec, band",
+    [(0.9, "highsec"), (0.5, "highsec"), (0.45, "highsec"),
+     (0.4, "lowsec"), (0.1, "lowsec"),
+     (0.0, "nullsec"), (-0.03, "nullsec"), (-0.99, "nullsec")],
+)
+def test_security_band(sec, band):
+    assert security_band(sec) == band
+
+
+def test_security_defaults_to_none_and_derives_from_system():
+    st = State.parse("t=1&sys=30000142")
+    assert st.security is None
+    assert "sec=" not in st.to_query()                       # no ensucia el link
+    assert resolve_security(st, _JITA_SYSTEMS) == "highsec"
+    assert build_assumptions(st, systems_doc=_JITA_SYSTEMS).structure.security == "highsec"
+
+
+def test_nullsec_system_derives_nullsec():
+    st = State.parse("t=1&sys=30003802")
+    assert resolve_security(st, _JITA_SYSTEMS) == "nullsec"
+
+
+def test_explicit_security_override_wins_and_round_trips():
+    st = State.parse("t=1&sys=30000142&sec=lowsec")
+    assert st.security == "lowsec"
+    assert resolve_security(st, _JITA_SYSTEMS) == "lowsec"
+    assert "sec=lowsec" in st.to_query()
+    assert State.parse(st.to_query()).security == "lowsec"
+
+
+def test_resolve_security_without_systems_doc_is_highsec():
+    st = State.parse("t=1&sys=30000142")
+    assert resolve_security(st, None) == "highsec"
+
+
+def test_structure_and_rigs_round_trip():
+    st = State.parse("t=20184&struct=35827&rigs=37172,43719&tax=0.001")
+    assert st.structure_type_id == 35827
+    assert st.rig_type_ids == (37172, 43719)
+    assert st.facility_tax == 0.001
+    assert State.parse(st.to_query()).to_query() == st.to_query()

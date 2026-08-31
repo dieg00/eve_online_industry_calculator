@@ -249,3 +249,37 @@ def test_minerals_mode_type_override_still_wins():
     )
     mob = resolve_make_or_buy(ds, a, prices, ROOT_M)
     assert mob.decision[B_M] is NodePolicy.BUILD      # override por typeID manda
+
+
+# --- estructura + rigs de verdad reducen el material -----------------------
+def test_rig_reduces_material_and_security_amplifies():
+    from eveindustry.model.structure import RigCatalog, StructureConfig
+
+    ROOT_R, M = 600, 34
+    ds = make_dataset(
+        blueprints={6000: {"product": ROOT_R, "mats": [(M, 1000)], "a": 1}},
+        type_names={ROOT_R: "Rigged", M: "Tritanium"},
+    )
+    prices = DictPrices({ROOT_R: {"sell": 999_999.0}, M: {"sell": 5.0}})
+    # rig T2 (2.4%) que aplica a la categoría 1 (la que usa make_dataset)
+    rigs_doc = {
+        "structures": {"9": {"n": "S", "roleBonus": {"manufacturing": 0.01}}},
+        "rigs": {"7": {"n": "r", "activity": "manufacturing", "meBonus": 0.024, "categories": [1]}},
+        "secMultiplier": {"highsec": 1.0, "nullsec": 2.1},
+    }
+    catalog = RigCatalog.from_doc(rigs_doc)
+
+    base = resolve(ds, ROOT_R, Assumptions(default_me=0.0), prices)
+    hs = resolve(ds, ROOT_R, Assumptions(
+        default_me=0.0, rig_catalog=catalog,
+        structure=StructureConfig(structure_type_id=9, rig_type_ids=(7,), security="highsec"),
+    ), prices)
+    ns = resolve(ds, ROOT_R, Assumptions(
+        default_me=0.0, rig_catalog=catalog,
+        structure=StructureConfig(structure_type_id=9, rig_type_ids=(7,), security="nullsec"),
+    ), prices)
+
+    assert hs.total_material_cost < base.total_material_cost
+    assert ns.total_material_cost < hs.total_material_cost   # ×2.1 amplifica el rig
+    assert hs.nodes[ROOT_R].structure_factor < 1.0
+    assert ns.nodes[ROOT_R].structure_factor < hs.nodes[ROOT_R].structure_factor

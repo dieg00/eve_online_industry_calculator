@@ -73,6 +73,22 @@ input[type="range"] { width: 100%; }
 .inline { display: flex; align-items: center; gap: 8px; }
 .inline input[type="checkbox"] { width: auto; }
 
+.riglist {
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: var(--panel-2);
+}
+.rigrow {
+  padding: 2px 0;
+  font-size: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.rigrow input { margin-top: 3px; }
+
 .me-value { font-variant-numeric: tabular-nums; color: var(--text); min-width: 28px; text-align: right; }
 
 .kpi { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }

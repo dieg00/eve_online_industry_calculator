@@ -61,6 +61,24 @@ def test_calc_minerals_policy_builds_components_buys_reactions(capsys):
 
 
 @pytest.mark.skipif(not HAS_PRICES, reason="data/prices.json no generado")
+def test_calc_structure_and_rig_reduce_material(capsys):
+    import json
+
+    def run(*extra):
+        main(["calc", "20184", "--me", "10", "--system", "30003802", "--json", *extra])
+        return json.loads(capsys.readouterr().out)
+
+    base = run()
+    rigged = run("--structure", "35827", "--rig", "37172", "--rig", "43719")
+    assert rigged["total_material_cost"] < base["total_material_cost"]
+    assert rigged["nodes"]["20183"]["structure_factor"] < 1.0
+    # sin --security, la banda se deriva de 30003802 (nullsec) -> el rig va ×2.1
+    hs = run("--structure", "35827", "--rig", "37172", "--rig", "43719",
+             "--security", "highsec")
+    assert rigged["nodes"]["20183"]["structure_factor"] < hs["nodes"]["20183"]["structure_factor"]
+
+
+@pytest.mark.skipif(not HAS_PRICES, reason="data/prices.json no generado")
 def test_calc_json_output(capsys):
     import json
 

@@ -9,7 +9,9 @@ export type ResolveResult = any;
 const BOOTSTRAP = `
 import json, dataclasses
 from eveindustry.model.dataset import dataset_from_docs
-from eveindustry.state import State, build_assumptions, price_override_map
+from eveindustry.state import (
+    State, build_assumptions, price_override_map, resolve_security,
+)
 from eveindustry.engine.resolve import resolve
 from eveindustry.prices.static_json import StaticJsonPriceProvider
 from eveindustry.prices.overrides import OverridePriceProvider
@@ -18,25 +20,41 @@ _DS = dataset_from_docs(json.loads(_BP_JSON), json.loads(_TYPES_JSON))
 _PRICES_DOC = json.loads(_PRICES_JSON)
 _INDICES_DOC = json.loads(_INDICES_JSON)
 _RIGS_DOC = json.loads(_RIGS_JSON)
+_SYSTEMS_DOC = json.loads(_SYSTEMS_JSON)
 
 def _prices_for(st):
     base = StaticJsonPriceProvider(_PRICES_DOC)
     ov = price_override_map(st)
     return OverridePriceProvider(base, ov) if ov else base
 
+def _state_dict(st):
+    d = st.to_dict()
+    d["security_effective"] = resolve_security(st, _SYSTEMS_DOC)
+    return d
+
 def calc(query):
     st = State.parse(query)
-    a = build_assumptions(st, indices_doc=_INDICES_DOC, rigs_doc=_RIGS_DOC)
+    a = build_assumptions(
+        st, indices_doc=_INDICES_DOC, rigs_doc=_RIGS_DOC, systems_doc=_SYSTEMS_DOC,
+    )
     r = resolve(_DS, st.type_id, a, _prices_for(st))
+    groups, cats = set(), set()
+    for tid in r.nodes:
+        info = _DS.types.get(tid)
+        if info is not None:
+            groups.add(info.group_id)
+            cats.add(info.category_id)
     return json.dumps({
         "result": dataclasses.asdict(r),
-        "state": st.to_dict(),
+        "state": _state_dict(st),
         "query": st.to_query(),
+        "tree_groups": sorted(groups),
+        "tree_categories": sorted(cats),
     }, default=str)
 
 def normalize(query):
     st = State.parse(query)
-    return json.dumps({"state": st.to_dict(), "query": st.to_query()}, default=str)
+    return json.dumps({"state": _state_dict(st), "query": st.to_query()}, default=str)
 
 def buildables():
     rows = []
@@ -77,8 +95,16 @@ const fresh = (name: string) => (RUNTIME_DATA ? `${RUNTIME_DATA}/${name}` : "");
 
 export type Buildable = [id: number, name: string, activityId: number, bpId: number];
 
+export type CalcOut = {
+  result: ResolveResult;
+  state: FormState;
+  query: string;
+  tree_groups: number[];
+  tree_categories: number[];
+};
+
 export type Engine = {
-  calc: (query: string) => { result: ResolveResult; state: FormState; query: string };
+  calc: (query: string) => CalcOut;
   normalize: (query: string) => { state: FormState; query: string };
   buildables: () => Buildable[];
 };
@@ -93,18 +119,20 @@ export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
   inflight = (async () => {
     const py = await getPyodide(onStatus);
     onStatus?.("Cargando datos del SDE y precios…");
-    const [bp, types, prices, indices, rigs] = await Promise.all([
+    const [bp, types, prices, indices, rigs, systems] = await Promise.all([
       grab(bundled("blueprints.json")),
       grab(bundled("types.json")),
       grab(fresh("prices.json"), bundled("prices.json")),
       grab(fresh("indices.json"), bundled("indices.json")),
       grab(bundled("rigs.json")),
+      grab(bundled("systems.json")),
     ]);
     py.globals.set("_BP_JSON", bp);
     py.globals.set("_TYPES_JSON", types);
     py.globals.set("_PRICES_JSON", prices);
     py.globals.set("_INDICES_JSON", indices);
     py.globals.set("_RIGS_JSON", rigs);
+    py.globals.set("_SYSTEMS_JSON", systems);
 
     onStatus?.("Compilando el motor…");
     py.runPython(BOOTSTRAP);
@@ -132,7 +160,8 @@ export type FormState = {
   system_id: number | null;
   structure_type_id: number | null;
   rig_type_ids: number[];
-  security: "highsec" | "lowsec" | "nullsec";
+  security: "highsec" | "lowsec" | "nullsec" | null;   // null = derivada del sistema
+  security_effective: "highsec" | "lowsec" | "nullsec";
   facility_tax: number | null;
   global_policy: "auto" | "build" | "buy";
   policy_by_type: Record<string, string>;

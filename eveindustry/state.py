@@ -29,6 +29,29 @@ from eveindustry.prices.base import PriceKind
 _SEC = {"highsec", "lowsec", "nullsec"}
 
 
+def security_band(sec_status: float) -> str:
+    """Banda de seguridad para el multiplicador de rigs, a partir del sec status
+    verdadero del sistema (el redondeado a 0.5 es highsec => true >= 0.45).
+    WH / Pochven tienen sec negativo -> nullsec (×2.1)."""
+    if sec_status >= 0.45:
+        return "highsec"
+    if sec_status > 0.0:
+        return "lowsec"
+    return "nullsec"
+
+
+def resolve_security(state: "State", systems_doc: dict | None) -> str:
+    """Banda efectiva: el override explícito de ``state.security`` si lo hay; si
+    no, la derivada del sistema; si no se puede, ``"highsec"``."""
+    if state.security is not None:
+        return state.security
+    if systems_doc and state.system_id is not None:
+        row = systems_doc.get("systems", {}).get(str(state.system_id))
+        if row is not None:
+            return security_band(float(row[1]))
+    return "highsec"
+
+
 @dataclass
 class State:
     type_id: int
@@ -39,7 +62,7 @@ class State:
     system_id: int | None = None
     structure_type_id: int | None = None
     rig_type_ids: tuple[int, ...] = ()
-    security: str = "highsec"
+    security: str | None = None   # None = derivar del sistema (ver resolve_security)
     facility_tax: float | None = None
 
     global_policy: NodePolicy = NodePolicy.AUTO
@@ -87,8 +110,8 @@ class State:
         st.structure_type_id = int(pairs["struct"]) if "struct" in pairs else None
         if pairs.get("rigs"):
             st.rig_type_ids = tuple(int(x) for x in pairs["rigs"].split(","))
-        st.security = pairs.get("sec", "highsec")
-        if st.security not in _SEC:
+        st.security = pairs.get("sec")  # None = derivar del sistema
+        if st.security is not None and st.security not in _SEC:
             raise ValueError(f"sec inválido: {st.security!r}")
         st.facility_tax = float(pairs["tax"]) if "tax" in pairs else None
 
@@ -133,7 +156,7 @@ class State:
             p.append(("struct", str(self.structure_type_id)))
         if self.rig_type_ids:
             p.append(("rigs", ",".join(str(r) for r in self.rig_type_ids)))
-        if self.security != "highsec":
+        if self.security is not None:
             p.append(("sec", self.security))
         if self.facility_tax is not None:
             p.append(("tax", _num(self.facility_tax)))
@@ -220,11 +243,13 @@ def build_assumptions(
     *,
     indices_doc: dict | None = None,
     rigs_doc: dict | None = None,
+    systems_doc: dict | None = None,
 ) -> Assumptions:
     """Traduce el estado a ``Assumptions``.
 
     ``indices_doc`` = ``indices.json`` ya parseado (para resolver ``sys`` y las
-    constantes). ``rigs_doc`` = ``rigs.json`` (para estructura + rigs).
+    constantes). ``rigs_doc`` = ``rigs.json`` (estructura + rigs). ``systems_doc``
+    = ``systems.json`` (para derivar la seguridad del sistema si no es explícita).
     """
     indices = CostIndices()
     constants = CostConstants()
@@ -241,7 +266,7 @@ def build_assumptions(
     structure = StructureConfig(
         structure_type_id=state.structure_type_id,
         rig_type_ids=state.rig_type_ids,
-        security=state.security,
+        security=resolve_security(state, systems_doc),
         facility_tax=tax,
     )
 

@@ -1,22 +1,1122 @@
 {
   "meta": {
-    "note": "CURADO A MANO, PARCIAL. Bonos de material verificados contra dgmTypeAttributes (attributeEngRigMatBonus): T1 = 2%, T2 = 2.4%. Los modificadores de seguridad (hiSec/lowSec/nullSec = 1.0/1.9/2.1) tambien salen de dogma. La lista 'groups'/'categories' de cada rig (que blueprints afecta) NO es derivable de dogma directamente y esta curada a ojo; ampliar y verificar antes de fiarse. canFitShipGroup01..03 en dogma = estructuras donde se monta el rig (Citadel/EngComplex/Refinery), no lo que afecta.",
-    "todo": "Catalogo completo de rigs (todas las actividades y grupos), idealmente scripted desde un mapping curado externo."
+    "note": "Generado por scripts/list_rigs.py desde el SDE. meBonus de dogma (attributeEngRigMatBonus). El mapeo groups/categories por familia NO esta en dogma; las familias por clase de nave (small/medium/large) usan una clasificacion HEURISTICA de grupos de nave — verificar contra CCP/EVE Ref si hace falta exactitud. secMultiplier global (los rigs de ME usan 1/1.9/2.1).",
+    "builtAt": "2026-08-31T21:54:41+00:00",
+    "rigCount": 67
   },
   "structures": {
-    "35825": { "n": "Raitaru", "roleBonus": { "manufacturing": 0.01, "reaction": 0.0 } },
-    "35826": { "n": "Azbel",   "roleBonus": { "manufacturing": 0.01, "reaction": 0.0 } },
-    "35827": { "n": "Sotiyo",  "roleBonus": { "manufacturing": 0.01, "reaction": 0.0 } },
-    "35835": { "n": "Athanor", "roleBonus": { "manufacturing": 0.0, "reaction": 0.0 } },
-    "35836": { "n": "Tatara",  "roleBonus": { "manufacturing": 0.0, "reaction": 0.0 } }
+    "35825": {
+      "n": "Raitaru",
+      "roleBonus": {
+        "manufacturing": 0.01,
+        "reaction": 0.0
+      }
+    },
+    "35826": {
+      "n": "Azbel",
+      "roleBonus": {
+        "manufacturing": 0.01,
+        "reaction": 0.0
+      }
+    },
+    "35827": {
+      "n": "Sotiyo",
+      "roleBonus": {
+        "manufacturing": 0.01,
+        "reaction": 0.0
+      }
+    },
+    "35835": {
+      "n": "Athanor",
+      "roleBonus": {
+        "manufacturing": 0.0,
+        "reaction": 0.0
+      }
+    },
+    "35836": {
+      "n": "Tatara",
+      "roleBonus": {
+        "manufacturing": 0.0,
+        "reaction": 0.0
+      }
+    }
   },
   "rigs": {
-    "43718": { "n": "Standup L-Set Basic Capital Component Manufacturing Efficiency I",  "activity": "manufacturing", "meBonus": 0.02,  "groups": [873], "categories": [] },
-    "43719": { "n": "Standup L-Set Basic Capital Component Manufacturing Efficiency II", "activity": "manufacturing", "meBonus": 0.024, "groups": [873], "categories": [] },
-    "37174": { "n": "Standup L-Set Advanced Component Manufacturing Efficiency I",  "activity": "manufacturing", "meBonus": 0.02,  "groups": [334, 536, 873, 913], "categories": [] },
-    "37175": { "n": "Standup L-Set Advanced Component Manufacturing Efficiency II", "activity": "manufacturing", "meBonus": 0.024, "groups": [334, 536, 873, 913], "categories": [] },
-    "37154": { "n": "Standup L-Set Capital Ship Manufacturing Efficiency I",  "activity": "manufacturing", "meBonus": 0.02,  "groups": [485, 513, 547, 883, 1538], "categories": [] },
-    "37155": { "n": "Standup L-Set Capital Ship Manufacturing Efficiency II", "activity": "manufacturing", "meBonus": 0.024, "groups": [485, 513, 547, 883, 1538], "categories": [] }
+    "37174": {
+      "n": "Standup L-Set Advanced Component Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        334,
+        536,
+        964,
+        880,
+        913
+      ],
+      "categories": []
+    },
+    "37175": {
+      "n": "Standup L-Set Advanced Component Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        334,
+        536,
+        964,
+        880,
+        913
+      ],
+      "categories": []
+    },
+    "37168": {
+      "n": "Standup L-Set Advanced Large Ship Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        27,
+        900,
+        898
+      ],
+      "categories": []
+    },
+    "37169": {
+      "n": "Standup L-Set Advanced Large Ship Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        27,
+        900,
+        898
+      ],
+      "categories": []
+    },
+    "43709": {
+      "n": "Standup L-Set Advanced Medium Ship Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        26,
+        358,
+        894,
+        832,
+        833,
+        906,
+        963,
+        419,
+        1201,
+        540,
+        28,
+        1202,
+        380,
+        463,
+        543,
+        4902,
+        941,
+        1972
+      ],
+      "categories": []
+    },
+    "43711": {
+      "n": "Standup L-Set Advanced Medium Ship Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        26,
+        358,
+        894,
+        832,
+        833,
+        906,
+        963,
+        419,
+        1201,
+        540,
+        28,
+        1202,
+        380,
+        463,
+        543,
+        4902,
+        941,
+        1972
+      ],
+      "categories": []
+    },
+    "43707": {
+      "n": "Standup L-Set Advanced Small Ship Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        237,
+        25,
+        324,
+        831,
+        830,
+        893,
+        1283,
+        1527,
+        834,
+        31,
+        1022,
+        1972,
+        420,
+        541,
+        1534,
+        1305,
+        29
+      ],
+      "categories": []
+    },
+    "43708": {
+      "n": "Standup L-Set Advanced Small Ship Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        237,
+        25,
+        324,
+        831,
+        830,
+        893,
+        1283,
+        1527,
+        834,
+        31,
+        1022,
+        1972,
+        420,
+        541,
+        1534,
+        1305,
+        29
+      ],
+      "categories": []
+    },
+    "37164": {
+      "n": "Standup L-Set Ammunition Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [],
+      "categories": [
+        8
+      ]
+    },
+    "37165": {
+      "n": "Standup L-Set Ammunition Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [],
+      "categories": [
+        8
+      ]
+    },
+    "43718": {
+      "n": "Standup L-Set Basic Capital Component Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        873
+      ],
+      "categories": []
+    },
+    "43719": {
+      "n": "Standup L-Set Basic Capital Component Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        873
+      ],
+      "categories": []
+    },
+    "37166": {
+      "n": "Standup L-Set Basic Large Ship Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        27,
+        900,
+        898
+      ],
+      "categories": []
+    },
+    "37167": {
+      "n": "Standup L-Set Basic Large Ship Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        27,
+        900,
+        898
+      ],
+      "categories": []
+    },
+    "43716": {
+      "n": "Standup L-Set Basic Medium Ship Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        26,
+        358,
+        894,
+        832,
+        833,
+        906,
+        963,
+        419,
+        1201,
+        540,
+        28,
+        1202,
+        380,
+        463,
+        543,
+        4902,
+        941,
+        1972
+      ],
+      "categories": []
+    },
+    "43717": {
+      "n": "Standup L-Set Basic Medium Ship Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        26,
+        358,
+        894,
+        832,
+        833,
+        906,
+        963,
+        419,
+        1201,
+        540,
+        28,
+        1202,
+        380,
+        463,
+        543,
+        4902,
+        941,
+        1972
+      ],
+      "categories": []
+    },
+    "43714": {
+      "n": "Standup L-Set Basic Small Ship Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        237,
+        25,
+        324,
+        831,
+        830,
+        893,
+        1283,
+        1527,
+        834,
+        31,
+        1022,
+        1972,
+        420,
+        541,
+        1534,
+        1305,
+        29
+      ],
+      "categories": []
+    },
+    "43715": {
+      "n": "Standup L-Set Basic Small Ship Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        237,
+        25,
+        324,
+        831,
+        830,
+        893,
+        1283,
+        1527,
+        834,
+        31,
+        1022,
+        1972,
+        420,
+        541,
+        1534,
+        1305,
+        29
+      ],
+      "categories": []
+    },
+    "37173": {
+      "n": "Standup L-Set Capital Ship Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        485,
+        4594,
+        547,
+        659,
+        30,
+        1538,
+        883,
+        513,
+        902,
+        5120,
+        4487,
+        4488
+      ],
+      "categories": []
+    },
+    "37172": {
+      "n": "Standup L-Set Capital Ship Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        485,
+        4594,
+        547,
+        659,
+        30,
+        1538,
+        883,
+        513,
+        902,
+        5120,
+        4487,
+        4488
+      ],
+      "categories": []
+    },
+    "43712": {
+      "n": "Standup L-Set Drone and Fighter Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [],
+      "categories": [
+        18,
+        87
+      ]
+    },
+    "43713": {
+      "n": "Standup L-Set Drone and Fighter Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [],
+      "categories": [
+        18,
+        87
+      ]
+    },
+    "37170": {
+      "n": "Standup L-Set Equipment Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [],
+      "categories": [
+        7
+      ]
+    },
+    "37171": {
+      "n": "Standup L-Set Equipment Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [],
+      "categories": [
+        7
+      ]
+    },
+    "46496": {
+      "n": "Standup L-Set Reactor Efficiency I",
+      "activity": "reaction",
+      "meBonus": 0.02,
+      "groups": [
+        429,
+        428,
+        4096,
+        974,
+        712
+      ],
+      "categories": []
+    },
+    "46497": {
+      "n": "Standup L-Set Reactor Efficiency II",
+      "activity": "reaction",
+      "meBonus": 0.024,
+      "groups": [
+        429,
+        428,
+        4096,
+        974,
+        712
+      ],
+      "categories": []
+    },
+    "43720": {
+      "n": "Standup L-Set Structure Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [],
+      "categories": [
+        65,
+        66
+      ]
+    },
+    "43721": {
+      "n": "Standup L-Set Structure Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [],
+      "categories": [
+        65,
+        66
+      ]
+    },
+    "45641": {
+      "n": "Standup L-Set Thukker Advanced Component Manufacturing Efficiency",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        334,
+        536,
+        964,
+        880,
+        913
+      ],
+      "categories": []
+    },
+    "43867": {
+      "n": "Standup M-Set Advanced Component Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        334,
+        536,
+        964,
+        880,
+        913
+      ],
+      "categories": []
+    },
+    "43866": {
+      "n": "Standup M-Set Advanced Component Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        334,
+        536,
+        964,
+        880,
+        913
+      ],
+      "categories": []
+    },
+    "43862": {
+      "n": "Standup M-Set Advanced Large Ship Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        27,
+        900,
+        898
+      ],
+      "categories": []
+    },
+    "43863": {
+      "n": "Standup M-Set Advanced Large Ship Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        27,
+        900,
+        898
+      ],
+      "categories": []
+    },
+    "43858": {
+      "n": "Standup M-Set Advanced Medium Ship Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        26,
+        358,
+        894,
+        832,
+        833,
+        906,
+        963,
+        419,
+        1201,
+        540,
+        28,
+        1202,
+        380,
+        463,
+        543,
+        4902,
+        941,
+        1972
+      ],
+      "categories": []
+    },
+    "43859": {
+      "n": "Standup M-Set Advanced Medium Ship Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        26,
+        358,
+        894,
+        832,
+        833,
+        906,
+        963,
+        419,
+        1201,
+        540,
+        28,
+        1202,
+        380,
+        463,
+        543,
+        4902,
+        941,
+        1972
+      ],
+      "categories": []
+    },
+    "43855": {
+      "n": "Standup M-Set Advanced Small Ship Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        237,
+        25,
+        324,
+        831,
+        830,
+        893,
+        1283,
+        1527,
+        834,
+        31,
+        1022,
+        1972,
+        420,
+        541,
+        1534,
+        1305,
+        29
+      ],
+      "categories": []
+    },
+    "43854": {
+      "n": "Standup M-Set Advanced Small Ship Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        237,
+        25,
+        324,
+        831,
+        830,
+        893,
+        1283,
+        1527,
+        834,
+        31,
+        1022,
+        1972,
+        420,
+        541,
+        1534,
+        1305,
+        29
+      ],
+      "categories": []
+    },
+    "37158": {
+      "n": "Standup M-Set Ammunition Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [],
+      "categories": [
+        8
+      ]
+    },
+    "37159": {
+      "n": "Standup M-Set Ammunition Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [],
+      "categories": [
+        8
+      ]
+    },
+    "43870": {
+      "n": "Standup M-Set Basic Capital Component Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        873
+      ],
+      "categories": []
+    },
+    "43871": {
+      "n": "Standup M-Set Basic Capital Component Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        873
+      ],
+      "categories": []
+    },
+    "43732": {
+      "n": "Standup M-Set Basic Large Ship Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        27,
+        900,
+        898
+      ],
+      "categories": []
+    },
+    "37152": {
+      "n": "Standup M-Set Basic Large Ship Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        27,
+        900,
+        898
+      ],
+      "categories": []
+    },
+    "37146": {
+      "n": "Standup M-Set Basic Medium Ship Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        26,
+        358,
+        894,
+        832,
+        833,
+        906,
+        963,
+        419,
+        1201,
+        540,
+        28,
+        1202,
+        380,
+        463,
+        543,
+        4902,
+        941,
+        1972
+      ],
+      "categories": []
+    },
+    "37147": {
+      "n": "Standup M-Set Basic Medium Ship Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        26,
+        358,
+        894,
+        832,
+        833,
+        906,
+        963,
+        419,
+        1201,
+        540,
+        28,
+        1202,
+        380,
+        463,
+        543,
+        4902,
+        941,
+        1972
+      ],
+      "categories": []
+    },
+    "37154": {
+      "n": "Standup M-Set Basic Small Ship Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        237,
+        25,
+        324,
+        831,
+        830,
+        893,
+        1283,
+        1527,
+        834,
+        31,
+        1022,
+        1972,
+        420,
+        541,
+        1534,
+        1305,
+        29
+      ],
+      "categories": []
+    },
+    "37155": {
+      "n": "Standup M-Set Basic Small Ship Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        237,
+        25,
+        324,
+        831,
+        830,
+        893,
+        1283,
+        1527,
+        834,
+        31,
+        1022,
+        1972,
+        420,
+        541,
+        1534,
+        1305,
+        29
+      ],
+      "categories": []
+    },
+    "46494": {
+      "n": "Standup M-Set Biochemical Reactor Material Efficiency I",
+      "activity": "reaction",
+      "meBonus": 0.02,
+      "groups": [
+        712
+      ],
+      "categories": []
+    },
+    "46495": {
+      "n": "Standup M-Set Biochemical Reactor Material Efficiency II",
+      "activity": "reaction",
+      "meBonus": 0.024,
+      "groups": [
+        712
+      ],
+      "categories": []
+    },
+    "46486": {
+      "n": "Standup M-Set Composite Reactor Material Efficiency I",
+      "activity": "reaction",
+      "meBonus": 0.02,
+      "groups": [
+        429,
+        428,
+        4096
+      ],
+      "categories": []
+    },
+    "46487": {
+      "n": "Standup M-Set Composite Reactor Material Efficiency II",
+      "activity": "reaction",
+      "meBonus": 0.024,
+      "groups": [
+        429,
+        428,
+        4096
+      ],
+      "categories": []
+    },
+    "37156": {
+      "n": "Standup M-Set Drone and Fighter Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [],
+      "categories": [
+        18,
+        87
+      ]
+    },
+    "37157": {
+      "n": "Standup M-Set Drone and Fighter Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [],
+      "categories": [
+        18,
+        87
+      ]
+    },
+    "43920": {
+      "n": "Standup M-Set Equipment Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [],
+      "categories": [
+        7
+      ]
+    },
+    "43921": {
+      "n": "Standup M-Set Equipment Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [],
+      "categories": [
+        7
+      ]
+    },
+    "46490": {
+      "n": "Standup M-Set Hybrid Reactor Material Efficiency I",
+      "activity": "reaction",
+      "meBonus": 0.02,
+      "groups": [
+        974
+      ],
+      "categories": []
+    },
+    "46491": {
+      "n": "Standup M-Set Hybrid Reactor Material Efficiency II",
+      "activity": "reaction",
+      "meBonus": 0.024,
+      "groups": [
+        974
+      ],
+      "categories": []
+    },
+    "43875": {
+      "n": "Standup M-Set Structure Manufacturing Material Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [],
+      "categories": [
+        65,
+        66
+      ]
+    },
+    "43874": {
+      "n": "Standup M-Set Structure Manufacturing Material Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [],
+      "categories": [
+        65,
+        66
+      ]
+    },
+    "45640": {
+      "n": "Standup M-Set Thukker Advanced Component Manufacturing Material Efficiency",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        334,
+        536,
+        964,
+        880,
+        913
+      ],
+      "categories": []
+    },
+    "37178": {
+      "n": "Standup XL-Set Equipment and Consumable Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [],
+      "categories": [
+        7,
+        8
+      ]
+    },
+    "37179": {
+      "n": "Standup XL-Set Equipment and Consumable Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [],
+      "categories": [
+        7,
+        8
+      ]
+    },
+    "37180": {
+      "n": "Standup XL-Set Ship Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        237,
+        324,
+        358,
+        380,
+        419,
+        420,
+        463,
+        485,
+        513,
+        540,
+        541,
+        543,
+        547,
+        659,
+        830,
+        831,
+        832,
+        833,
+        834,
+        883,
+        893,
+        894,
+        898,
+        900,
+        902,
+        906,
+        941,
+        963,
+        1022,
+        1201,
+        1202,
+        1283,
+        1305,
+        1527,
+        1534,
+        1538,
+        1972,
+        4487,
+        4488,
+        4594,
+        4902,
+        5120
+      ],
+      "categories": []
+    },
+    "37181": {
+      "n": "Standup XL-Set Ship Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        237,
+        324,
+        358,
+        380,
+        419,
+        420,
+        463,
+        485,
+        513,
+        540,
+        541,
+        543,
+        547,
+        659,
+        830,
+        831,
+        832,
+        833,
+        834,
+        883,
+        893,
+        894,
+        898,
+        900,
+        902,
+        906,
+        941,
+        963,
+        1022,
+        1201,
+        1202,
+        1283,
+        1305,
+        1527,
+        1534,
+        1538,
+        1972,
+        4487,
+        4488,
+        4594,
+        4902,
+        5120
+      ],
+      "categories": []
+    },
+    "43704": {
+      "n": "Standup XL-Set Structure and Component Manufacturing Efficiency I",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        334,
+        536,
+        964,
+        880,
+        913,
+        873
+      ],
+      "categories": [
+        65,
+        66
+      ]
+    },
+    "43705": {
+      "n": "Standup XL-Set Structure and Component Manufacturing Efficiency II",
+      "activity": "manufacturing",
+      "meBonus": 0.024,
+      "groups": [
+        334,
+        536,
+        964,
+        880,
+        913,
+        873
+      ],
+      "categories": [
+        65,
+        66
+      ]
+    },
+    "45548": {
+      "n": "Standup XL-Set Thukker Structure and Component Manufacturing Efficiency",
+      "activity": "manufacturing",
+      "meBonus": 0.02,
+      "groups": [
+        334,
+        536,
+        964,
+        880,
+        913,
+        873
+      ],
+      "categories": [
+        65,
+        66
+      ]
+    }
   },
-  "secMultiplier": { "highsec": 1.0, "lowsec": 1.9, "nullsec": 2.1 }
+  "secMultiplier": {
+    "highsec": 1.0,
+    "lowsec": 1.9,
+    "nullsec": 2.1
+  }
 }

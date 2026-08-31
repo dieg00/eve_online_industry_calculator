@@ -45,6 +45,15 @@ def _state_from_args(args: argparse.Namespace) -> State:
         st.me_overrides[int(bp)] = float(me)
     if args.system is not None:
         st.system_id = args.system
+    if args.security is not None:
+        st.security = args.security
+    if args.structure is not None:
+        st.structure_type_id = args.structure
+    for rid in args.rig or []:
+        if rid not in st.rig_type_ids:
+            st.rig_type_ids = (*st.rig_type_ids, rid)
+    if args.facility_tax is not None:
+        st.facility_tax = args.facility_tax
     if args.demand is not None:
         st.demand = args.demand
     if args.invention:
@@ -65,15 +74,14 @@ def _state_from_args(args: argparse.Namespace) -> State:
 
 
 def _load_docs(data_dir: Path, indices_path: Path | None, rigs_path: Path | None):
-    indices_doc = None
-    ip = indices_path or (data_dir / "indices.json")
-    if ip.is_file():
-        indices_doc = json.loads(ip.read_text("utf-8"))
-    rigs_doc = None
-    rp = rigs_path or (data_dir / "rigs.json")
-    if rp.is_file():
-        rigs_doc = json.loads(rp.read_text("utf-8"))
-    return indices_doc, rigs_doc
+    def _read(p: Path | None, default_name: str):
+        path = p or (data_dir / default_name)
+        return json.loads(path.read_text("utf-8")) if path.is_file() else None
+
+    indices_doc = _read(indices_path, "indices.json")
+    rigs_doc = _read(rigs_path, "rigs.json")
+    systems_doc = _read(None, "systems.json")
+    return indices_doc, rigs_doc, systems_doc
 
 
 def _prices(data_dir: Path, prices_path: Path | None, state: State):
@@ -121,8 +129,12 @@ def cmd_calc(args: argparse.Namespace) -> int:
     data_dir = Path(args.data)
     state = _state_from_args(args)
     dataset = load_dataset(data_dir)
-    indices_doc, rigs_doc = _load_docs(data_dir, _opt(args.indices), _opt(args.rigs))
-    assumptions = build_assumptions(state, indices_doc=indices_doc, rigs_doc=rigs_doc)
+    indices_doc, rigs_doc, systems_doc = _load_docs(
+        data_dir, _opt(args.indices), _opt(args.rigs)
+    )
+    assumptions = build_assumptions(
+        state, indices_doc=indices_doc, rigs_doc=rigs_doc, systems_doc=systems_doc
+    )
     prices = _prices(data_dir, _opt(args.prices), state)
 
     r = resolve(dataset, state.type_id, assumptions, prices)
@@ -210,6 +222,14 @@ def _add_common(sp: argparse.ArgumentParser) -> None:
     sp.add_argument("--me", type=float, help="ME por defecto")
     sp.add_argument("--me-bp", action="append", metavar="BPID=ME", help="ME por blueprint (repetible)")
     sp.add_argument("--system", type=int, help="solarSystemID para los índices de coste")
+    sp.add_argument(
+        "--security",
+        choices=["highsec", "lowsec", "nullsec"],
+        help="override de la banda de seguridad (por defecto se deriva del --system)",
+    )
+    sp.add_argument("--structure", type=int, metavar="TYPEID", help="typeID de la estructura")
+    sp.add_argument("--rig", action="append", type=int, metavar="TYPEID", help="typeID de rig (repetible)")
+    sp.add_argument("--facility-tax", type=float, metavar="FRAC", help="tax de instalación (fracción, p. ej. 0.001)")
     sp.add_argument("--demand", type=int, help="unidades a producir (def 1)")
     sp.add_argument("--invention", action="store_true", help="activa la capa de invención")
     sp.add_argument(
