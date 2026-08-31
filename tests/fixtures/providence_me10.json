@@ -1,0 +1,801 @@
+{
+  "meta": {
+    "note": "Subgrafo de la Providence para el test de regresion (plan §9). ME 10 en casco y componentes, sin rigs, componentes forzados a build, sus inputs como hoja.",
+    "sdeSource": "fuzzwork latest-sqlite.db.gz md5 576077b554a4ede1592e8a7f67c561f3",
+    "rootProduct": 20183,
+    "rootBlueprint": 20184,
+    "defaultME": 10
+  },
+  "blueprints": {
+    "20184": {
+      "a": 1,
+      "p": 20183,
+      "pr": 1,
+      "ml": 1,
+      "m": [
+        [
+          21009,
+          15
+        ],
+        [
+          21017,
+          5
+        ],
+        [
+          21027,
+          40
+        ],
+        [
+          21037,
+          5
+        ],
+        [
+          57470,
+          16
+        ],
+        [
+          57474,
+          1
+        ],
+        [
+          57478,
+          400
+        ],
+        [
+          57486,
+          200
+        ],
+        [
+          57487,
+          1
+        ]
+      ],
+      "t": 1500000
+    },
+    "21010": {
+      "a": 1,
+      "p": 21009,
+      "pr": 1,
+      "ml": 40,
+      "m": [
+        [
+          34,
+          40500
+        ],
+        [
+          35,
+          146250
+        ],
+        [
+          36,
+          40500
+        ],
+        [
+          37,
+          11250
+        ],
+        [
+          38,
+          1125
+        ],
+        [
+          39,
+          570
+        ],
+        [
+          40,
+          285
+        ],
+        [
+          2872,
+          1
+        ],
+        [
+          57457,
+          100
+        ]
+      ],
+      "t": 16000
+    },
+    "21018": {
+      "a": 1,
+      "p": 21017,
+      "pr": 1,
+      "ml": 40,
+      "m": [
+        [
+          34,
+          45000
+        ],
+        [
+          35,
+          157500
+        ],
+        [
+          36,
+          45000
+        ],
+        [
+          37,
+          12000
+        ],
+        [
+          38,
+          1200
+        ],
+        [
+          39,
+          615
+        ],
+        [
+          40,
+          308
+        ],
+        [
+          2870,
+          5
+        ],
+        [
+          57457,
+          100
+        ]
+      ],
+      "t": 16000
+    },
+    "21028": {
+      "a": 1,
+      "p": 21027,
+      "pr": 1,
+      "ml": 40,
+      "m": [
+        [
+          34,
+          54000
+        ],
+        [
+          35,
+          195000
+        ],
+        [
+          36,
+          54000
+        ],
+        [
+          37,
+          15000
+        ],
+        [
+          38,
+          1500
+        ],
+        [
+          39,
+          760
+        ],
+        [
+          40,
+          380
+        ],
+        [
+          57457,
+          100
+        ]
+      ],
+      "t": 16000
+    },
+    "21038": {
+      "a": 1,
+      "p": 21037,
+      "pr": 1,
+      "ml": 40,
+      "m": [
+        [
+          34,
+          30000
+        ],
+        [
+          35,
+          105000
+        ],
+        [
+          36,
+          30000
+        ],
+        [
+          37,
+          9000
+        ],
+        [
+          38,
+          750
+        ],
+        [
+          39,
+          413
+        ],
+        [
+          40,
+          210
+        ],
+        [
+          57457,
+          100
+        ]
+      ],
+      "t": 16000
+    },
+    "57507": {
+      "a": 1,
+      "p": 57470,
+      "pr": 1,
+      "ml": 200,
+      "m": [
+        [
+          57456,
+          10
+        ],
+        [
+          57457,
+          10
+        ],
+        [
+          57459,
+          40
+        ],
+        [
+          57466,
+          1
+        ]
+      ],
+      "t": 10800
+    },
+    "57511": {
+      "a": 1,
+      "p": 57474,
+      "pr": 1,
+      "ml": 40,
+      "m": [
+        [
+          2867,
+          2
+        ],
+        [
+          2872,
+          1
+        ],
+        [
+          2876,
+          1
+        ],
+        [
+          17317,
+          40
+        ],
+        [
+          30303,
+          660
+        ],
+        [
+          30304,
+          190
+        ],
+        [
+          30305,
+          390
+        ],
+        [
+          30306,
+          190
+        ],
+        [
+          30307,
+          190
+        ],
+        [
+          30308,
+          130
+        ],
+        [
+          30309,
+          560
+        ],
+        [
+          30310,
+          380
+        ],
+        [
+          30311,
+          260
+        ],
+        [
+          33360,
+          560
+        ]
+      ],
+      "t": 16000
+    },
+    "57515": {
+      "a": 1,
+      "p": 57478,
+      "pr": 3,
+      "ml": 200,
+      "m": [
+        [
+          2312,
+          4
+        ],
+        [
+          2463,
+          4
+        ],
+        [
+          57457,
+          10
+        ]
+      ],
+      "t": 1800
+    },
+    "57523": {
+      "a": 1,
+      "p": 57486,
+      "pr": 3,
+      "ml": 200,
+      "m": [
+        [
+          2319,
+          8
+        ],
+        [
+          3775,
+          8
+        ],
+        [
+          57457,
+          10
+        ]
+      ],
+      "t": 1800
+    },
+    "57524": {
+      "a": 1,
+      "p": 57487,
+      "pr": 1,
+      "ml": 40,
+      "m": [
+        [
+          2868,
+          20
+        ],
+        [
+          2872,
+          20
+        ],
+        [
+          57479,
+          35
+        ]
+      ],
+      "t": 16000
+    }
+  },
+  "types": {
+    "34": {
+      "n": "Tritanium",
+      "g": 18,
+      "c": 4,
+      "v": 0.01
+    },
+    "35": {
+      "n": "Pyerite",
+      "g": 18,
+      "c": 4,
+      "v": 0.01
+    },
+    "36": {
+      "n": "Mexallon",
+      "g": 18,
+      "c": 4,
+      "v": 0.01
+    },
+    "37": {
+      "n": "Isogen",
+      "g": 18,
+      "c": 4,
+      "v": 0.01
+    },
+    "38": {
+      "n": "Nocxium",
+      "g": 18,
+      "c": 4,
+      "v": 0.01
+    },
+    "39": {
+      "n": "Zydrine",
+      "g": 18,
+      "c": 4,
+      "v": 0.01
+    },
+    "40": {
+      "n": "Megacyte",
+      "g": 18,
+      "c": 4,
+      "v": 0.01
+    },
+    "2312": {
+      "n": "Supertensile Plastics",
+      "g": 1034,
+      "c": 43,
+      "v": 0.75
+    },
+    "2319": {
+      "n": "Test Cultures",
+      "g": 1034,
+      "c": 43,
+      "v": 0.75
+    },
+    "2463": {
+      "n": "Nanites",
+      "g": 1034,
+      "c": 43,
+      "v": 0.75
+    },
+    "2867": {
+      "n": "Broadcast Node",
+      "g": 1041,
+      "c": 43,
+      "v": 50.0
+    },
+    "2868": {
+      "n": "Integrity Response Drones",
+      "g": 1041,
+      "c": 43,
+      "v": 50.0
+    },
+    "2870": {
+      "n": "Organic Mortar Applicators",
+      "g": 1041,
+      "c": 43,
+      "v": 50.0
+    },
+    "2872": {
+      "n": "Self-Harmonizing Power Core",
+      "g": 1041,
+      "c": 43,
+      "v": 50.0
+    },
+    "2876": {
+      "n": "Wetware Mainframe",
+      "g": 1041,
+      "c": 43,
+      "v": 50.0
+    },
+    "3775": {
+      "n": "Viral Agent",
+      "g": 1034,
+      "c": 43,
+      "v": 0.75
+    },
+    "17317": {
+      "n": "Fermionic Condensates",
+      "g": 429,
+      "c": 4,
+      "v": 1.3
+    },
+    "20183": {
+      "n": "Providence",
+      "g": 513,
+      "c": 6,
+      "v": 18500000.0
+    },
+    "20184": {
+      "n": "Providence Blueprint",
+      "g": 525,
+      "c": 9,
+      "v": 0.01
+    },
+    "21009": {
+      "n": "Capital Propulsion Engine",
+      "g": 873,
+      "c": 17,
+      "v": 2000.0
+    },
+    "21010": {
+      "n": "Capital Propulsion Engine Blueprint",
+      "g": 915,
+      "c": 9,
+      "v": 0.01
+    },
+    "21017": {
+      "n": "Capital Armor Plates",
+      "g": 873,
+      "c": 17,
+      "v": 2000.0
+    },
+    "21018": {
+      "n": "Capital Armor Plates Blueprint",
+      "g": 915,
+      "c": 9,
+      "v": 0.01
+    },
+    "21027": {
+      "n": "Capital Cargo Bay",
+      "g": 873,
+      "c": 17,
+      "v": 2000.0
+    },
+    "21028": {
+      "n": "Capital Cargo Bay Blueprint",
+      "g": 915,
+      "c": 9,
+      "v": 0.01
+    },
+    "21037": {
+      "n": "Capital Construction Parts",
+      "g": 873,
+      "c": 17,
+      "v": 2000.0
+    },
+    "21038": {
+      "n": "Capital Construction Parts Blueprint",
+      "g": 915,
+      "c": 9,
+      "v": 0.01
+    },
+    "30303": {
+      "n": "Fulleroferrocene",
+      "g": 974,
+      "c": 4,
+      "v": 0.1
+    },
+    "30304": {
+      "n": "PPD Fullerene Fibers",
+      "g": 974,
+      "c": 4,
+      "v": 0.5
+    },
+    "30305": {
+      "n": "Fullerene Intercalated Graphite",
+      "g": 974,
+      "c": 4,
+      "v": 0.8
+    },
+    "30306": {
+      "n": "Methanofullerene",
+      "g": 974,
+      "c": 4,
+      "v": 0.75
+    },
+    "30307": {
+      "n": "Lanthanum Metallofullerene",
+      "g": 974,
+      "c": 4,
+      "v": 1.0
+    },
+    "30308": {
+      "n": "Scandium Metallofullerene",
+      "g": 974,
+      "c": 4,
+      "v": 0.65
+    },
+    "30309": {
+      "n": "Graphene Nanoribbons",
+      "g": 974,
+      "c": 4,
+      "v": 1.5
+    },
+    "30310": {
+      "n": "Carbon-86 Epoxy Resin",
+      "g": 974,
+      "c": 4,
+      "v": 0.4
+    },
+    "30311": {
+      "n": "C3-FTM Acid",
+      "g": 974,
+      "c": 4,
+      "v": 0.2
+    },
+    "33360": {
+      "n": "Terahertz Metamaterials",
+      "g": 429,
+      "c": 4,
+      "v": 1.0
+    },
+    "57456": {
+      "n": "Pressurized Oxidizers",
+      "g": 429,
+      "c": 4,
+      "v": 0.1
+    },
+    "57457": {
+      "n": "Reinforced Carbon Fiber",
+      "g": 429,
+      "c": 4,
+      "v": 0.1
+    },
+    "57459": {
+      "n": "Hypnagogic Neurolink Enhancer",
+      "g": 4096,
+      "c": 4,
+      "v": 4.0
+    },
+    "57466": {
+      "n": "Ultradian-Cycling Neurolink Stabilizer",
+      "g": 4096,
+      "c": 4,
+      "v": 10.0
+    },
+    "57470": {
+      "n": "U-C Trigger Neurolink Conduit",
+      "g": 334,
+      "c": 17,
+      "v": 16.0
+    },
+    "57474": {
+      "n": "Radar-FTL Interlink Communicator",
+      "g": 913,
+      "c": 17,
+      "v": 100.0
+    },
+    "57478": {
+      "n": "Auto-Integrity Preservation Seal",
+      "g": 334,
+      "c": 17,
+      "v": 16.0
+    },
+    "57479": {
+      "n": "Core Temperature Regulator",
+      "g": 334,
+      "c": 17,
+      "v": 180.0
+    },
+    "57486": {
+      "n": "Life Support Backup Unit",
+      "g": 334,
+      "c": 17,
+      "v": 45.0
+    },
+    "57487": {
+      "n": "Capital Core Temperature Regulator",
+      "g": 873,
+      "c": 17,
+      "v": 28000.0
+    },
+    "57507": {
+      "n": "U-C Trigger Neurolink Conduit Blueprint",
+      "g": 447,
+      "c": 9,
+      "v": 0.01
+    },
+    "57511": {
+      "n": "Radar-FTL Interlink Communicator Blueprint",
+      "g": 914,
+      "c": 9,
+      "v": 0.01
+    },
+    "57515": {
+      "n": "Auto-Integrity Preservation Seal Blueprint",
+      "g": 447,
+      "c": 9,
+      "v": 0.01
+    },
+    "57523": {
+      "n": "Life Support Backup Unit Blueprint",
+      "g": 447,
+      "c": 9,
+      "v": 0.01
+    },
+    "57524": {
+      "n": "Capital Core Temperature Regulator Blueprint",
+      "g": 915,
+      "c": 9,
+      "v": 0.01
+    }
+  },
+  "productIndex": {
+    "20183": 20184,
+    "21009": 21010,
+    "21017": 21018,
+    "21027": 21028,
+    "21037": 21038,
+    "57470": 57507,
+    "57474": 57511,
+    "57478": 57515,
+    "57486": 57523,
+    "57487": 57524
+  },
+  "expected": {
+    "components": {
+      "21027": {
+        "name": "Capital Cargo Bay",
+        "base": 40,
+        "me10_units": 36,
+        "runs": 36
+      },
+      "57470": {
+        "name": "U-C Trigger Neurolink Conduit",
+        "base": 16,
+        "me10_units": 15,
+        "runs": 15
+      },
+      "21009": {
+        "name": "Capital Propulsion Engine",
+        "base": 15,
+        "me10_units": 14,
+        "runs": 14
+      },
+      "21017": {
+        "name": "Capital Armor Plates",
+        "base": 5,
+        "me10_units": 5,
+        "runs": 5
+      },
+      "21037": {
+        "name": "Capital Construction Parts",
+        "base": 5,
+        "me10_units": 5,
+        "runs": 5
+      },
+      "57478": {
+        "name": "Auto-Integrity Preservation Seal",
+        "base": 400,
+        "me10_units": 360,
+        "runs": 120
+      },
+      "57486": {
+        "name": "Life Support Backup Unit",
+        "base": 200,
+        "me10_units": 180,
+        "runs": 60
+      },
+      "57474": {
+        "name": "Radar-FTL Interlink Communicator",
+        "base": 1,
+        "me10_units": 1,
+        "runs": 1
+      },
+      "57487": {
+        "name": "Capital Core Temperature Regulator",
+        "base": 1,
+        "me10_units": 1,
+        "runs": 1
+      }
+    },
+    "minerals": {
+      "Tritanium": 2597400,
+      "Pyerite": 9342000,
+      "Mexallon": 2597400,
+      "Isogen": 722250,
+      "Nocxium": 71550,
+      "Zydrine": 36433,
+      "Megacyte": 18234
+    },
+    "nonMinerals": {
+      "Reinforced Carbon Fiber": 7155,
+      "Hypnagogic Neurolink Enhancer": 540,
+      "Terahertz Metamaterials": 504,
+      "Pressurized Oxidizers": 135,
+      "Core Temperature Regulator": 32,
+      "Ultradian-Cycling Neurolink Stabilizer": 15,
+      "Self-Harmonizing Power Core": 33,
+      "Organic Mortar Applicators": 23,
+      "Integrity Response Drones": 18,
+      "Broadcast Node": 2,
+      "Wetware Mainframe": 1,
+      "Supertensile Plastics": 432,
+      "Nanites": 432,
+      "Test Cultures": 432,
+      "Viral Agent": 432,
+      "Fulleroferrocene": 594,
+      "Graphene Nanoribbons": 504,
+      "Fullerene Intercalated Graphite": 351,
+      "Carbon-86 Epoxy Resin": 342,
+      "C3-FTM Acid": 234,
+      "Methanofullerene": 171,
+      "PPD Fullerene Fibers": 171,
+      "Lanthanum Metallofullerene": 171,
+      "Scandium Metallofullerene": 117,
+      "Fermionic Condensates": 36
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "note": "CURADO A MANO, PARCIAL. Bonos de material verificados contra dgmTypeAttributes (attributeEngRigMatBonus): T1 = 2%, T2 = 2.4%. Los modificadores de seguridad (hiSec/lowSec/nullSec = 1.0/1.9/2.1) tambien salen de dogma. La lista 'groups'/'categories' de cada rig (que blueprints afecta) NO es derivable de dogma directamente y esta curada a ojo; ampliar y verificar antes de fiarse. canFitShipGroup01..03 en dogma = estructuras donde se monta el rig (Citadel/EngComplex/Refinery), no lo que afecta.",
+    "todo": "Catalogo completo de rigs (todas las actividades y grupos), idealmente scripted desde un mapping curado externo."
+  },
+  "structures": {
+    "35825": { "n": "Raitaru", "roleBonus": { "manufacturing": 0.01, "reaction": 0.0 } },
+    "35826": { "n": "Azbel",   "roleBonus": { "manufacturing": 0.01, "reaction": 0.0 } },
+    "35827": { "n": "Sotiyo",  "roleBonus": { "manufacturing": 0.01, "reaction": 0.0 } },
+    "35835": { "n": "Athanor", "roleBonus": { "manufacturing": 0.0, "reaction": 0.0 } },
+    "35836": { "n": "Tatara",  "roleBonus": { "manufacturing": 0.0, "reaction": 0.0 } }
+  },
+  "rigs": {
+    "43718": { "n": "Standup L-Set Basic Capital Component Manufacturing Efficiency I",  "activity": "manufacturing", "meBonus": 0.02,  "groups": [873], "categories": [] },
+    "43719": { "n": "Standup L-Set Basic Capital Component Manufacturing Efficiency II", "activity": "manufacturing", "meBonus": 0.024, "groups": [873], "categories": [] },
+    "37174": { "n": "Standup L-Set Advanced Component Manufacturing Efficiency I",  "activity": "manufacturing", "meBonus": 0.02,  "groups": [334, 536, 873, 913], "categories": [] },
+    "37175": { "n": "Standup L-Set Advanced Component Manufacturing Efficiency II", "activity": "manufacturing", "meBonus": 0.024, "groups": [334, 536, 873, 913], "categories": [] },
+    "37154": { "n": "Standup L-Set Capital Ship Manufacturing Efficiency I",  "activity": "manufacturing", "meBonus": 0.02,  "groups": [485, 513, 547, 883, 1538], "categories": [] },
+    "37155": { "n": "Standup L-Set Capital Ship Manufacturing Efficiency II", "activity": "manufacturing", "meBonus": 0.024, "groups": [485, 513, 547, 883, 1538], "categories": [] }
+  },
+  "secMultiplier": { "highsec": 1.0, "lowsec": 1.9, "nullsec": 2.1 }
+}

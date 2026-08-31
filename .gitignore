@@ -1,0 +1,39 @@
+# Datos volátiles: los publica la GitHub Action en la rama `data`, no en main.
+/data/prices.json
+/data/indices.json
+
+# SÍ se versionan (pequeños, cambian solo al re-trimar el SDE o a mano):
+#   data/blueprints.json  data/types.json   -> salida de `python -m eveindustry.sde.trim`
+#   data/rigs.json                          -> config curada a mano
+
+# SDE en bruto
+sde.sqlite
+sde.sqlite-*
+*.sqlite
+*.sqlite3
+
+# Wheel del motor (se reconstruye: python -m pip wheel . --no-deps -w dist/)
+/dist/
+
+# Frontend
+web/node_modules/
+web/.next/
+web/out/
+web/public/data/
+web/public/engine/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

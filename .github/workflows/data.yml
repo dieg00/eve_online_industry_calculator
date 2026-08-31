@@ -1,0 +1,60 @@
+name: build-data
+
+# Vuelca precios (ESI + Jita) e índices de coste (ESI) a JSON estáticos y los
+# publica en la rama `data`. El frontend (Vercel) consume esa rama; los precios
+# nunca se piden en el request del usuario.
+
+on:
+  schedule:
+    - cron: "17 5 * * *"      # a diario ~05:17 UTC
+  workflow_dispatch: {}        # y a mano cuando haga falta
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-data
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar deps de scripts
+        run: pip install requests
+
+      - name: Índices de coste (ESI /industry/systems/)
+        run: python scripts/build_indices.py --out out/indices.json
+
+      - name: Precios (ESI /markets/prices/ + agregados de Jita)
+        run: python scripts/build_prices.py --types data/types.json --out out/prices.json
+
+      - name: Publicar en la rama data
+        run: |
+          set -euo pipefail
+          test -s out/indices.json
+          test -s out/prices.json
+          git config user.name  "data-bot"
+          git config user.email "data-bot@users.noreply.github.com"
+          git fetch origin data || true
+          if git show-ref --verify --quiet refs/remotes/origin/data; then
+            git checkout data
+          else
+            git checkout --orphan data
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+          mkdir -p data
+          cp out/indices.json out/prices.json data/
+          git add data/indices.json data/prices.json
+          if git diff --cached --quiet; then
+            echo "sin cambios en los datos"
+            exit 0
+          fi
+          git commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push origin HEAD:data
