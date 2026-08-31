@@ -47,6 +47,15 @@ def test_defaults_are_omitted_from_query():
     assert q == "t=20184"
 
 
+def test_minerals_policy_round_trips():
+    st = State.parse("t=20184&pol=minerals")
+    assert st.global_policy is NodePolicy.MINERALS
+    assert st.to_query() == "t=20184&pol=minerals"
+    assert st.to_dict()["global_policy"] == "minerals"
+    a = build_assumptions(st)
+    assert a.policy.default is NodePolicy.MINERALS
+
+
 def test_build_assumptions_wires_indices_invention_and_policy():
     indices_doc = {
         "systems": {"30000142": {"manufacturing": 0.17, "reaction": 0.004}},

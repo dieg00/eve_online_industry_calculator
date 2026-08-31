@@ -22,9 +22,10 @@ from dataclasses import dataclass, field
 from eveindustry.engine.graph import build_subgraph, topological_order
 from eveindustry.engine.jobcost import job_install_cost
 from eveindustry.engine.me import job_material_totals, runs_for_demand
-from eveindustry.engine.policy import NodePolicy, PolicyConfig
+from eveindustry.engine.policy import NodePolicy, PolicyConfig, PolicyDecision
 from eveindustry.model.assumptions import Assumptions
 from eveindustry.model.dataset import Dataset
+from eveindustry.model.types import ACTIVITY_MANUFACTURING
 from eveindustry.prices.base import PriceProvider, resolve_price
 
 
@@ -111,6 +112,15 @@ def pass1(
             activity_name=activity,
             has_blueprint=bp is not None,
         )
+
+        # "vertical de minerales": construir si hay blueprint de manufacturing;
+        # comprar reacciones y todo lo que no tiene blueprint (minerales, PI, gas).
+        if decision.policy is NodePolicy.MINERALS:
+            keep = bp is not None and bp.activity_id == ACTIVITY_MANUFACTURING
+            decision = PolicyDecision(
+                NodePolicy.BUILD if keep else NodePolicy.BUY,
+                "minerals-build" if keep else "minerals-buy",
+            )
 
         if decision.policy is NodePolicy.AUTO:
             res.auto_nodes.add(type_id)

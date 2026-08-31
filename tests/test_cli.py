@@ -38,6 +38,29 @@ def test_calc_providence_runs(capsys):
 
 
 @pytest.mark.skipif(not HAS_PRICES, reason="data/prices.json no generado")
+def test_calc_minerals_policy_builds_components_buys_reactions(capsys):
+    import json
+
+    main(["calc", "20184", "--me", "10", "--system", "30000142",
+          "--policy", "minerals", "--json"])
+    doc = json.loads(capsys.readouterr().out)
+    nodes = doc["nodes"]
+
+    seal = nodes["57478"]          # Auto-Integrity Preservation Seal (manufacturing)
+    assert seal["decision"] == "build"
+    assert seal["policy_source"] == "minerals-build"
+
+    # el modo compró cosas (reacciones + minerales)
+    assert any(n["policy_source"] == "minerals-buy" for n in nodes.values())
+    # y todo lo construido lo fue por ser manufacturing
+    assert all(
+        n["policy_source"] == "minerals-build"
+        for n in nodes.values()
+        if n["decision"] == "build"
+    )
+
+
+@pytest.mark.skipif(not HAS_PRICES, reason="data/prices.json no generado")
 def test_calc_json_output(capsys):
     import json
 

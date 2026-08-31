@@ -40,3 +40,13 @@ def test_no_blueprint_forces_buy_even_if_build_requested():
     cfg = PolicyConfig(by_type={99: NodePolicy.BUILD})
     d = cfg.resolve(99, category_id=None, activity_name=None, has_blueprint=False)
     assert (d.policy, d.source) == (NodePolicy.BUY, "no-blueprint")
+
+
+def test_minerals_passes_through_resolve_and_falls_to_buy_without_blueprint():
+    # resolve() no evalúa MINERALS (lo hace pass1): lo devuelve tal cual...
+    cfg = PolicyConfig(default=NodePolicy.MINERALS)
+    d = cfg.resolve(1, category_id=17, activity_name="manufacturing", has_blueprint=True)
+    assert d.policy is NodePolicy.MINERALS
+    # ...salvo que no haya receta, donde el short-circuit ya fuerza compra.
+    d2 = cfg.resolve(1, category_id=None, activity_name=None, has_blueprint=False)
+    assert (d2.policy, d2.source) == (NodePolicy.BUY, "no-blueprint")

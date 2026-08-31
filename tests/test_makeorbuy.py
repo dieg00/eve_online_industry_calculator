@@ -200,3 +200,52 @@ def test_reaction_node_respects_by_activity_policy():
     r = resolve(ds, RROOT, a, prices)
     assert r.leaves == {RINT: 2}
     assert r.total_cost == pytest.approx(100.0)
+
+
+# --- modo "vertical de minerales" -------------------------------------------
+def _mineral_dataset():
+    # ROOT (manuf) <- A (manuf, minerales) + B (reacción)
+    ROOT_M, A_M, B_M, MIN, GAS = 400, 41, 42, 34, 24
+    ds = make_dataset(
+        blueprints={
+            4000: {"product": ROOT_M, "mats": [(A_M, 3), (B_M, 2)], "a": 1},
+            4041: {"product": A_M, "mats": [(MIN, 100)], "a": 1},   # job de minerales
+            4042: {"product": B_M, "mats": [(GAS, 50)], "a": 11},   # reacción
+        },
+        type_names={ROOT_M: "RootM", A_M: "CompA", B_M: "ReactB", MIN: "Tritanium", GAS: "Gas"},
+    )
+    prices = DictPrices({
+        ROOT_M: {"sell": 100_000.0},
+        A_M: {"sell": 900.0},
+        B_M: {"sell": 400.0},
+        MIN: {"sell": 5.0},
+        GAS: {"sell": 3.0},
+    })
+    return ds, prices, ROOT_M, A_M, B_M, MIN
+
+
+def test_minerals_mode_builds_manufacturing_buys_reactions():
+    ds, prices, ROOT_M, A_M, B_M, MIN = _mineral_dataset()
+    a = Assumptions(policy=PolicyConfig(default=NodePolicy.MINERALS), default_me=0.0)
+    mob = resolve_make_or_buy(ds, a, prices, ROOT_M)
+
+    assert mob.decision[ROOT_M] is NodePolicy.BUILD   # manufacturing
+    assert mob.decision[A_M] is NodePolicy.BUILD      # manufacturing (minerales)
+    assert mob.decision[B_M] is NodePolicy.BUY        # reacción -> comprar
+    assert B_M not in mob.flips                       # forzado, el punto fijo no lo toca
+
+    r = resolve(ds, ROOT_M, a, prices)
+    # ROOT: 1 run -> 3 A + 2 B ; A construido (3 -> 300 Tritanium) ; B comprado
+    assert set(r.leaves) == {B_M, MIN}
+    assert r.leaves[B_M] == 2
+    assert r.leaves[MIN] == 300
+
+
+def test_minerals_mode_type_override_still_wins():
+    ds, prices, ROOT_M, A_M, B_M, MIN = _mineral_dataset()
+    a = Assumptions(
+        policy=PolicyConfig(default=NodePolicy.MINERALS, by_type={B_M: NodePolicy.BUILD}),
+        default_me=0.0,
+    )
+    mob = resolve_make_or_buy(ds, a, prices, ROOT_M)
+    assert mob.decision[B_M] is NodePolicy.BUILD      # override por typeID manda

@@ -220,6 +220,7 @@ export default function Page() {
               >
                 <option value="auto">Auto (decide el coste)</option>
                 <option value="build">Construir todo lo posible</option>
+                <option value="minerals">Vertical de minerales (comprar reacciones)</option>
                 <option value="buy">Comprar todo</option>
               </select>
             </div>

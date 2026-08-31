@@ -21,6 +21,10 @@ class NodePolicy(str, Enum):
     BUILD = "build"
     BUY = "buy"
     AUTO = "auto"
+    # "vertical de minerales": construir todo lo que tenga blueprint de
+    # manufacturing; comprar reacciones, PI/gas/luna y minerales. Se resuelve en
+    # ``engine.makeorbuy.pass1`` (necesita ver la actividad de la receta).
+    MINERALS = "minerals"
 
 
 @dataclass(frozen=True)

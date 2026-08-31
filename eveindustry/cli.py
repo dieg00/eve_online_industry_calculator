@@ -212,7 +212,11 @@ def _add_common(sp: argparse.ArgumentParser) -> None:
     sp.add_argument("--system", type=int, help="solarSystemID para los índices de coste")
     sp.add_argument("--demand", type=int, help="unidades a producir (def 1)")
     sp.add_argument("--invention", action="store_true", help="activa la capa de invención")
-    sp.add_argument("--policy", choices=["auto", "build", "buy"], help="política global")
+    sp.add_argument(
+        "--policy",
+        choices=["auto", "build", "buy", "minerals"],
+        help="política global (minerals = construir manufacturing, comprar reacciones)",
+    )
     sp.add_argument("--pol-type", action="append", metavar="TYPEID=POL", help="política por typeID (repetible)")
     sp.add_argument("--price", action="append", metavar="TYPEID=ISK", help="override de precio (repetible)")
     sp.add_argument("--data", default="data", help="directorio de datos (def: data)")
