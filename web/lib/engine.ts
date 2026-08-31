@@ -50,11 +50,30 @@ def buildables():
     return json.dumps(rows)
 `;
 
-async function text(path: string): Promise<string> {
-  const r = await fetch(`${base()}${path}`);
-  if (!r.ok) throw new Error(`${path}: ${r.status}`);
-  return r.text();
+// Precios/índices: si NEXT_PUBLIC_DATA_URL está definido (raw de la rama `data`),
+// se leen de ahí en cada carga (se refrescan sin re-deploy). Si no, o si falla,
+// se cae al copia bundleada en /data/. El resto (SDE recortado) va siempre
+// bundleado porque cambia poco.
+const RUNTIME_DATA =
+  process.env.NEXT_PUBLIC_DATA_URL?.replace(/\/+$/, "") || "";
+
+async function grab(...urls: string[]): Promise<string> {
+  let lastErr: unknown;
+  for (const u of urls) {
+    if (!u) continue;
+    try {
+      const r = await fetch(u, { cache: "no-store" });
+      if (r.ok) return r.text();
+      lastErr = new Error(`${u}: HTTP ${r.status}`);
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw lastErr ?? new Error("sin URLs");
 }
+
+const bundled = (name: string) => `${base()}/data/${name}`;
+const fresh = (name: string) => (RUNTIME_DATA ? `${RUNTIME_DATA}/${name}` : "");
 
 export type Buildable = [id: number, name: string, activityId: number, bpId: number];
 
@@ -75,11 +94,11 @@ export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
     const py = await getPyodide(onStatus);
     onStatus?.("Cargando datos del SDE y precios…");
     const [bp, types, prices, indices, rigs] = await Promise.all([
-      text("/data/blueprints.json"),
-      text("/data/types.json"),
-      text("/data/prices.json"),
-      text("/data/indices.json"),
-      text("/data/rigs.json"),
+      grab(bundled("blueprints.json")),
+      grab(bundled("types.json")),
+      grab(fresh("prices.json"), bundled("prices.json")),
+      grab(fresh("indices.json"), bundled("indices.json")),
+      grab(bundled("rigs.json")),
     ]);
     py.globals.set("_BP_JSON", bp);
     py.globals.set("_TYPES_JSON", types);
