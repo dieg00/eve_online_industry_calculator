@@ -47,11 +47,19 @@ jobs:
           tmp="$(mktemp -d)"
           cp out/indices.json out/prices.json "$tmp/"
 
-          # index vacío, todo pasa a untracked; solo añadimos los 2 ficheros.
+          # index vacío, todo pasa a untracked; solo añadimos lo que queremos.
           git switch --orphan data
           mkdir -p data
           cp "$tmp/indices.json" "$tmp/prices.json" data/
-          git add -f data/indices.json data/prices.json
+
+          # Que Vercel NO despliegue esta rama (es un snapshot de datos, no la
+          # app). git.deploymentEnabled se lee del vercel.json de la rama; el
+          # Root Directory del proyecto es web/, así que va en web/vercel.json.
+          mkdir -p web
+          printf '%s\n' '{"git":{"deploymentEnabled":false}}' > web/vercel.json
+          cp web/vercel.json vercel.json
+
+          git add -f data/indices.json data/prices.json web/vercel.json vercel.json
 
           git -c user.name=data-bot -c user.email=data-bot@users.noreply.github.com \
             commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
