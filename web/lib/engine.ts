@@ -21,6 +21,7 @@ _PRICES_DOC = json.loads(_PRICES_JSON)
 _INDICES_DOC = json.loads(_INDICES_JSON)
 _RIGS_DOC = json.loads(_RIGS_JSON)
 _SYSTEMS_DOC = json.loads(_SYSTEMS_JSON)
+_ORES_DOC = json.loads(_ORES_JSON)
 
 def _prices_for(st):
     base = StaticJsonPriceProvider(_PRICES_DOC)
@@ -35,7 +36,8 @@ def _state_dict(st):
 def calc(query):
     st = State.parse(query)
     a = build_assumptions(
-        st, indices_doc=_INDICES_DOC, rigs_doc=_RIGS_DOC, systems_doc=_SYSTEMS_DOC,
+        st, indices_doc=_INDICES_DOC, rigs_doc=_RIGS_DOC,
+        systems_doc=_SYSTEMS_DOC, ores_doc=_ORES_DOC,
     )
     r = resolve(_DS, st.type_id, a, _prices_for(st))
     groups, cats = set(), set()
@@ -119,13 +121,14 @@ export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
   inflight = (async () => {
     const py = await getPyodide(onStatus);
     onStatus?.("Cargando datos del SDE y precios…");
-    const [bp, types, prices, indices, rigs, systems] = await Promise.all([
+    const [bp, types, prices, indices, rigs, systems, ores] = await Promise.all([
       grab(bundled("blueprints.json")),
       grab(bundled("types.json")),
       grab(fresh("prices.json"), bundled("prices.json")),
       grab(fresh("indices.json"), bundled("indices.json")),
       grab(bundled("rigs.json")),
       grab(bundled("systems.json")),
+      grab(bundled("ores.json")),
     ]);
     py.globals.set("_BP_JSON", bp);
     py.globals.set("_TYPES_JSON", types);
@@ -133,6 +136,7 @@ export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
     py.globals.set("_INDICES_JSON", indices);
     py.globals.set("_RIGS_JSON", rigs);
     py.globals.set("_SYSTEMS_JSON", systems);
+    py.globals.set("_ORES_JSON", ores);
 
     onStatus?.("Compilando el motor…");
     py.runPython(BOOTSTRAP);
@@ -161,6 +165,11 @@ export type FormState = {
   structure_type_id: number | null;
   rig_type_ids: number[];
   security: "highsec" | "lowsec" | "nullsec" | null;   // null = derivada del sistema
+  ore_families: number[];
+  ore_grade: number;
+  reprocess_yield: number;
+  mineral_basis: string;
+  mining_rate: number | null;
   security_effective: "highsec" | "lowsec" | "nullsec";
   facility_tax: number | null;
   global_policy: "auto" | "build" | "buy";

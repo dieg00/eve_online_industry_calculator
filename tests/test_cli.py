@@ -107,3 +107,51 @@ def test_calc_state_and_flags_merge(capsys):
         "--system", "30000142", "--tree-depth", "0",
     ])
     assert "Providence (20183)" in capsys.readouterr().out
+
+
+@pytest.mark.skipif(not HAS_PRICES, reason="data/prices.json no generado")
+def test_calc_mining_highsec_cannot_cover_the_rare_minerals(capsys):
+    import json
+
+    main(["calc", "20184", "--me", "10", "--system", "30000142",
+          "--ore-preset", "highsec", "--mineral-basis", "zero", "--json"])
+    doc = json.loads(capsys.readouterr().out)
+
+    plan = doc["mining_plan"]
+    assert plan is not None and plan["lines"]
+    # highsec no da Nocxium (38) / Zydrine (39) / Megacyte (40): se compran
+    short = {int(k) for k in plan["shortfall"]}
+    assert {38, 39, 40} <= short
+    # con base "zero" los minerales propios no cuestan nada
+    assert doc["cost_self_mined"] == 0.0
+    assert doc["cost_bought_minerals"] > 0
+    assert doc["cost_bought_other"] > 0
+
+
+@pytest.mark.skipif(not HAS_PRICES, reason="data/prices.json no generado")
+def test_calc_mining_nullsec_covers_everything_and_ore_basis_costs_more(capsys):
+    import json
+
+    def run(*extra):
+        main(["calc", "641", "--me", "10", "--system", "30003802",
+              "--ore-preset", "nullsec", "--mining-rate", "1200", "--json", *extra])
+        return json.loads(capsys.readouterr().out)
+
+    free = run("--mineral-basis", "zero")
+    honest = run("--mineral-basis", "ore")
+
+    assert not free["mining_plan"]["shortfall"]          # nullsec cubre los 7
+    assert honest["total_cost"] > free["total_cost"]     # el ore tiene valor
+    assert free["margin_per_hour"] > honest["margin_per_hour"]
+    assert honest["ore_market_value"] > 0
+    assert honest["mining_plan"]["yield_rate"] == 0.876
+
+
+@pytest.mark.skipif(not HAS_PRICES, reason="data/prices.json no generado")
+def test_calc_without_ores_has_no_mining_plan(capsys):
+    import json
+
+    main(["calc", "641", "--me", "10", "--system", "30000142", "--json"])
+    doc = json.loads(capsys.readouterr().out)
+    assert doc["mining_plan"] is None
+    assert doc["cost_self_mined"] == 0.0

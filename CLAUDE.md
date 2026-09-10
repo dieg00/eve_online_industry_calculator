@@ -19,12 +19,13 @@ preguntar cada vez.
 | Web dev | `cd web && npm run dev` |
 | Rebuild del wheel tras tocar `eveindustry/` | `python -m pip wheel . --no-deps -w dist/ && node web/scripts/sync-assets.mjs` |
 | Regenerar rigs desde el SDE | `python scripts/list_rigs.py --sde sde.sqlite --out data/rigs.json` |
+| Regenerar ore desde el SDE | `python scripts/build_ores.py --sde sde.sqlite --out data/ores.json` |
 
 ## Arquitectura
 
 Motor Python puro (cero deps) en `eveindustry/`: corre en `pytest` y en el
 navegador vía **Pyodide** (`web/`, Next.js export estático en Vercel). El SDE va
-recortado a `data/{blueprints,types,systems,rigs}.json` (versionados);
+recortado a `data/{blueprints,types,systems,rigs,ores}.json` (versionados);
 `prices.json` / `indices.json` los publica la GitHub Action `data.yml` en la rama
 `data` y el frontend los lee en runtime (`NEXT_PUBLIC_DATA_URL`).
 

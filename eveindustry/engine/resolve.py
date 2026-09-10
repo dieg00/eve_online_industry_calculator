@@ -15,10 +15,13 @@ from eveindustry.engine.makeorbuy import (
     resolve_make_or_buy,
 )
 from eveindustry.engine.policy import NodePolicy
+from eveindustry.engine.mining import MiningPlan, ore_mix_for
 from eveindustry.invention.cost import InventionOutcome, InventionParams, rank_decryptors
 from eveindustry.model.assumptions import Assumptions
 from eveindustry.model.dataset import Dataset
+from eveindustry.model.types import MINERAL_GROUP_ID
 from eveindustry.prices.base import PriceProvider, resolve_price
+from eveindustry.prices.mining import SelfMinedPriceProvider
 
 
 @dataclass
@@ -71,6 +74,15 @@ class ResolveResult:
     warnings: list[str] = field(default_factory=list)
     fixpoint_iterations: int = 1
 
+    # --- minado (solo si assumptions.mining está activo) ---
+    mining_plan: MiningPlan | None = None
+    cost_self_mined: float = 0.0        # minerales que sacas de tu propio ore
+    cost_bought_minerals: float = 0.0   # minerales que no cubren tus ores
+    cost_bought_other: float = 0.0      # reacciones, componentes, PI...
+    ore_market_value: float | None = None   # lo que valdria vender ese ore comprimido
+    margin_per_hour: float | None = None
+    margin_per_m3: float | None = None
+
 
 def resolve(
     dataset: Dataset,
@@ -79,6 +91,18 @@ def resolve(
     prices: PriceProvider,
 ) -> ResolveResult:
     root_id = dataset.normalize_to_product(type_id)
+
+    # --- minado propio (opcional): revalorar los minerales que minas tú ---
+    mining = assumptions.mining
+    mining_ores = []
+    mineable: frozenset[int] = frozenset()
+    if mining is not None and mining.active:
+        mining_ores = assumptions.ore_catalog.pick(mining.ore_families, mining.grade)
+        mineable = assumptions.ore_catalog.mineable_minerals(mining_ores)
+        prices = SelfMinedPriceProvider(
+            prices, mineable, mining.basis, mining_ores,
+            mining.reprocess_yield, mining.fixed_price,
+        )
 
     # --- capa de invención (opcional): elegir decryptor por item T2 ---
     inv_outcomes: dict[int, InventionOutcome] = {}
@@ -135,6 +159,41 @@ def resolve(
     root_buy = buy_price(prices, assumptions, root_id)
     root_should_buy = p1.decision.get(root_id) is NodePolicy.BUY
 
+    # --- minado: reparto del coste por fuente + plan de ore ---
+    cost_self_mined = cost_bought_minerals = cost_bought_other = 0.0
+    for t, c in leaf_cost.items():
+        info = dataset.types.get(t)
+        is_mineral = info is not None and info.group_id == MINERAL_GROUP_ID
+        if is_mineral and t in mineable:
+            cost_self_mined += c
+        elif is_mineral:
+            cost_bought_minerals += c
+        else:
+            cost_bought_other += c
+
+    mining_plan = None
+    ore_market_value = margin_per_hour = margin_per_m3 = None
+    if mining is not None and mining.active:
+        targets = {
+            t: q for t, q in p2.leaves.items()
+            if (info := dataset.types.get(t)) is not None
+            and info.group_id == MINERAL_GROUP_ID
+        }
+        mining_plan = ore_mix_for(targets, mining_ores, mining.reprocess_yield)
+        # F5: lo que valdria vender ese ore comprimido en vez de construir.
+        ore_market_value = 0.0
+        for line in mining_plan.lines:
+            oid = line.compressed_type_id or line.ore_type_id
+            px = prices.buy(oid) or prices.sell(oid)
+            if px:
+                ore_market_value += px * line.units
+        if margin is not None:
+            hours = mining_plan.hours(mining.m3_per_hour)
+            if hours:
+                margin_per_hour = margin / hours
+            if mining_plan.total_m3 > 0:
+                margin_per_m3 = margin / mining_plan.total_m3
+
     # --- árbol de nodos ---
     flip_set = set(mob.flips)
     nodes: dict[int, NodeResult] = {}
@@ -185,6 +244,13 @@ def resolve(
         flips=list(mob.flips),
         warnings=warnings,
         fixpoint_iterations=mob.iterations,
+        mining_plan=mining_plan,
+        cost_self_mined=cost_self_mined,
+        cost_bought_minerals=cost_bought_minerals,
+        cost_bought_other=cost_bought_other,
+        ore_market_value=ore_market_value,
+        margin_per_hour=margin_per_hour,
+        margin_per_m3=margin_per_m3,
     )
 
 

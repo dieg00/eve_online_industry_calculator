@@ -29,6 +29,11 @@ type RigsDoc = {
   rigs: Record<string, RigInfo>;
 };
 
+type OresDoc = {
+  families: Record<string, { n: string; grades: Record<string, number> }>;
+  secPresets: Record<string, number[]>;
+};
+
 export default function Page() {
   const [engine, setEngine] = useState<Engine | null>(null);
   const [status, setStatus] = useState("Iniciando…");
@@ -42,6 +47,7 @@ export default function Page() {
   const [buildables, setBuildables] = useState<Buildable[]>([]);
   const [systems, setSystems] = useState<Record<string, [string, number]>>({});
   const [rigsDoc, setRigsDoc] = useState<RigsDoc | null>(null);
+  const [oresDoc, setOresDoc] = useState<OresDoc | null>(null);
   const [allRigs, setAllRigs] = useState(false);
   const [typeInput, setTypeInput] = useState("");
   const [sysInput, setSysInput] = useState("");
@@ -63,6 +69,10 @@ export default function Page() {
     fetch(`${base()}/data/rigs.json`)
       .then((r) => r.json())
       .then((d) => alive && setRigsDoc(d))
+      .catch(() => {});
+    fetch(`${base()}/data/ores.json`)
+      .then((r) => r.json())
+      .then((d) => alive && setOresDoc(d))
       .catch(() => {});
     return () => {
       alive = false;
@@ -98,6 +108,25 @@ export default function Page() {
       .filter((e) => allRigs || relevant(e))
       .sort((a, b) => a[1].n.localeCompare(b[1].n));
   }, [rigsDoc, out?.tree_groups, out?.tree_categories, allRigs]);
+
+  const oreFamilies = useMemo(() => {
+    if (!oresDoc) return [] as [string, string][];
+    return Object.entries(oresDoc.families)
+      .map(([id, f]) => [id, f.n] as [string, string])
+      .sort((a, b) => a[1].localeCompare(b[1]));
+  }, [oresDoc]);
+
+  function toggleOre(id: string) {
+    if (!st) return;
+    const cur = new Set(st.ore_families.map(String));
+    cur.has(id) ? cur.delete(id) : cur.add(id);
+    patch({ ore: [...cur].join(",") || null });
+  }
+
+  function applyOrePreset(band: string) {
+    const ids = oresDoc?.secPresets?.[band] ?? [];
+    patch({ ore: ids.join(",") || null });
+  }
 
   function toggleRig(id: string) {
     if (!st) return;
@@ -362,6 +391,116 @@ export default function Page() {
             </div>
           </div>
 
+          <div className="panel">
+            <label style={{ marginBottom: 8 }}>Minado propio</label>
+            <p className="muted" style={{ fontSize: 11, marginTop: 0 }}>
+              Marca el ore que puedes minar. Lo que tus ores no cubran se compra.
+            </p>
+
+            <div className="field">
+              <label>
+                Ore disponible{" "}
+                {["highsec", "lowsec", "nullsec"].map((b) => (
+                  <button
+                    key={b}
+                    type="button"
+                    className="copy"
+                    style={{ marginLeft: 4, padding: "1px 6px" }}
+                    onClick={() => applyOrePreset(b)}
+                  >
+                    {b}
+                  </button>
+                ))}
+                {st.ore_families.length > 0 && (
+                  <button
+                    type="button"
+                    className="copy"
+                    style={{ marginLeft: 4, padding: "1px 6px" }}
+                    onClick={() => patch({ ore: null })}
+                  >
+                    ninguno
+                  </button>
+                )}
+              </label>
+              <div className="riglist">
+                {oreFamilies.length === 0 && <span className="muted">cargando…</span>}
+                {oreFamilies.map(([id, name]) => (
+                  <label key={id} className="inline rigrow">
+                    <input
+                      type="checkbox"
+                      checked={st.ore_families.map(String).includes(id)}
+                      onChange={() => toggleOre(id)}
+                    />
+                    <span>{name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {st.ore_families.length > 0 && (
+              <>
+                <div className="field">
+                  <label>Grado del ore</label>
+                  <select
+                    value={st.ore_grade}
+                    onChange={(e) =>
+                      patch({ ograde: e.target.value === "1" ? null : e.target.value })
+                    }
+                  >
+                    <option value="0">0-Grade</option>
+                    <option value="1">Base</option>
+                    <option value="2">II-Grade (+5%)</option>
+                    <option value="3">III-Grade (+10%)</option>
+                    <option value="4">IV-Grade (+15%)</option>
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label>Rendimiento de reprocesado %</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={100}
+                    step={0.1}
+                    value={+(st.reprocess_yield * 100).toFixed(2)}
+                    onChange={(e) => {
+                      const v = +e.target.value / 100;
+                      patch({ ry: v === 0.876 ? null : String(v) });
+                    }}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Cuánto valen tus minerales</label>
+                  <select
+                    value={st.mineral_basis}
+                    onChange={(e) =>
+                      patch({ mval: e.target.value === "ore" ? null : e.target.value })
+                    }
+                  >
+                    <option value="ore">Lo que valdría el ore (coste de oportunidad)</option>
+                    <option value="zero">Cero (mi tiempo es gratis)</option>
+                    <option value="buy">Jita buy del mineral</option>
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label>m³/hora de tu setup (opcional)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={st.mining_rate ?? ""}
+                    placeholder="p. ej. 1200"
+                    onChange={(e) =>
+                      patch({ mrate: e.target.value === "" ? null : e.target.value })
+                    }
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
           <div className="linkbar">
             <div>
               <code>?{out!.query}</code>
@@ -412,6 +551,28 @@ export default function Page() {
                     <td>{isk(r.total_invention_cost)}</td>
                   </tr>
                 )}
+                {r.mining_plan && (
+                  <>
+                    <tr>
+                      <td className="muted" style={{ paddingLeft: 12 }}>
+                        · de tu ore
+                      </td>
+                      <td>{isk(r.cost_self_mined)}</td>
+                    </tr>
+                    <tr>
+                      <td className="muted" style={{ paddingLeft: 12 }}>
+                        · minerales comprados
+                      </td>
+                      <td>{isk(r.cost_bought_minerals)}</td>
+                    </tr>
+                    <tr>
+                      <td className="muted" style={{ paddingLeft: 12 }}>
+                        · resto comprado
+                      </td>
+                      <td>{isk(r.cost_bought_other)}</td>
+                    </tr>
+                  </>
+                )}
                 <tr className="total">
                   <td>Coste total</td>
                   <td>{isk(r.total_cost)}</td>
@@ -446,6 +607,8 @@ export default function Page() {
             </p>
           </div>
 
+          {r.mining_plan && <MiningPanel result={r} />}
+
           <div className="panel">
             <label style={{ marginBottom: 8 }}>Árbol de decisiones</label>
             <Tree result={r} />
@@ -459,6 +622,91 @@ export default function Page() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function MiningPanel({ result }: { result: ResolveResult }) {
+  const mp = result.mining_plan;
+  const nodes: Record<string, any> = result.nodes;
+  const name = (id: string | number) => nodes[String(id)]?.name ?? `#${id}`;
+  const m3 = (n: number) => Math.round(n).toLocaleString("en-US");
+  const hours =
+    result.margin_per_hour != null && result.margin != null
+      ? result.margin / result.margin_per_hour
+      : null;
+
+  return (
+    <div className="panel">
+      <label style={{ marginBottom: 8 }}>
+        Plan de minado — {m3(mp.total_m3)} m³ ({m3(mp.total_m3_compressed)} m³ comprimido)
+        {hours != null && ` · ${hours.toFixed(1)} h`}
+      </label>
+
+      <table className="breakdown">
+        <tbody>
+          {mp.lines.map((l: any) => (
+            <tr key={l.ore_type_id}>
+              <td>
+                {l.ore_name}{" "}
+                <span className="muted">{l.units.toLocaleString("en-US")} ud</span>
+              </td>
+              <td>{m3(l.m3)} m³</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {Object.keys(mp.shortfall).length > 0 && (
+        <p className="warns" style={{ marginTop: 10 }}>
+          Tus ores no cubren (se compran):{" "}
+          {Object.entries(mp.shortfall)
+            .map(([id, q]) => `${name(id)} ${(q as number).toLocaleString("en-US")}`)
+            .join(" · ")}
+        </p>
+      )}
+
+      {Object.keys(mp.surplus).length > 0 && (
+        <p className="muted" style={{ marginTop: 6, fontSize: 12 }}>
+          Excedente:{" "}
+          {Object.entries(mp.surplus)
+            .sort((a, b) => (b[1] as number) - (a[1] as number))
+            .slice(0, 4)
+            .map(([id, q]) => `${name(id)} ${(q as number).toLocaleString("en-US")}`)
+            .join(" · ")}
+        </p>
+      )}
+
+      <table className="breakdown" style={{ marginTop: 10 }}>
+        <tbody>
+          {result.margin_per_hour != null && (
+            <tr>
+              <td className="muted">Margen por hora de minado</td>
+              <td>{isk(result.margin_per_hour)} /h</td>
+            </tr>
+          )}
+          {result.margin_per_m3 != null && (
+            <tr>
+              <td className="muted">Margen por m³</td>
+              <td>{result.margin_per_m3.toFixed(1)} /m³</td>
+            </tr>
+          )}
+          {result.ore_market_value ? (
+            <tr className="total">
+              <td>Vender ese ore en vez de construir</td>
+              <td>{isk(result.ore_market_value)}</td>
+            </tr>
+          ) : null}
+        </tbody>
+      </table>
+
+      {!result.ore_market_value && (
+        <p className="muted" style={{ marginTop: 8, fontSize: 11 }}>
+          Sin precios de ore en el snapshot actual: la valoración por ore y la
+          comparación &ldquo;vender vs construir&rdquo; aparecerán cuando el
+          workflow de datos publique precios de ore comprimido.
+        </p>
+      )}
     </div>
   );
 }

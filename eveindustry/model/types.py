@@ -26,6 +26,9 @@ ENCRYPTION_SKILL_IDS: frozenset[int] = frozenset(
     {23087, 21790, 23121, 21791, 3408, 52308, 55025}
 )
 
+# invGroups: grupo 'Mineral' (Tritanium..Morphite + los exoticos nuevos).
+MINERAL_GROUP_ID = 18
+
 # Un blueprint invencionado empieza en ME 2 / TE 4 (antes de decryptor).
 INVENTED_BASE_ME = 2
 INVENTED_BASE_TE = 4

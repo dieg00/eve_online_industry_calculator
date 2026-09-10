@@ -9,8 +9,10 @@ from dataclasses import dataclass, field
 
 from eveindustry.invention.cost import InventionParams
 from eveindustry.model.costconfig import CostConstants, CostIndices
+from eveindustry.model.ores import OreCatalog
 from eveindustry.model.structure import NPC_STATION, RigCatalog, StructureConfig
 from eveindustry.prices.base import PriceKind
+from eveindustry.prices.mining import MineralBasis
 
 
 @dataclass(frozen=True)
@@ -27,6 +29,23 @@ class Valuation:
     def output_retention(self) -> float:
         """Fracción del precio de venta que te queda tras comisiones."""
         return max(0.0, 1.0 - self.broker_fee - self.sales_tax)
+
+
+@dataclass(frozen=True)
+class MiningConfig:
+    """Minas tu propio ore: qué familias tienes, con qué rendimiento reprocesas y
+    cómo valoras los minerales que salen de ahí."""
+
+    ore_families: tuple[int, ...] = ()          # groupIDs de familia de ore
+    grade: int = 1                              # 0-Grade..IV-Grade (1 = base)
+    reprocess_yield: float = 0.876              # 0.50 NPC ... ~0.906 Tatara+rigs+skills
+    basis: MineralBasis = MineralBasis.ORE
+    fixed_price: float | None = None            # solo con basis FIXED
+    m3_per_hour: float | None = None            # para estimar horas de minado
+
+    @property
+    def active(self) -> bool:
+        return bool(self.ore_families)
 
 
 @dataclass
@@ -46,6 +65,10 @@ class Assumptions:
     # None = sin capa de invención (comportamiento por defecto). Si se pasa,
     # resolve() elige el mejor decryptor por item T2 y lo integra en el coste.
     invention: InventionParams | None = None
+
+    # None = sin modelo de minado (todo se compra a mercado, como siempre).
+    mining: MiningConfig | None = None
+    ore_catalog: OreCatalog = field(default_factory=OreCatalog.empty)
 
     # policy se define en engine.policy para no crear un import circular con model;
     # aquí va como Any y resolve() lo valida.

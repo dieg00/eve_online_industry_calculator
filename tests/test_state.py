@@ -134,3 +134,62 @@ def test_structure_and_rigs_round_trip():
     assert st.rig_type_ids == (37172, 43719)
     assert st.facility_tax == 0.001
     assert State.parse(st.to_query()).to_query() == st.to_query()
+
+
+# --- minado propio ----------------------------------------------------------
+def test_mining_params_round_trip():
+    st = State.parse("t=641&ore=462,460,450&ograde=3&ry=0.9&mval=zero&mrate=1200")
+    assert st.ore_families == (462, 460, 450)
+    assert st.ore_grade == 3
+    assert st.reprocess_yield == 0.9
+    assert st.mineral_basis == "zero"
+    assert st.mining_rate == 1200.0
+    assert State.parse(st.to_query()).to_query() == st.to_query()
+
+
+def test_mining_defaults_are_omitted_from_query():
+    # sin ores no se emite nada de minado
+    assert State(type_id=641).to_query() == "t=641"
+    # con ores, solo lo que difiere del default (grade 1, ry 0.876, mval ore)
+    st = State.parse("t=641&ore=462")
+    assert st.to_query() == "t=641&ore=462"
+
+
+def test_build_mining_from_state():
+    from eveindustry.prices.mining import MineralBasis
+    from eveindustry.state import build_mining
+
+    assert build_mining(State.parse("t=641")) is None
+    m = build_mining(State.parse("t=641&ore=462,460&mval=zero&mrate=800"))
+    assert m is not None and m.active
+    assert m.ore_families == (462, 460)
+    assert m.basis is MineralBasis.ZERO
+    assert m.m3_per_hour == 800.0
+
+
+def test_build_mining_numeric_basis_is_fixed_price():
+    from eveindustry.prices.mining import MineralBasis
+    from eveindustry.state import build_mining
+
+    m = build_mining(State.parse("t=641&ore=462&mval=7.5"))
+    assert m.basis is MineralBasis.FIXED and m.fixed_price == 7.5
+
+
+def test_build_mining_rejects_garbage_basis():
+    from eveindustry.state import build_mining
+
+    with pytest.raises(ValueError):
+        build_mining(State.parse("t=641&ore=462&mval=loquesea"))
+
+
+def test_build_assumptions_wires_ore_catalog():
+    ores_doc = {
+        "ores": {"1": {"n": "V", "fam": 462, "famName": "Veldspar", "grade": 1,
+                       "v": 0.1, "portion": 100, "comp": 2, "compV": 0.001,
+                       "m": [[34, 400]]}},
+        "families": {"462": {"n": "Veldspar", "grades": {"1": 1}}},
+        "secPresets": {"highsec": [462]},
+    }
+    a = build_assumptions(State.parse("t=641&ore=462"), ores_doc=ores_doc)
+    assert a.mining is not None and a.mining.active
+    assert len(a.ore_catalog.ores) == 1

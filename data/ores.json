@@ -1,0 +1,3096 @@
+{
+  "meta": {
+    "note": "Generado por scripts/build_ores.py desde el SDE. 'm' son los minerales por lote de 'portion' unidades al 100% de rendimiento (invTypeMaterials = tabla de reprocesado). secPresets es ORIENTATIVO: la distribucion real de ore es por region desde el rework, no por banda de seguridad.",
+    "builtAt": "2026-09-10T08:14:26+00:00",
+    "oreCount": 131,
+    "familyCount": 36
+  },
+  "ores": {
+    "50015": {
+      "n": "Amethystic Crystallite",
+      "fam": 2024,
+      "famName": "Fluorite",
+      "grade": 1,
+      "v": 3.0,
+      "portion": 1000,
+      "comp": null,
+      "compV": null,
+      "m": [
+        [
+          48927,
+          2
+        ]
+      ]
+    },
+    "22": {
+      "n": "Arkonor",
+      "fam": 450,
+      "famName": "Arkonor",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62568,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          3200
+        ],
+        [
+          36,
+          1200
+        ],
+        [
+          40,
+          120
+        ]
+      ]
+    },
+    "17425": {
+      "n": "Arkonor II-Grade",
+      "fam": 450,
+      "famName": "Arkonor",
+      "grade": 2,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62569,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          3360
+        ],
+        [
+          36,
+          1260
+        ],
+        [
+          40,
+          126
+        ]
+      ]
+    },
+    "17426": {
+      "n": "Arkonor III-Grade",
+      "fam": 450,
+      "famName": "Arkonor",
+      "grade": 3,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62570,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          3520
+        ],
+        [
+          36,
+          1320
+        ],
+        [
+          40,
+          132
+        ]
+      ]
+    },
+    "46678": {
+      "n": "Arkonor IV-Grade",
+      "fam": 450,
+      "famName": "Arkonor",
+      "grade": 4,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62571,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          3680
+        ],
+        [
+          36,
+          1380
+        ],
+        [
+          40,
+          138
+        ]
+      ]
+    },
+    "52316": {
+      "n": "Bezdnacine",
+      "fam": 4031,
+      "famName": "Bezdnacine",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62576,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          40000
+        ],
+        [
+          37,
+          4800
+        ],
+        [
+          40,
+          128
+        ]
+      ]
+    },
+    "56627": {
+      "n": "Bezdnacine II-Grade",
+      "fam": 4031,
+      "famName": "Bezdnacine",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62577,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          42000
+        ],
+        [
+          37,
+          5040
+        ],
+        [
+          40,
+          134
+        ]
+      ]
+    },
+    "56628": {
+      "n": "Bezdnacine III-Grade",
+      "fam": 4031,
+      "famName": "Bezdnacine",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62578,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          44000
+        ],
+        [
+          37,
+          5280
+        ],
+        [
+          40,
+          141
+        ]
+      ]
+    },
+    "1223": {
+      "n": "Bistot",
+      "fam": 451,
+      "famName": "Bistot",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62564,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          3200
+        ],
+        [
+          36,
+          1200
+        ],
+        [
+          39,
+          160
+        ]
+      ]
+    },
+    "17428": {
+      "n": "Bistot II-Grade",
+      "fam": 451,
+      "famName": "Bistot",
+      "grade": 2,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62565,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          3360
+        ],
+        [
+          36,
+          1260
+        ],
+        [
+          39,
+          168
+        ]
+      ]
+    },
+    "17429": {
+      "n": "Bistot III-Grade",
+      "fam": 451,
+      "famName": "Bistot",
+      "grade": 3,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62566,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          3520
+        ],
+        [
+          36,
+          1320
+        ],
+        [
+          39,
+          176
+        ]
+      ]
+    },
+    "46676": {
+      "n": "Bistot IV-Grade",
+      "fam": 451,
+      "famName": "Bistot",
+      "grade": 4,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62567,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          3680
+        ],
+        [
+          36,
+          1380
+        ],
+        [
+          39,
+          184
+        ]
+      ]
+    },
+    "45492": {
+      "n": "Bitumens",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 1,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62454,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          6000
+        ],
+        [
+          36,
+          400
+        ]
+      ]
+    },
+    "46284": {
+      "n": "Brimful Bitumens",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 3,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62455,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          6900
+        ],
+        [
+          36,
+          460
+        ]
+      ]
+    },
+    "46286": {
+      "n": "Brimful Coesite",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 3,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62458,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          2300
+        ],
+        [
+          36,
+          460
+        ]
+      ]
+    },
+    "46282": {
+      "n": "Brimful Sylvite",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 3,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62461,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          4600
+        ],
+        [
+          36,
+          460
+        ]
+      ]
+    },
+    "46280": {
+      "n": "Brimful Zeolites",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 3,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62464,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          9200
+        ],
+        [
+          36,
+          460
+        ]
+      ]
+    },
+    "45493": {
+      "n": "Coesite",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 1,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62457,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          2000
+        ],
+        [
+          36,
+          400
+        ]
+      ]
+    },
+    "1225": {
+      "n": "Crokite",
+      "fam": 452,
+      "famName": "Crokite",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62560,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          800
+        ],
+        [
+          36,
+          2000
+        ],
+        [
+          38,
+          800
+        ]
+      ]
+    },
+    "17432": {
+      "n": "Crokite II-Grade",
+      "fam": 452,
+      "famName": "Crokite",
+      "grade": 2,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62561,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          840
+        ],
+        [
+          36,
+          2100
+        ],
+        [
+          38,
+          840
+        ]
+      ]
+    },
+    "17433": {
+      "n": "Crokite III-Grade",
+      "fam": 452,
+      "famName": "Crokite",
+      "grade": 3,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62562,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          880
+        ],
+        [
+          36,
+          2200
+        ],
+        [
+          38,
+          880
+        ]
+      ]
+    },
+    "46677": {
+      "n": "Crokite IV-Grade",
+      "fam": 452,
+      "famName": "Crokite",
+      "grade": 4,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62563,
+      "compV": 0.16,
+      "m": [
+        [
+          35,
+          920
+        ],
+        [
+          36,
+          2300
+        ],
+        [
+          38,
+          920
+        ]
+      ]
+    },
+    "1232": {
+      "n": "Dark Ochre",
+      "fam": 453,
+      "famName": "Dark Ochre",
+      "grade": 1,
+      "v": 8.0,
+      "portion": 100,
+      "comp": 62556,
+      "compV": 0.08,
+      "m": [
+        [
+          36,
+          1360
+        ],
+        [
+          37,
+          1200
+        ],
+        [
+          38,
+          320
+        ]
+      ]
+    },
+    "17436": {
+      "n": "Dark Ochre II-Grade",
+      "fam": 453,
+      "famName": "Dark Ochre",
+      "grade": 2,
+      "v": 8.0,
+      "portion": 100,
+      "comp": 62557,
+      "compV": 0.08,
+      "m": [
+        [
+          36,
+          1428
+        ],
+        [
+          37,
+          1260
+        ],
+        [
+          38,
+          336
+        ]
+      ]
+    },
+    "17437": {
+      "n": "Dark Ochre III-Grade",
+      "fam": 453,
+      "famName": "Dark Ochre",
+      "grade": 3,
+      "v": 8.0,
+      "portion": 100,
+      "comp": 62558,
+      "compV": 0.08,
+      "m": [
+        [
+          36,
+          1496
+        ],
+        [
+          37,
+          1320
+        ],
+        [
+          38,
+          352
+        ]
+      ]
+    },
+    "46675": {
+      "n": "Dark Ochre IV-Grade",
+      "fam": 453,
+      "famName": "Dark Ochre",
+      "grade": 4,
+      "v": 8.0,
+      "portion": 100,
+      "comp": 62559,
+      "compV": 0.08,
+      "m": [
+        [
+          36,
+          1564
+        ],
+        [
+          37,
+          1380
+        ],
+        [
+          38,
+          368
+        ]
+      ]
+    },
+    "74533": {
+      "n": "Ducinium",
+      "fam": 4516,
+      "famName": "Ducinium",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 75287,
+      "compV": 0.16,
+      "m": [
+        [
+          40,
+          170
+        ]
+      ]
+    },
+    "74534": {
+      "n": "Ducinium II-Grade",
+      "fam": 4516,
+      "famName": "Ducinium",
+      "grade": 2,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 75288,
+      "compV": 0.16,
+      "m": [
+        [
+          40,
+          179
+        ]
+      ]
+    },
+    "74535": {
+      "n": "Ducinium III-Grade",
+      "fam": 4516,
+      "famName": "Ducinium",
+      "grade": 3,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 75289,
+      "compV": 0.16,
+      "m": [
+        [
+          40,
+          187
+        ]
+      ]
+    },
+    "74536": {
+      "n": "Ducinium IV-Grade",
+      "fam": 4516,
+      "famName": "Ducinium",
+      "grade": 4,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 75290,
+      "compV": 0.16,
+      "m": [
+        [
+          40,
+          196
+        ]
+      ]
+    },
+    "74529": {
+      "n": "Eifyrium",
+      "fam": 4515,
+      "famName": "Eifyrium",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 75283,
+      "compV": 0.16,
+      "m": [
+        [
+          39,
+          266
+        ]
+      ]
+    },
+    "74530": {
+      "n": "Eifyrium II-Grade",
+      "fam": 4515,
+      "famName": "Eifyrium",
+      "grade": 2,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 75284,
+      "compV": 0.16,
+      "m": [
+        [
+          39,
+          279
+        ]
+      ]
+    },
+    "74531": {
+      "n": "Eifyrium III-Grade",
+      "fam": 4515,
+      "famName": "Eifyrium",
+      "grade": 3,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 75285,
+      "compV": 0.16,
+      "m": [
+        [
+          39,
+          293
+        ]
+      ]
+    },
+    "74532": {
+      "n": "Eifyrium IV-Grade",
+      "fam": 4515,
+      "famName": "Eifyrium",
+      "grade": 4,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 75286,
+      "compV": 0.16,
+      "m": [
+        [
+          39,
+          306
+        ]
+      ]
+    },
+    "46285": {
+      "n": "Glistening Bitumens",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 5,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62456,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          12000
+        ],
+        [
+          36,
+          800
+        ]
+      ]
+    },
+    "46287": {
+      "n": "Glistening Coesite",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 5,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62459,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          4000
+        ],
+        [
+          36,
+          800
+        ]
+      ]
+    },
+    "46283": {
+      "n": "Glistening Sylvite",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 5,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62466,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          8000
+        ],
+        [
+          36,
+          800
+        ]
+      ]
+    },
+    "46281": {
+      "n": "Glistening Zeolites",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 5,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62467,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          16000
+        ],
+        [
+          36,
+          800
+        ]
+      ]
+    },
+    "1229": {
+      "n": "Gneiss",
+      "fam": 467,
+      "famName": "Gneiss",
+      "grade": 1,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 62552,
+      "compV": 0.05,
+      "m": [
+        [
+          35,
+          2000
+        ],
+        [
+          36,
+          1500
+        ],
+        [
+          37,
+          800
+        ]
+      ]
+    },
+    "17865": {
+      "n": "Gneiss II-Grade",
+      "fam": 467,
+      "famName": "Gneiss",
+      "grade": 2,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 62553,
+      "compV": 0.05,
+      "m": [
+        [
+          35,
+          2100
+        ],
+        [
+          36,
+          1575
+        ],
+        [
+          37,
+          840
+        ]
+      ]
+    },
+    "17866": {
+      "n": "Gneiss III-Grade",
+      "fam": 467,
+      "famName": "Gneiss",
+      "grade": 3,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 62554,
+      "compV": 0.05,
+      "m": [
+        [
+          35,
+          2200
+        ],
+        [
+          36,
+          1650
+        ],
+        [
+          37,
+          880
+        ]
+      ]
+    },
+    "46679": {
+      "n": "Gneiss IV-Grade",
+      "fam": 467,
+      "famName": "Gneiss",
+      "grade": 4,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 62555,
+      "compV": 0.05,
+      "m": [
+        [
+          35,
+          2300
+        ],
+        [
+          36,
+          1725
+        ],
+        [
+          37,
+          920
+        ]
+      ]
+    },
+    "81975": {
+      "n": "Griemeer",
+      "fam": 4759,
+      "famName": "Griemeer",
+      "grade": 1,
+      "v": 0.8,
+      "portion": 100,
+      "comp": 82316,
+      "compV": 0.008,
+      "m": [
+        [
+          34,
+          250
+        ],
+        [
+          37,
+          80
+        ]
+      ]
+    },
+    "81976": {
+      "n": "Griemeer II-Grade",
+      "fam": 4759,
+      "famName": "Griemeer",
+      "grade": 2,
+      "v": 0.8,
+      "portion": 100,
+      "comp": 82317,
+      "compV": 0.008,
+      "m": [
+        [
+          34,
+          263
+        ],
+        [
+          37,
+          84
+        ]
+      ]
+    },
+    "81977": {
+      "n": "Griemeer III-Grade",
+      "fam": 4759,
+      "famName": "Griemeer",
+      "grade": 3,
+      "v": 0.8,
+      "portion": 100,
+      "comp": 82318,
+      "compV": 0.008,
+      "m": [
+        [
+          34,
+          275
+        ],
+        [
+          37,
+          88
+        ]
+      ]
+    },
+    "81978": {
+      "n": "Griemeer IV-Grade",
+      "fam": 4759,
+      "famName": "Griemeer",
+      "grade": 4,
+      "v": 0.8,
+      "portion": 100,
+      "comp": 82319,
+      "compV": 0.008,
+      "m": [
+        [
+          34,
+          288
+        ],
+        [
+          37,
+          92
+        ]
+      ]
+    },
+    "21": {
+      "n": "Hedbergite",
+      "fam": 454,
+      "famName": "Hedbergite",
+      "grade": 1,
+      "v": 3.0,
+      "portion": 100,
+      "comp": 62548,
+      "compV": 0.03,
+      "m": [
+        [
+          35,
+          450
+        ],
+        [
+          38,
+          120
+        ]
+      ]
+    },
+    "17440": {
+      "n": "Hedbergite II-Grade",
+      "fam": 454,
+      "famName": "Hedbergite",
+      "grade": 2,
+      "v": 3.0,
+      "portion": 100,
+      "comp": 62549,
+      "compV": 0.03,
+      "m": [
+        [
+          35,
+          473
+        ],
+        [
+          38,
+          126
+        ]
+      ]
+    },
+    "17441": {
+      "n": "Hedbergite III-Grade",
+      "fam": 454,
+      "famName": "Hedbergite",
+      "grade": 3,
+      "v": 3.0,
+      "portion": 100,
+      "comp": 62550,
+      "compV": 0.03,
+      "m": [
+        [
+          35,
+          495
+        ],
+        [
+          38,
+          132
+        ]
+      ]
+    },
+    "46680": {
+      "n": "Hedbergite IV-Grade",
+      "fam": 454,
+      "famName": "Hedbergite",
+      "grade": 4,
+      "v": 3.0,
+      "portion": 100,
+      "comp": 62551,
+      "compV": 0.03,
+      "m": [
+        [
+          35,
+          518
+        ],
+        [
+          38,
+          138
+        ]
+      ]
+    },
+    "1231": {
+      "n": "Hemorphite",
+      "fam": 455,
+      "famName": "Hemorphite",
+      "grade": 1,
+      "v": 3.0,
+      "portion": 100,
+      "comp": 62544,
+      "compV": 0.03,
+      "m": [
+        [
+          37,
+          240
+        ],
+        [
+          38,
+          90
+        ]
+      ]
+    },
+    "17444": {
+      "n": "Hemorphite II-Grade",
+      "fam": 455,
+      "famName": "Hemorphite",
+      "grade": 2,
+      "v": 3.0,
+      "portion": 100,
+      "comp": 62545,
+      "compV": 0.03,
+      "m": [
+        [
+          37,
+          252
+        ],
+        [
+          38,
+          95
+        ]
+      ]
+    },
+    "17445": {
+      "n": "Hemorphite III-Grade",
+      "fam": 455,
+      "famName": "Hemorphite",
+      "grade": 3,
+      "v": 3.0,
+      "portion": 100,
+      "comp": 62546,
+      "compV": 0.03,
+      "m": [
+        [
+          37,
+          264
+        ],
+        [
+          38,
+          99
+        ]
+      ]
+    },
+    "46681": {
+      "n": "Hemorphite IV-Grade",
+      "fam": 455,
+      "famName": "Hemorphite",
+      "grade": 4,
+      "v": 3.0,
+      "portion": 100,
+      "comp": 62547,
+      "compV": 0.03,
+      "m": [
+        [
+          37,
+          276
+        ],
+        [
+          38,
+          104
+        ]
+      ]
+    },
+    "82163": {
+      "n": "Hezorime",
+      "fam": 4758,
+      "famName": "Hezorime",
+      "grade": 1,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 82312,
+      "compV": 0.05,
+      "m": [
+        [
+          34,
+          2000
+        ],
+        [
+          37,
+          120
+        ],
+        [
+          39,
+          60
+        ]
+      ]
+    },
+    "82164": {
+      "n": "Hezorime II-Grade",
+      "fam": 4758,
+      "famName": "Hezorime",
+      "grade": 2,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 82313,
+      "compV": 0.05,
+      "m": [
+        [
+          34,
+          2100
+        ],
+        [
+          37,
+          126
+        ],
+        [
+          39,
+          63
+        ]
+      ]
+    },
+    "82165": {
+      "n": "Hezorime III-Grade",
+      "fam": 4758,
+      "famName": "Hezorime",
+      "grade": 3,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 82314,
+      "compV": 0.05,
+      "m": [
+        [
+          34,
+          2200
+        ],
+        [
+          37,
+          132
+        ],
+        [
+          39,
+          66
+        ]
+      ]
+    },
+    "82166": {
+      "n": "Hezorime IV-Grade",
+      "fam": 4758,
+      "famName": "Hezorime",
+      "grade": 4,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 82315,
+      "compV": 0.05,
+      "m": [
+        [
+          34,
+          2300
+        ],
+        [
+          37,
+          138
+        ],
+        [
+          39,
+          69
+        ]
+      ]
+    },
+    "49789": {
+      "n": "Hiemal Tricarboxyl Condensate",
+      "fam": 2022,
+      "famName": "Temporal Resources",
+      "grade": 1,
+      "v": 6.0,
+      "portion": 100,
+      "comp": null,
+      "compV": null,
+      "m": [
+        [
+          48927,
+          2
+        ]
+      ]
+    },
+    "1226": {
+      "n": "Jaspet",
+      "fam": 456,
+      "famName": "Jaspet",
+      "grade": 1,
+      "v": 2.0,
+      "portion": 100,
+      "comp": 62540,
+      "compV": 0.02,
+      "m": [
+        [
+          36,
+          150
+        ],
+        [
+          38,
+          50
+        ]
+      ]
+    },
+    "17448": {
+      "n": "Jaspet II-Grade",
+      "fam": 456,
+      "famName": "Jaspet",
+      "grade": 2,
+      "v": 2.0,
+      "portion": 100,
+      "comp": 62541,
+      "compV": 0.02,
+      "m": [
+        [
+          36,
+          158
+        ],
+        [
+          38,
+          53
+        ]
+      ]
+    },
+    "17449": {
+      "n": "Jaspet III-Grade",
+      "fam": 456,
+      "famName": "Jaspet",
+      "grade": 3,
+      "v": 2.0,
+      "portion": 100,
+      "comp": 62542,
+      "compV": 0.02,
+      "m": [
+        [
+          36,
+          165
+        ],
+        [
+          38,
+          55
+        ]
+      ]
+    },
+    "46682": {
+      "n": "Jaspet IV-Grade",
+      "fam": 456,
+      "famName": "Jaspet",
+      "grade": 4,
+      "v": 2.0,
+      "portion": 100,
+      "comp": 62543,
+      "compV": 0.02,
+      "m": [
+        [
+          36,
+          173
+        ],
+        [
+          38,
+          58
+        ]
+      ]
+    },
+    "92568": {
+      "n": "Kangite X-Grade",
+      "fam": 5086,
+      "famName": "Kangite",
+      "grade": 4,
+      "v": 1.0,
+      "portion": 100,
+      "comp": 92821,
+      "compV": 0.01,
+      "m": [
+        [
+          34,
+          1000
+        ],
+        [
+          35,
+          750
+        ],
+        [
+          92572,
+          10
+        ]
+      ]
+    },
+    "20": {
+      "n": "Kernite",
+      "fam": 457,
+      "famName": "Kernite",
+      "grade": 1,
+      "v": 1.2,
+      "portion": 100,
+      "comp": 62536,
+      "compV": 0.012,
+      "m": [
+        [
+          36,
+          60
+        ],
+        [
+          37,
+          120
+        ]
+      ]
+    },
+    "17452": {
+      "n": "Kernite II-Grade",
+      "fam": 457,
+      "famName": "Kernite",
+      "grade": 2,
+      "v": 1.2,
+      "portion": 100,
+      "comp": 62537,
+      "compV": 0.012,
+      "m": [
+        [
+          36,
+          63
+        ],
+        [
+          37,
+          126
+        ]
+      ]
+    },
+    "17453": {
+      "n": "Kernite III-Grade",
+      "fam": 457,
+      "famName": "Kernite",
+      "grade": 3,
+      "v": 1.2,
+      "portion": 100,
+      "comp": 62538,
+      "compV": 0.012,
+      "m": [
+        [
+          36,
+          66
+        ],
+        [
+          37,
+          132
+        ]
+      ]
+    },
+    "46683": {
+      "n": "Kernite IV-Grade",
+      "fam": 457,
+      "famName": "Kernite",
+      "grade": 4,
+      "v": 1.2,
+      "portion": 100,
+      "comp": 62539,
+      "compV": 0.012,
+      "m": [
+        [
+          36,
+          69
+        ],
+        [
+          37,
+          138
+        ]
+      ]
+    },
+    "81900": {
+      "n": "Kylixium",
+      "fam": 4755,
+      "famName": "Kylixium",
+      "grade": 1,
+      "v": 1.2,
+      "portion": 100,
+      "comp": 82300,
+      "compV": 0.012,
+      "m": [
+        [
+          34,
+          300
+        ],
+        [
+          35,
+          200
+        ],
+        [
+          36,
+          550
+        ]
+      ]
+    },
+    "81901": {
+      "n": "Kylixium II-Grade",
+      "fam": 4755,
+      "famName": "Kylixium",
+      "grade": 2,
+      "v": 1.2,
+      "portion": 100,
+      "comp": 82301,
+      "compV": 0.012,
+      "m": [
+        [
+          34,
+          315
+        ],
+        [
+          35,
+          210
+        ],
+        [
+          36,
+          578
+        ]
+      ]
+    },
+    "81902": {
+      "n": "Kylixium III-Grade",
+      "fam": 4755,
+      "famName": "Kylixium",
+      "grade": 3,
+      "v": 1.2,
+      "portion": 100,
+      "comp": 82302,
+      "compV": 0.012,
+      "m": [
+        [
+          34,
+          330
+        ],
+        [
+          35,
+          220
+        ],
+        [
+          36,
+          605
+        ]
+      ]
+    },
+    "81903": {
+      "n": "Kylixium IV-Grade",
+      "fam": 4755,
+      "famName": "Kylixium",
+      "grade": 4,
+      "v": 1.2,
+      "portion": 100,
+      "comp": 82303,
+      "compV": 0.012,
+      "m": [
+        [
+          34,
+          345
+        ],
+        [
+          35,
+          230
+        ],
+        [
+          36,
+          633
+        ]
+      ]
+    },
+    "11396": {
+      "n": "Mercoxit",
+      "fam": 468,
+      "famName": "Mercoxit",
+      "grade": 1,
+      "v": 40.0,
+      "portion": 100,
+      "comp": 62586,
+      "compV": 0.4,
+      "m": [
+        [
+          11399,
+          140
+        ]
+      ]
+    },
+    "17869": {
+      "n": "Mercoxit II-Grade",
+      "fam": 468,
+      "famName": "Mercoxit",
+      "grade": 2,
+      "v": 40.0,
+      "portion": 100,
+      "comp": 62587,
+      "compV": 0.4,
+      "m": [
+        [
+          11399,
+          147
+        ]
+      ]
+    },
+    "17870": {
+      "n": "Mercoxit III-Grade",
+      "fam": 468,
+      "famName": "Mercoxit",
+      "grade": 3,
+      "v": 40.0,
+      "portion": 100,
+      "comp": 62588,
+      "compV": 0.4,
+      "m": [
+        [
+          11399,
+          154
+        ]
+      ]
+    },
+    "92567": {
+      "n": "Moissanite X-Grade",
+      "fam": 5085,
+      "famName": "Moissanite",
+      "grade": 4,
+      "v": 1.0,
+      "portion": 100,
+      "comp": 92820,
+      "compV": 0.01,
+      "m": [
+        [
+          34,
+          1000
+        ],
+        [
+          35,
+          750
+        ],
+        [
+          92571,
+          10
+        ]
+      ]
+    },
+    "74521": {
+      "n": "Mordunium",
+      "fam": 4513,
+      "famName": "Mordunium",
+      "grade": 1,
+      "v": 0.1,
+      "portion": 100,
+      "comp": 75275,
+      "compV": 0.001,
+      "m": [
+        [
+          35,
+          97
+        ]
+      ]
+    },
+    "74522": {
+      "n": "Mordunium II-Grade",
+      "fam": 4513,
+      "famName": "Mordunium",
+      "grade": 2,
+      "v": 0.1,
+      "portion": 100,
+      "comp": 75276,
+      "compV": 0.001,
+      "m": [
+        [
+          35,
+          101
+        ]
+      ]
+    },
+    "74523": {
+      "n": "Mordunium III-Grade",
+      "fam": 4513,
+      "famName": "Mordunium",
+      "grade": 3,
+      "v": 0.1,
+      "portion": 100,
+      "comp": 75277,
+      "compV": 0.001,
+      "m": [
+        [
+          35,
+          107
+        ]
+      ]
+    },
+    "74524": {
+      "n": "Mordunium IV-Grade",
+      "fam": 4513,
+      "famName": "Mordunium",
+      "grade": 4,
+      "v": 0.1,
+      "portion": 100,
+      "comp": 75278,
+      "compV": 0.001,
+      "m": [
+        [
+          35,
+          112
+        ]
+      ]
+    },
+    "76373": {
+      "n": "Nesosilicate Rakovene",
+      "fam": 4030,
+      "famName": "Rakovene",
+      "grade": 1,
+      "v": 0.5,
+      "portion": 100,
+      "comp": null,
+      "compV": null,
+      "m": [
+        [
+          34,
+          1500
+        ],
+        [
+          37,
+          120
+        ],
+        [
+          39,
+          7
+        ],
+        [
+          76374,
+          65
+        ]
+      ]
+    },
+    "82016": {
+      "n": "Nocxite",
+      "fam": 4756,
+      "famName": "Nocxite",
+      "grade": 1,
+      "v": 4.0,
+      "portion": 100,
+      "comp": 82304,
+      "compV": 0.04,
+      "m": [
+        [
+          34,
+          900
+        ],
+        [
+          35,
+          150
+        ],
+        [
+          38,
+          105
+        ]
+      ]
+    },
+    "82017": {
+      "n": "Nocxite II-Grade",
+      "fam": 4756,
+      "famName": "Nocxite",
+      "grade": 2,
+      "v": 4.0,
+      "portion": 100,
+      "comp": 82305,
+      "compV": 0.04,
+      "m": [
+        [
+          34,
+          945
+        ],
+        [
+          35,
+          158
+        ],
+        [
+          38,
+          111
+        ]
+      ]
+    },
+    "82018": {
+      "n": "Nocxite III-Grade",
+      "fam": 4756,
+      "famName": "Nocxite",
+      "grade": 3,
+      "v": 4.0,
+      "portion": 100,
+      "comp": 82306,
+      "compV": 0.04,
+      "m": [
+        [
+          34,
+          990
+        ],
+        [
+          35,
+          165
+        ],
+        [
+          38,
+          116
+        ]
+      ]
+    },
+    "82019": {
+      "n": "Nocxite IV-Grade",
+      "fam": 4756,
+      "famName": "Nocxite",
+      "grade": 4,
+      "v": 4.0,
+      "portion": 100,
+      "comp": 82307,
+      "compV": 0.04,
+      "m": [
+        [
+          34,
+          1035
+        ],
+        [
+          35,
+          173
+        ],
+        [
+          38,
+          121
+        ]
+      ]
+    },
+    "1227": {
+      "n": "Omber",
+      "fam": 469,
+      "famName": "Omber",
+      "grade": 1,
+      "v": 0.6,
+      "portion": 100,
+      "comp": 62532,
+      "compV": 0.006,
+      "m": [
+        [
+          35,
+          90
+        ],
+        [
+          37,
+          75
+        ]
+      ]
+    },
+    "17867": {
+      "n": "Omber II-Grade",
+      "fam": 469,
+      "famName": "Omber",
+      "grade": 2,
+      "v": 0.6,
+      "portion": 100,
+      "comp": 62533,
+      "compV": 0.006,
+      "m": [
+        [
+          35,
+          95
+        ],
+        [
+          37,
+          79
+        ]
+      ]
+    },
+    "17868": {
+      "n": "Omber III-Grade",
+      "fam": 469,
+      "famName": "Omber",
+      "grade": 3,
+      "v": 0.6,
+      "portion": 100,
+      "comp": 62534,
+      "compV": 0.006,
+      "m": [
+        [
+          35,
+          99
+        ],
+        [
+          37,
+          83
+        ]
+      ]
+    },
+    "46684": {
+      "n": "Omber IV-Grade",
+      "fam": 469,
+      "famName": "Omber",
+      "grade": 4,
+      "v": 0.6,
+      "portion": 100,
+      "comp": 62535,
+      "compV": 0.006,
+      "m": [
+        [
+          35,
+          104
+        ],
+        [
+          37,
+          86
+        ]
+      ]
+    },
+    "18": {
+      "n": "Plagioclase",
+      "fam": 458,
+      "famName": "Plagioclase",
+      "grade": 1,
+      "v": 0.35,
+      "portion": 100,
+      "comp": 62528,
+      "compV": 0.0035,
+      "m": [
+        [
+          34,
+          175
+        ],
+        [
+          36,
+          70
+        ]
+      ]
+    },
+    "17455": {
+      "n": "Plagioclase II-Grade",
+      "fam": 458,
+      "famName": "Plagioclase",
+      "grade": 2,
+      "v": 0.35,
+      "portion": 100,
+      "comp": 62529,
+      "compV": 0.0035,
+      "m": [
+        [
+          34,
+          184
+        ],
+        [
+          36,
+          74
+        ]
+      ]
+    },
+    "17456": {
+      "n": "Plagioclase III-Grade",
+      "fam": 458,
+      "famName": "Plagioclase",
+      "grade": 3,
+      "v": 0.35,
+      "portion": 100,
+      "comp": 62530,
+      "compV": 0.0035,
+      "m": [
+        [
+          34,
+          193
+        ],
+        [
+          36,
+          77
+        ]
+      ]
+    },
+    "46685": {
+      "n": "Plagioclase IV-Grade",
+      "fam": 458,
+      "famName": "Plagioclase",
+      "grade": 4,
+      "v": 0.35,
+      "portion": 100,
+      "comp": 62531,
+      "compV": 0.0035,
+      "m": [
+        [
+          34,
+          201
+        ],
+        [
+          36,
+          81
+        ]
+      ]
+    },
+    "92566": {
+      "n": "Polycrase X-Grade",
+      "fam": 5084,
+      "famName": "Polycrase",
+      "grade": 4,
+      "v": 1.0,
+      "portion": 100,
+      "comp": 92819,
+      "compV": 0.01,
+      "m": [
+        [
+          34,
+          1000
+        ],
+        [
+          35,
+          750
+        ],
+        [
+          92570,
+          10
+        ]
+      ]
+    },
+    "1224": {
+      "n": "Pyroxeres",
+      "fam": 459,
+      "famName": "Pyroxeres",
+      "grade": 1,
+      "v": 0.3,
+      "portion": 100,
+      "comp": 62524,
+      "compV": 0.003,
+      "m": [
+        [
+          35,
+          90
+        ],
+        [
+          36,
+          30
+        ]
+      ]
+    },
+    "95395": {
+      "n": "Pyroxeres 0-Grade",
+      "fam": 459,
+      "famName": "Pyroxeres",
+      "grade": 0,
+      "v": 0.3,
+      "portion": 100,
+      "comp": null,
+      "compV": null,
+      "m": [
+        [
+          35,
+          45
+        ],
+        [
+          36,
+          15
+        ]
+      ]
+    },
+    "17459": {
+      "n": "Pyroxeres II-Grade",
+      "fam": 459,
+      "famName": "Pyroxeres",
+      "grade": 2,
+      "v": 0.3,
+      "portion": 100,
+      "comp": 62525,
+      "compV": 0.003,
+      "m": [
+        [
+          35,
+          95
+        ],
+        [
+          36,
+          32
+        ]
+      ]
+    },
+    "17460": {
+      "n": "Pyroxeres III-Grade",
+      "fam": 459,
+      "famName": "Pyroxeres",
+      "grade": 3,
+      "v": 0.3,
+      "portion": 100,
+      "comp": 62526,
+      "compV": 0.003,
+      "m": [
+        [
+          35,
+          99
+        ],
+        [
+          36,
+          33
+        ]
+      ]
+    },
+    "46686": {
+      "n": "Pyroxeres IV-Grade",
+      "fam": 459,
+      "famName": "Pyroxeres",
+      "grade": 4,
+      "v": 0.3,
+      "portion": 100,
+      "comp": 62527,
+      "compV": 0.003,
+      "m": [
+        [
+          35,
+          104
+        ],
+        [
+          36,
+          35
+        ]
+      ]
+    },
+    "52315": {
+      "n": "Rakovene",
+      "fam": 4030,
+      "famName": "Rakovene",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62579,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          40000
+        ],
+        [
+          37,
+          3200
+        ],
+        [
+          39,
+          200
+        ]
+      ]
+    },
+    "56629": {
+      "n": "Rakovene II-Grade",
+      "fam": 4030,
+      "famName": "Rakovene",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62580,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          42000
+        ],
+        [
+          37,
+          3360
+        ],
+        [
+          39,
+          210
+        ]
+      ]
+    },
+    "56630": {
+      "n": "Rakovene III-Grade",
+      "fam": 4030,
+      "famName": "Rakovene",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62581,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          44000
+        ],
+        [
+          37,
+          3520
+        ],
+        [
+          39,
+          220
+        ]
+      ]
+    },
+    "92565": {
+      "n": "Raspite X-Grade",
+      "fam": 5083,
+      "famName": "Raspite",
+      "grade": 4,
+      "v": 1.0,
+      "portion": 100,
+      "comp": 92818,
+      "compV": 0.01,
+      "m": [
+        [
+          34,
+          1000
+        ],
+        [
+          35,
+          750
+        ],
+        [
+          92569,
+          10
+        ]
+      ]
+    },
+    "1228": {
+      "n": "Scordite",
+      "fam": 460,
+      "famName": "Scordite",
+      "grade": 1,
+      "v": 0.15,
+      "portion": 100,
+      "comp": 62520,
+      "compV": 0.0015,
+      "m": [
+        [
+          34,
+          150
+        ],
+        [
+          35,
+          110
+        ]
+      ]
+    },
+    "92373": {
+      "n": "Scordite 0-Grade",
+      "fam": 460,
+      "famName": "Scordite",
+      "grade": 0,
+      "v": 0.15,
+      "portion": 100,
+      "comp": 92374,
+      "compV": 0.0015,
+      "m": [
+        [
+          34,
+          75
+        ],
+        [
+          35,
+          55
+        ]
+      ]
+    },
+    "17463": {
+      "n": "Scordite II-Grade",
+      "fam": 460,
+      "famName": "Scordite",
+      "grade": 2,
+      "v": 0.15,
+      "portion": 100,
+      "comp": 62521,
+      "compV": 0.0015,
+      "m": [
+        [
+          34,
+          158
+        ],
+        [
+          35,
+          114
+        ]
+      ]
+    },
+    "17464": {
+      "n": "Scordite III-Grade",
+      "fam": 460,
+      "famName": "Scordite",
+      "grade": 3,
+      "v": 0.15,
+      "portion": 100,
+      "comp": 62522,
+      "compV": 0.0015,
+      "m": [
+        [
+          34,
+          165
+        ],
+        [
+          35,
+          119
+        ]
+      ]
+    },
+    "46687": {
+      "n": "Scordite IV-Grade",
+      "fam": 460,
+      "famName": "Scordite",
+      "grade": 4,
+      "v": 0.15,
+      "portion": 100,
+      "comp": 62523,
+      "compV": 0.0015,
+      "m": [
+        [
+          34,
+          173
+        ],
+        [
+          35,
+          125
+        ]
+      ]
+    },
+    "19": {
+      "n": "Spodumain",
+      "fam": 461,
+      "famName": "Spodumain",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62572,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          48000
+        ],
+        [
+          37,
+          1000
+        ],
+        [
+          38,
+          160
+        ],
+        [
+          39,
+          80
+        ],
+        [
+          40,
+          40
+        ]
+      ]
+    },
+    "17466": {
+      "n": "Spodumain II-Grade",
+      "fam": 461,
+      "famName": "Spodumain",
+      "grade": 2,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62573,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          50400
+        ],
+        [
+          37,
+          1050
+        ],
+        [
+          38,
+          168
+        ],
+        [
+          39,
+          84
+        ],
+        [
+          40,
+          42
+        ]
+      ]
+    },
+    "17467": {
+      "n": "Spodumain III-Grade",
+      "fam": 461,
+      "famName": "Spodumain",
+      "grade": 3,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62574,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          52800
+        ],
+        [
+          37,
+          1100
+        ],
+        [
+          38,
+          176
+        ],
+        [
+          39,
+          88
+        ],
+        [
+          40,
+          44
+        ]
+      ]
+    },
+    "46688": {
+      "n": "Spodumain IV-Grade",
+      "fam": 461,
+      "famName": "Spodumain",
+      "grade": 4,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62575,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          55200
+        ],
+        [
+          37,
+          1150
+        ],
+        [
+          38,
+          184
+        ],
+        [
+          39,
+          92
+        ],
+        [
+          40,
+          46
+        ]
+      ]
+    },
+    "45491": {
+      "n": "Sylvite",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 1,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62460,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          4000
+        ],
+        [
+          36,
+          400
+        ]
+      ]
+    },
+    "52306": {
+      "n": "Talassonite",
+      "fam": 4029,
+      "famName": "Talassonite",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62582,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          40000
+        ],
+        [
+          38,
+          960
+        ],
+        [
+          40,
+          32
+        ]
+      ]
+    },
+    "56625": {
+      "n": "Talassonite II-Grade",
+      "fam": 4029,
+      "famName": "Talassonite",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62583,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          42000
+        ],
+        [
+          38,
+          1008
+        ],
+        [
+          40,
+          34
+        ]
+      ]
+    },
+    "56626": {
+      "n": "Talassonite III-Grade",
+      "fam": 4029,
+      "famName": "Talassonite",
+      "grade": 1,
+      "v": 16.0,
+      "portion": 100,
+      "comp": 62584,
+      "compV": 0.16,
+      "m": [
+        [
+          34,
+          44000
+        ],
+        [
+          38,
+          1056
+        ],
+        [
+          40,
+          35
+        ]
+      ]
+    },
+    "88105": {
+      "n": "Tyranite",
+      "fam": 4857,
+      "famName": "Tyranite",
+      "grade": 1,
+      "v": 0.6,
+      "portion": 100,
+      "comp": null,
+      "compV": null,
+      "m": [
+        [
+          88087,
+          1035
+        ]
+      ]
+    },
+    "82205": {
+      "n": "Ueganite",
+      "fam": 4757,
+      "famName": "Ueganite",
+      "grade": 1,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 82308,
+      "compV": 0.05,
+      "m": [
+        [
+          34,
+          800
+        ],
+        [
+          40,
+          40
+        ]
+      ]
+    },
+    "82206": {
+      "n": "Ueganite II-Grade",
+      "fam": 4757,
+      "famName": "Ueganite",
+      "grade": 2,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 82309,
+      "compV": 0.05,
+      "m": [
+        [
+          34,
+          840
+        ],
+        [
+          40,
+          42
+        ]
+      ]
+    },
+    "82207": {
+      "n": "Ueganite III-Grade",
+      "fam": 4757,
+      "famName": "Ueganite",
+      "grade": 3,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 82310,
+      "compV": 0.05,
+      "m": [
+        [
+          34,
+          880
+        ],
+        [
+          40,
+          44
+        ]
+      ]
+    },
+    "82208": {
+      "n": "Ueganite IV-Grade",
+      "fam": 4757,
+      "famName": "Ueganite",
+      "grade": 4,
+      "v": 5.0,
+      "portion": 100,
+      "comp": 82311,
+      "compV": 0.05,
+      "m": [
+        [
+          34,
+          920
+        ],
+        [
+          40,
+          46
+        ]
+      ]
+    },
+    "1230": {
+      "n": "Veldspar",
+      "fam": 462,
+      "famName": "Veldspar",
+      "grade": 1,
+      "v": 0.1,
+      "portion": 100,
+      "comp": 62516,
+      "compV": 0.001,
+      "m": [
+        [
+          34,
+          400
+        ]
+      ]
+    },
+    "92371": {
+      "n": "Veldspar 0-Grade",
+      "fam": 462,
+      "famName": "Veldspar",
+      "grade": 0,
+      "v": 0.1,
+      "portion": 100,
+      "comp": 92372,
+      "compV": 0.001,
+      "m": [
+        [
+          34,
+          200
+        ]
+      ]
+    },
+    "17470": {
+      "n": "Veldspar II-Grade",
+      "fam": 462,
+      "famName": "Veldspar",
+      "grade": 2,
+      "v": 0.1,
+      "portion": 100,
+      "comp": 62517,
+      "compV": 0.001,
+      "m": [
+        [
+          34,
+          420
+        ]
+      ]
+    },
+    "17471": {
+      "n": "Veldspar III-Grade",
+      "fam": 462,
+      "famName": "Veldspar",
+      "grade": 3,
+      "v": 0.1,
+      "portion": 100,
+      "comp": 62518,
+      "compV": 0.001,
+      "m": [
+        [
+          34,
+          440
+        ]
+      ]
+    },
+    "46689": {
+      "n": "Veldspar IV-Grade",
+      "fam": 462,
+      "famName": "Veldspar",
+      "grade": 4,
+      "v": 0.1,
+      "portion": 100,
+      "comp": 62519,
+      "compV": 0.001,
+      "m": [
+        [
+          34,
+          460
+        ]
+      ]
+    },
+    "74525": {
+      "n": "Ytirium",
+      "fam": 4514,
+      "famName": "Ytirium",
+      "grade": 1,
+      "v": 0.6,
+      "portion": 100,
+      "comp": 75279,
+      "compV": 0.006,
+      "m": [
+        [
+          37,
+          240
+        ]
+      ]
+    },
+    "74526": {
+      "n": "Ytirium II-Grade",
+      "fam": 4514,
+      "famName": "Ytirium",
+      "grade": 2,
+      "v": 0.6,
+      "portion": 100,
+      "comp": 75280,
+      "compV": 0.006,
+      "m": [
+        [
+          37,
+          252
+        ]
+      ]
+    },
+    "74527": {
+      "n": "Ytirium III-Grade",
+      "fam": 4514,
+      "famName": "Ytirium",
+      "grade": 3,
+      "v": 0.6,
+      "portion": 100,
+      "comp": 75281,
+      "compV": 0.006,
+      "m": [
+        [
+          37,
+          264
+        ]
+      ]
+    },
+    "74528": {
+      "n": "Ytirium IV-Grade",
+      "fam": 4514,
+      "famName": "Ytirium",
+      "grade": 4,
+      "v": 0.6,
+      "portion": 100,
+      "comp": 75282,
+      "compV": 0.006,
+      "m": [
+        [
+          37,
+          276
+        ]
+      ]
+    },
+    "45490": {
+      "n": "Zeolites",
+      "fam": 1884,
+      "famName": "Ubiquitous Moon Asteroids",
+      "grade": 1,
+      "v": 10.0,
+      "portion": 100,
+      "comp": 62463,
+      "compV": 0.1,
+      "m": [
+        [
+          35,
+          8000
+        ],
+        [
+          36,
+          400
+        ]
+      ]
+    }
+  },
+  "families": {
+    "2024": {
+      "n": "Fluorite",
+      "grades": {
+        "1": 50015
+      }
+    },
+    "450": {
+      "n": "Arkonor",
+      "grades": {
+        "1": 22,
+        "2": 17425,
+        "3": 17426,
+        "4": 46678
+      }
+    },
+    "4031": {
+      "n": "Bezdnacine",
+      "grades": {
+        "1": 56628
+      }
+    },
+    "451": {
+      "n": "Bistot",
+      "grades": {
+        "1": 1223,
+        "2": 17428,
+        "3": 17429,
+        "4": 46676
+      }
+    },
+    "1884": {
+      "n": "Ubiquitous Moon Asteroids",
+      "grades": {
+        "1": 45490,
+        "3": 46280,
+        "5": 46281
+      }
+    },
+    "452": {
+      "n": "Crokite",
+      "grades": {
+        "1": 1225,
+        "2": 17432,
+        "3": 17433,
+        "4": 46677
+      }
+    },
+    "453": {
+      "n": "Dark Ochre",
+      "grades": {
+        "1": 1232,
+        "2": 17436,
+        "3": 17437,
+        "4": 46675
+      }
+    },
+    "4516": {
+      "n": "Ducinium",
+      "grades": {
+        "1": 74533,
+        "2": 74534,
+        "3": 74535,
+        "4": 74536
+      }
+    },
+    "4515": {
+      "n": "Eifyrium",
+      "grades": {
+        "1": 74529,
+        "2": 74530,
+        "3": 74531,
+        "4": 74532
+      }
+    },
+    "467": {
+      "n": "Gneiss",
+      "grades": {
+        "1": 1229,
+        "2": 17865,
+        "3": 17866,
+        "4": 46679
+      }
+    },
+    "4759": {
+      "n": "Griemeer",
+      "grades": {
+        "1": 81975,
+        "2": 81976,
+        "3": 81977,
+        "4": 81978
+      }
+    },
+    "454": {
+      "n": "Hedbergite",
+      "grades": {
+        "1": 21,
+        "2": 17440,
+        "3": 17441,
+        "4": 46680
+      }
+    },
+    "455": {
+      "n": "Hemorphite",
+      "grades": {
+        "1": 1231,
+        "2": 17444,
+        "3": 17445,
+        "4": 46681
+      }
+    },
+    "4758": {
+      "n": "Hezorime",
+      "grades": {
+        "1": 82163,
+        "2": 82164,
+        "3": 82165,
+        "4": 82166
+      }
+    },
+    "2022": {
+      "n": "Temporal Resources",
+      "grades": {
+        "1": 49789
+      }
+    },
+    "456": {
+      "n": "Jaspet",
+      "grades": {
+        "1": 1226,
+        "2": 17448,
+        "3": 17449,
+        "4": 46682
+      }
+    },
+    "5086": {
+      "n": "Kangite",
+      "grades": {
+        "4": 92568
+      }
+    },
+    "457": {
+      "n": "Kernite",
+      "grades": {
+        "1": 20,
+        "2": 17452,
+        "3": 17453,
+        "4": 46683
+      }
+    },
+    "4755": {
+      "n": "Kylixium",
+      "grades": {
+        "1": 81900,
+        "2": 81901,
+        "3": 81902,
+        "4": 81903
+      }
+    },
+    "468": {
+      "n": "Mercoxit",
+      "grades": {
+        "1": 11396,
+        "2": 17869,
+        "3": 17870
+      }
+    },
+    "5085": {
+      "n": "Moissanite",
+      "grades": {
+        "4": 92567
+      }
+    },
+    "4513": {
+      "n": "Mordunium",
+      "grades": {
+        "1": 74521,
+        "2": 74522,
+        "3": 74523,
+        "4": 74524
+      }
+    },
+    "4030": {
+      "n": "Rakovene",
+      "grades": {
+        "1": 56630
+      }
+    },
+    "4756": {
+      "n": "Nocxite",
+      "grades": {
+        "1": 82016,
+        "2": 82017,
+        "3": 82018,
+        "4": 82019
+      }
+    },
+    "469": {
+      "n": "Omber",
+      "grades": {
+        "1": 1227,
+        "2": 17867,
+        "3": 17868,
+        "4": 46684
+      }
+    },
+    "458": {
+      "n": "Plagioclase",
+      "grades": {
+        "1": 18,
+        "2": 17455,
+        "3": 17456,
+        "4": 46685
+      }
+    },
+    "5084": {
+      "n": "Polycrase",
+      "grades": {
+        "4": 92566
+      }
+    },
+    "459": {
+      "n": "Pyroxeres",
+      "grades": {
+        "1": 1224,
+        "0": 95395,
+        "2": 17459,
+        "3": 17460,
+        "4": 46686
+      }
+    },
+    "5083": {
+      "n": "Raspite",
+      "grades": {
+        "4": 92565
+      }
+    },
+    "460": {
+      "n": "Scordite",
+      "grades": {
+        "1": 1228,
+        "0": 92373,
+        "2": 17463,
+        "3": 17464,
+        "4": 46687
+      }
+    },
+    "461": {
+      "n": "Spodumain",
+      "grades": {
+        "1": 19,
+        "2": 17466,
+        "3": 17467,
+        "4": 46688
+      }
+    },
+    "4029": {
+      "n": "Talassonite",
+      "grades": {
+        "1": 56626
+      }
+    },
+    "4857": {
+      "n": "Tyranite",
+      "grades": {
+        "1": 88105
+      }
+    },
+    "4757": {
+      "n": "Ueganite",
+      "grades": {
+        "1": 82205,
+        "2": 82206,
+        "3": 82207,
+        "4": 82208
+      }
+    },
+    "462": {
+      "n": "Veldspar",
+      "grades": {
+        "1": 1230,
+        "0": 92371,
+        "2": 17470,
+        "3": 17471,
+        "4": 46689
+      }
+    },
+    "4514": {
+      "n": "Ytirium",
+      "grades": {
+        "1": 74525,
+        "2": 74526,
+        "3": 74527,
+        "4": 74528
+      }
+    }
+  },
+  "secPresets": {
+    "highsec": [
+      457,
+      458,
+      459,
+      460,
+      462,
+      469
+    ],
+    "lowsec": [
+      453,
+      454,
+      455,
+      456,
+      457,
+      458,
+      459,
+      460,
+      462,
+      467,
+      469
+    ],
+    "nullsec": [
+      450,
+      451,
+      452,
+      453,
+      454,
+      455,
+      456,
+      457,
+      458,
+      459,
+      460,
+      461,
+      462,
+      467,
+      468,
+      469
+    ]
+  }
+}

@@ -9,6 +9,7 @@ Formato (todo opcional salvo ``t``):
     t=20183 d=1 me=10 me.2049=2 sys=30000142 struct=35825 rigs=37180,37181
     sec=nullsec tax=0.001 pol=auto pol.34562=buy polact.reaction=buy
     inv=1 enc=5 sci1=5 sci2=5 pin=sell pout=buy broker=0.03 stax=0.045
+    ore=462,460,450 ograde=1 ry=0.876 mval=ore mrate=1200
     px.34=6.10
 
 Los ``px.<typeID>`` son overrides de precio (se aplican con ``OverridePriceProvider``).
@@ -21,10 +22,12 @@ from urllib.parse import unquote, urlencode
 
 from eveindustry.engine.policy import NodePolicy, PolicyConfig
 from eveindustry.invention.cost import InventionParams
-from eveindustry.model.assumptions import Assumptions, Valuation
+from eveindustry.model.assumptions import Assumptions, MiningConfig, Valuation
 from eveindustry.model.costconfig import CostConstants, CostIndices
+from eveindustry.model.ores import OreCatalog
 from eveindustry.model.structure import RigCatalog, StructureConfig
 from eveindustry.prices.base import PriceKind
+from eveindustry.prices.mining import MineralBasis
 
 _SEC = {"highsec", "lowsec", "nullsec"}
 
@@ -79,6 +82,14 @@ class State:
     output_price_kind: PriceKind = PriceKind.BUY
     broker_fee: float = 0.03
     sales_tax: float = 0.045
+
+    # minado propio: familias de ore que tienes, grado, rendimiento de
+    # reprocesado y como valoras los minerales que salen de ahi.
+    ore_families: tuple[int, ...] = ()
+    ore_grade: int = 1
+    reprocess_yield: float = 0.876
+    mineral_basis: str = "ore"      # ore | zero | buy | <ISK/ud>
+    mining_rate: float | None = None  # m3/h, para estimar horas
 
     price_overrides: dict[int, float] = field(default_factory=dict)  # typeID -> ISK
 
@@ -136,6 +147,13 @@ class State:
         st.broker_fee = float(pairs.get("broker", 0.03))
         st.sales_tax = float(pairs.get("stax", 0.045))
 
+        if pairs.get("ore"):
+            st.ore_families = tuple(int(x) for x in pairs["ore"].split(","))
+        st.ore_grade = int(pairs.get("ograde", 1))
+        st.reprocess_yield = float(pairs.get("ry", 0.876))
+        st.mineral_basis = pairs.get("mval", "ore")
+        st.mining_rate = float(pairs["mrate"]) if "mrate" in pairs else None
+
         st.price_overrides = {
             int(k): float(v) for k, v in multi.get("px", {}).items()
         }
@@ -184,6 +202,16 @@ class State:
             p.append(("broker", _num(self.broker_fee)))
         if self.sales_tax != 0.045:
             p.append(("stax", _num(self.sales_tax)))
+        if self.ore_families:
+            p.append(("ore", ",".join(str(f) for f in self.ore_families)))
+            if self.ore_grade != 1:
+                p.append(("ograde", str(self.ore_grade)))
+            if self.reprocess_yield != 0.876:
+                p.append(("ry", _num(self.reprocess_yield)))
+            if self.mineral_basis != "ore":
+                p.append(("mval", self.mineral_basis))
+            if self.mining_rate is not None:
+                p.append(("mrate", _num(self.mining_rate)))
         for tid, px in sorted(self.price_overrides.items()):
             p.append((f"px.{tid}", _num(px)))
         return urlencode(p, safe=",")
@@ -218,6 +246,11 @@ class State:
             "output_price_kind": self.output_price_kind.value,
             "broker_fee": self.broker_fee,
             "sales_tax": self.sales_tax,
+            "ore_families": list(self.ore_families),
+            "ore_grade": self.ore_grade,
+            "reprocess_yield": self.reprocess_yield,
+            "mineral_basis": self.mineral_basis,
+            "mining_rate": self.mining_rate,
             "price_overrides": {str(k): v for k, v in self.price_overrides.items()},
         }
 
@@ -238,12 +271,38 @@ def price_override_map(state: State) -> dict[int, dict[str, float]]:
 # --------------------------------------------------------------------------- #
 # State -> objetos del motor                                                  #
 # --------------------------------------------------------------------------- #
+def build_mining(state: State) -> MiningConfig | None:
+    """``MiningConfig`` desde el estado, o ``None`` si no hay ores marcados."""
+    if not state.ore_families:
+        return None
+    raw = (state.mineral_basis or "ore").strip()
+    fixed = None
+    try:
+        basis = MineralBasis(raw)
+    except ValueError:
+        # un numero = ISK/unidad a mano
+        try:
+            fixed = float(raw)
+            basis = MineralBasis.FIXED
+        except ValueError as exc:
+            raise ValueError(f"mval invalido: {raw!r}") from exc
+    return MiningConfig(
+        ore_families=state.ore_families,
+        grade=state.ore_grade,
+        reprocess_yield=state.reprocess_yield,
+        basis=basis,
+        fixed_price=fixed,
+        m3_per_hour=state.mining_rate,
+    )
+
+
 def build_assumptions(
     state: State,
     *,
     indices_doc: dict | None = None,
     rigs_doc: dict | None = None,
     systems_doc: dict | None = None,
+    ores_doc: dict | None = None,
 ) -> Assumptions:
     """Traduce el estado a ``Assumptions``.
 
@@ -261,6 +320,7 @@ def build_assumptions(
                 indices = CostIndices.from_system_doc(row)
 
     rig_catalog = RigCatalog.from_doc(rigs_doc) if rigs_doc else RigCatalog.empty()
+    ore_catalog = OreCatalog.from_doc(ores_doc) if ores_doc else OreCatalog.empty()
 
     tax = state.facility_tax if state.facility_tax is not None else constants.facility_tax
     structure = StructureConfig(
@@ -299,6 +359,8 @@ def build_assumptions(
             sales_tax=state.sales_tax,
         ),
         invention=invention,
+        mining=build_mining(state),
+        ore_catalog=ore_catalog,
         policy=policy,
         root_demand=state.demand,
     )

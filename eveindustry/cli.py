@@ -54,6 +54,17 @@ def _state_from_args(args: argparse.Namespace) -> State:
             st.rig_type_ids = (*st.rig_type_ids, rid)
     if args.facility_tax is not None:
         st.facility_tax = args.facility_tax
+    for fid in args.ore or []:
+        if fid not in st.ore_families:
+            st.ore_families = (*st.ore_families, fid)
+    if args.ore_grade is not None:
+        st.ore_grade = args.ore_grade
+    if args.reprocess_yield is not None:
+        st.reprocess_yield = args.reprocess_yield
+    if args.mineral_basis is not None:
+        st.mineral_basis = args.mineral_basis
+    if args.mining_rate is not None:
+        st.mining_rate = args.mining_rate
     if args.demand is not None:
         st.demand = args.demand
     if args.invention:
@@ -81,7 +92,8 @@ def _load_docs(data_dir: Path, indices_path: Path | None, rigs_path: Path | None
     indices_doc = _read(indices_path, "indices.json")
     rigs_doc = _read(rigs_path, "rigs.json")
     systems_doc = _read(None, "systems.json")
-    return indices_doc, rigs_doc, systems_doc
+    ores_doc = _read(None, "ores.json")
+    return indices_doc, rigs_doc, systems_doc, ores_doc
 
 
 def _prices(data_dir: Path, prices_path: Path | None, state: State):
@@ -129,11 +141,14 @@ def cmd_calc(args: argparse.Namespace) -> int:
     data_dir = Path(args.data)
     state = _state_from_args(args)
     dataset = load_dataset(data_dir)
-    indices_doc, rigs_doc, systems_doc = _load_docs(
+    indices_doc, rigs_doc, systems_doc, ores_doc = _load_docs(
         data_dir, _opt(args.indices), _opt(args.rigs)
     )
+    if args.ore_preset and not state.ore_families and ores_doc:
+        state.ore_families = tuple(ores_doc.get("secPresets", {}).get(args.ore_preset, ()))
     assumptions = build_assumptions(
-        state, indices_doc=indices_doc, rigs_doc=rigs_doc, systems_doc=systems_doc
+        state, indices_doc=indices_doc, rigs_doc=rigs_doc,
+        systems_doc=systems_doc, ores_doc=ores_doc,
     )
     prices = _prices(data_dir, _opt(args.prices), state)
 
@@ -145,6 +160,44 @@ def cmd_calc(args: argparse.Namespace) -> int:
 
     _print_report_and_link(r, dataset, state, args.tree_depth)
     return 0
+
+
+def _print_mining(r, dataset) -> None:
+    mp = r.mining_plan
+    tot = r.total_cost or 1.0
+    print("\n  fuente del coste:")
+    print(f"    minado propio       {_isk(r.cost_self_mined):>18}  "
+          f"({r.cost_self_mined / tot * 100:4.1f}%)")
+    print(f"    minerales comprados {_isk(r.cost_bought_minerals):>18}  "
+          f"({r.cost_bought_minerals / tot * 100:4.1f}%)")
+    print(f"    resto comprado      {_isk(r.cost_bought_other):>18}  "
+          f"({r.cost_bought_other / tot * 100:4.1f}%)")
+    print(f"    instalación         {_isk(r.total_install_cost):>18}  "
+          f"({r.total_install_cost / tot * 100:4.1f}%)")
+
+    print(f"\n  plan de minado ({mp.total_m3:,.0f} m³ / "
+          f"{mp.total_m3_compressed:,.0f} m³ comprimido):")
+    for line in mp.lines:
+        print(f"    {line.ore_name:<24} {line.units:>13,} ud  {line.m3:>13,.0f} m³")
+    if mp.shortfall:
+        faltan = ", ".join(
+            f"{dataset.type_name(t)} {q:,}" for t, q in sorted(mp.shortfall.items())
+        )
+        print(f"    tus ores NO cubren (se compran): {faltan}")
+    if mp.surplus:
+        sobra = ", ".join(
+            f"{dataset.type_name(t)} {q:,}" for t, q in sorted(
+                mp.surplus.items(), key=lambda kv: -kv[1])[:4]
+        )
+        print(f"    excedente: {sobra}")
+    hours = mp.hours(None)
+    if r.margin_per_hour is not None:
+        print(f"    margen por hora de minado: {_isk(r.margin_per_hour)} ISK/h")
+    if r.margin_per_m3 is not None:
+        print(f"    margen por m³: {r.margin_per_m3:,.1f} ISK/m³")
+    if r.ore_market_value is not None:
+        print(f"    vender ese ore comprimido en vez de construir: "
+              f"{_isk(r.ore_market_value)} ISK")
 
 
 def _print_report_and_link(r, dataset, state, tree_depth):
@@ -166,6 +219,10 @@ def _print_report_and_link(r, dataset, state, tree_depth):
         print(f"  margen                {_isk(r.margin)}   ({pct})")
     if r.root_should_buy:
         print("  → la pasada 1 dice que sale más barato COMPRAR el root entero")
+
+    if r.mining_plan is not None:
+        _print_mining(r, dataset)
+
     if tree_depth > 0:
         print("\n  decisiones:")
         _print_tree(r, r.root_type_id, 0, tree_depth, set())
@@ -230,6 +287,18 @@ def _add_common(sp: argparse.ArgumentParser) -> None:
     sp.add_argument("--structure", type=int, metavar="TYPEID", help="typeID de la estructura")
     sp.add_argument("--rig", action="append", type=int, metavar="TYPEID", help="typeID de rig (repetible)")
     sp.add_argument("--facility-tax", type=float, metavar="FRAC", help="tax de instalación (fracción, p. ej. 0.001)")
+    sp.add_argument("--ore", action="append", type=int, metavar="FAMILYID",
+                    help="familia de ore que puedes minar (groupID, repetible)")
+    sp.add_argument("--ore-preset", choices=["highsec", "lowsec", "nullsec"],
+                    help="marca las familias tipicas de esa banda (orientativo)")
+    sp.add_argument("--ore-grade", type=int, choices=[0, 1, 2, 3, 4],
+                    help="grado del ore: 0=0-Grade, 1=base, 2=II, 3=III, 4=IV")
+    sp.add_argument("--reprocess-yield", type=float, metavar="FRAC",
+                    help="rendimiento de reprocesado (0.50 NPC ... ~0.906)")
+    sp.add_argument("--mineral-basis", metavar="ore|zero|buy|ISK",
+                    help="como valorar los minerales que minas tu (def: ore)")
+    sp.add_argument("--mining-rate", type=float, metavar="M3H",
+                    help="m3/hora de tu setup, para estimar horas de minado")
     sp.add_argument("--demand", type=int, help="unidades a producir (def 1)")
     sp.add_argument("--invention", action="store_true", help="activa la capa de invención")
     sp.add_argument(

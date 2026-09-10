@@ -30,6 +30,7 @@ const DATA_FILES = [
   "types.json",
   "systems.json",
   "rigs.json",
+  "ores.json",
   "prices.json",
   "indices.json",
 ];

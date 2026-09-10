@@ -44,10 +44,18 @@ def fetch_json(url: str) -> object:
     return resp.json()
 
 
-def load_type_ids(types_path: str) -> list[int]:
+def load_type_ids(types_path: str, ores_path: str | None = None) -> list[int]:
     with open(types_path, encoding="utf-8") as f:
         doc = json.load(f)
     ids = {int(t) for t in doc.get("types", {})}
+    # El ore no es material ni producto de manufacturing, así que no está en
+    # types.json; sin sus precios la base de valoración "ore" no funciona.
+    if ores_path and Path(ores_path).is_file():
+        ore_doc = json.loads(Path(ores_path).read_text(encoding="utf-8"))
+        for tid, ore in ore_doc.get("ores", {}).items():
+            ids.add(int(tid))
+            if ore.get("comp"):
+                ids.add(int(ore["comp"]))
     ids.update(EXTRA_TYPE_IDS)
     return sorted(ids)
 
@@ -91,8 +99,9 @@ def _f(v) -> float | None:
     return f if f > 0 else None
 
 
-def build(types_path: str, out_path: str, *, station: bool) -> None:
-    type_ids = load_type_ids(types_path)
+def build(types_path: str, out_path: str, *, station: bool,
+          ores_path: str | None = None) -> None:
+    type_ids = load_type_ids(types_path, ores_path)
     esi = fetch_esi_prices()
     jita = fetch_jita_aggregates(type_ids, station=station)
 
@@ -133,6 +142,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--types", default="data/types.json")
     ap.add_argument("--out", default="data/prices.json")
+    ap.add_argument("--ores", default="data/ores.json",
+                    help="ores.json, para pedir tambien precios de ore (def: data/ores.json)")
     ap.add_argument(
         "--station",
         action="store_true",
@@ -140,7 +151,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = ap.parse_args(argv)
     try:
-        build(args.types, args.out, station=args.station)
+        build(args.types, args.out, station=args.station, ores_path=args.ores)
     except Exception as exc:  # noqa: BLE001
         print(f"error: {exc}", file=sys.stderr)
         return 1
