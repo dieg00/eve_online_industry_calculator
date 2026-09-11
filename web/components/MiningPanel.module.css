@@ -1,0 +1,25 @@
+.row:hover {
+  background: var(--panel-3);
+}
+
+.short {
+  margin: var(--s3) 0 0;
+  color: var(--warn);
+  font-size: var(--fs-sm);
+}
+
+.surplus {
+  margin: var(--s2) 0 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.totals {
+  margin-top: var(--s3);
+}
+
+.note {
+  margin: var(--s2) 0 0;
+  color: var(--faint);
+  font-size: var(--fs-xs);
+}

@@ -1,0 +1,34 @@
+.indent {
+  padding-left: var(--s3);
+}
+
+/* Barra de proporción: gris, fina y detrás del texto. Informa del reparto sin
+   convertir la tabla en un gráfico. */
+.track {
+  display: block;
+  height: 2px;
+  margin-top: 2px;
+  background: var(--panel-2);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--line-strong);
+}
+
+.pct {
+  color: var(--faint);
+  width: 44px;
+}
+
+.note {
+  margin: var(--s3) 0 0;
+  padding: var(--s2) var(--s3);
+  border-left: 2px solid var(--warn);
+  background: rgba(231, 185, 85, 0.08);
+  color: var(--warn);
+  font-size: var(--fs-sm);
+}

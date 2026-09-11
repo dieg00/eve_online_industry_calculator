@@ -1,0 +1,53 @@
+.section {
+  padding: 0;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  list-style: none;
+  cursor: pointer;
+  padding: var(--s3) var(--s4);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  user-select: none;
+  border-radius: var(--r3);
+}
+.summary::-webkit-details-marker {
+  display: none;
+}
+.summary:hover {
+  color: var(--text);
+}
+
+.marker {
+  flex: 0 0 auto;
+  width: 0;
+  height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+}
+.section[open] .marker {
+  transform: rotate(90deg);
+}
+
+.title {
+  flex: 1;
+}
+
+.badge {
+  flex: 0 0 auto;
+  font-size: var(--fs-xs);
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--faint);
+}
+
+.body {
+  padding: 0 var(--s4) var(--s4);
+}
