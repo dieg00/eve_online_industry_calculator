@@ -1,0 +1,16 @@
+.bar {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  margin-top: var(--s3);
+  font-size: var(--fs-xs);
+  color: var(--faint);
+}
+
+.code {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  word-break: break-all;
+  line-height: 1.4;
+}

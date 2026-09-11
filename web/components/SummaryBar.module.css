@@ -1,0 +1,72 @@
+.bar {
+  grid-area: summary;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  min-height: var(--summary-h);
+  padding: var(--s2) var(--s4);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r3);
+}
+
+/* Resultado del cálculo anterior mientras el actual falla. */
+.stale {
+  opacity: 0.5;
+}
+
+.root {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+.rootName {
+  font-size: var(--fs-lg);
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s5);
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.label {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.value {
+  font-size: 21px;
+  font-weight: 650;
+  line-height: 1.1;
+}
+
+@media (max-width: 900px) {
+  .stats {
+    gap: var(--s4);
+  }
+  .value {
+    font-size: 18px;
+  }
+}

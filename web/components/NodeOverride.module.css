@@ -1,0 +1,40 @@
+.panel {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  padding: var(--s3);
+  margin: var(--s1) 0;
+  background: var(--panel-2);
+  border: 1px solid var(--line-strong);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--r2);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+
+/* el grupo de acciones va en fila y pegado abajo, a la altura de los campos */
+.group:last-child {
+  flex-direction: row;
+  align-self: flex-end;
+  gap: var(--s2);
+}
+
+.label {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  margin: 0;
+}
+
+.seg {
+  display: flex;
+  gap: var(--s1);
+}
+
+.panel input {
+  width: 150px;
+}

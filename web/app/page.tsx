@@ -1,56 +1,46 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  getEngine,
-  type Buildable,
-  type CalcOut,
-  type Engine,
-  type ResolveResult,
-} from "@/lib/engine";
+import { getEngine, type Buildable, type CalcOut, type Engine } from "@/lib/engine";
+import { errorCause } from "@/lib/format";
 import { base } from "@/lib/pyodide";
 import { patchQuery } from "@/lib/query";
+import { readOverrides } from "@/lib/overrides";
+import type { DataMeta, OresDoc, RigsDoc, SystemsMap } from "@/lib/types";
+import ActiveOverrides from "@/components/ActiveOverrides";
+import CostBreakdown from "@/components/CostBreakdown";
+import DataFreshness from "@/components/DataFreshness";
+import DecisionTree from "@/components/DecisionTree";
+import MiningPanel from "@/components/MiningPanel";
+import Sidebar from "@/components/Sidebar";
+import ShareLink from "@/components/ShareLink";
+import ShoppingList from "@/components/ShoppingList";
+import SummaryBar from "@/components/SummaryBar";
+import Warnings from "@/components/Warnings";
+import s from "./page.module.css";
 
 const DEFAULT_QUERY = "t=20184&me=10&sys=30000142";
-const isk = (n: number | null | undefined) =>
-  n == null ? "—" : Math.round(n).toLocaleString("en-US");
-
-type Out = CalcOut;
-
-type RigInfo = {
-  n: string;
-  activity: "manufacturing" | "reaction";
-  meBonus: number;
-  groups: number[];
-  categories: number[];
-};
-type RigsDoc = {
-  structures: Record<string, { n: string }>;
-  rigs: Record<string, RigInfo>;
-};
-
-type OresDoc = {
-  families: Record<string, { n: string; grades: Record<string, number> }>;
-  secPresets: Record<string, number[]>;
-};
 
 export default function Page() {
   const [engine, setEngine] = useState<Engine | null>(null);
   const [status, setStatus] = useState("Iniciando…");
-  const [error, setError] = useState<string | null>(null);
+  // Arranque y cálculo son fallos distintos: sin motor no hay nada que hacer,
+  // pero un cálculo malo no puede llevarse por delante el formulario.
+  const [bootError, setBootError] = useState<string | null>(null);
+  const [calcError, setCalcError] = useState<string | null>(null);
+
   const [query, setQuery] = useState<string>(() => {
     if (typeof window !== "undefined" && window.location.search.length > 1)
       return window.location.search.slice(1);
     return DEFAULT_QUERY;
   });
-  const [out, setOut] = useState<Out | null>(null);
+
+  const [out, setOut] = useState<CalcOut | null>(null);
   const [buildables, setBuildables] = useState<Buildable[]>([]);
-  const [systems, setSystems] = useState<Record<string, [string, number]>>({});
+  const [systems, setSystems] = useState<SystemsMap>({});
   const [rigsDoc, setRigsDoc] = useState<RigsDoc | null>(null);
   const [oresDoc, setOresDoc] = useState<OresDoc | null>(null);
-  const [allRigs, setAllRigs] = useState(false);
-  const [typeInput, setTypeInput] = useState("");
-  const [sysInput, setSysInput] = useState("");
+  const [meta, setMeta] = useState<DataMeta | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -59,21 +49,21 @@ export default function Page() {
         if (!alive) return;
         setEngine(e);
         setBuildables(e.buildables());
+        setMeta(e.meta());
         setStatus("");
       })
-      .catch((x) => alive && setError(String(x)));
-    fetch(`${base()}/data/systems.json`)
-      .then((r) => r.json())
-      .then((d) => alive && setSystems(d.systems))
-      .catch(() => {});
-    fetch(`${base()}/data/rigs.json`)
-      .then((r) => r.json())
-      .then((d) => alive && setRigsDoc(d))
-      .catch(() => {});
-    fetch(`${base()}/data/ores.json`)
-      .then((r) => r.json())
-      .then((d) => alive && setOresDoc(d))
-      .catch(() => {});
+      .catch((x) => alive && setBootError(errorCause(x)));
+
+    const grab = <T,>(name: string, set: (v: T) => void) =>
+      fetch(`${base()}/data/${name}`)
+        .then((r) => r.json())
+        .then((d) => alive && set(d))
+        .catch(() => {});
+
+    grab<{ systems: SystemsMap }>("systems.json", (d) => setSystems(d.systems));
+    grab<RigsDoc>("rigs.json", setRigsDoc);
+    grab<OresDoc>("ores.json", setOresDoc);
+
     return () => {
       alive = false;
     };
@@ -82,675 +72,118 @@ export default function Page() {
   useEffect(() => {
     if (!engine) return;
     try {
-      const res = engine.calc(query) as Out;
+      const res = engine.calc(query);
       setOut(res);
-      setError(null);
+      setCalcError(null);
       window.history.replaceState(null, "", `?${res.query}`);
     } catch (x) {
-      setError(String(x));
+      // Se conserva el último resultado bueno: el formulario sigue usable para
+      // corregir lo que haya roto el cálculo.
+      setCalcError(errorCause(x));
     }
   }, [engine, query]);
-
-  const st = out?.state;
-  const r = out?.result as ResolveResult | undefined;
 
   const patch = (p: Record<string, string | number | boolean | null>) =>
     setQuery((q) => patchQuery(q, p));
 
-  // rigs relevantes al cálculo actual (por defecto se filtra a esos)
-  const rigList = useMemo(() => {
-    if (!rigsDoc) return [] as [string, RigInfo][];
-    const g = new Set(out?.tree_groups ?? []);
-    const c = new Set(out?.tree_categories ?? []);
-    const relevant = ([, rig]: [string, RigInfo]) =>
-      rig.groups.some((x) => g.has(x)) || rig.categories.some((x) => c.has(x));
-    return Object.entries(rigsDoc.rigs)
-      .filter((e) => allRigs || relevant(e))
-      .sort((a, b) => a[1].n.localeCompare(b[1].n));
-  }, [rigsDoc, out?.tree_groups, out?.tree_categories, allRigs]);
+  const overrides = useMemo(() => readOverrides(out?.query ?? query), [out?.query, query]);
 
-  const oreFamilies = useMemo(() => {
-    if (!oresDoc) return [] as [string, string][];
-    return Object.entries(oresDoc.families)
-      .map(([id, f]) => [id, f.n] as [string, string])
-      .sort((a, b) => a[1].localeCompare(b[1]));
-  }, [oresDoc]);
+  const header = (
+    <div className={s.header}>
+      <h1>Calculadora de industria — EVE Online</h1>
+      <p className={s.sub}>
+        Coste real make-or-buy, con el coste de instalación acumulado en cada nivel.
+      </p>
+    </div>
+  );
 
-  function toggleOre(id: string) {
-    if (!st) return;
-    const cur = new Set(st.ore_families.map(String));
-    cur.has(id) ? cur.delete(id) : cur.add(id);
-    patch({ ore: [...cur].join(",") || null });
-  }
-
-  function applyOrePreset(band: string) {
-    const ids = oresDoc?.secPresets?.[band] ?? [];
-    patch({ ore: ids.join(",") || null });
-  }
-
-  function toggleRig(id: string) {
-    if (!st) return;
-    const cur = new Set(st.rig_type_ids.map(String));
-    cur.has(id) ? cur.delete(id) : cur.add(id);
-    patch({ rigs: [...cur].join(",") || null });
-  }
-
-  // sincroniza los inputs de texto con el estado resuelto
-  useEffect(() => {
-    if (r) setTypeInput(`${r.root_name}`);
-  }, [r?.root_name]);
-  useEffect(() => {
-    if (st?.system_id && systems[String(st.system_id)])
-      setSysInput(systems[String(st.system_id)][0]);
-  }, [st?.system_id, systems]);
-
-  const typeMatches = useMemo(() => {
-    const q = typeInput.trim().toLowerCase();
-    if (!q || q.length < 2) return [];
-    return buildables
-      .filter(([, name]) => name.toLowerCase().includes(q))
-      .slice(0, 60);
-  }, [typeInput, buildables]);
-
-  const sysMatches = useMemo(() => {
-    const q = sysInput.trim().toLowerCase();
-    if (!q || q.length < 2) return [];
-    return Object.entries(systems)
-      .filter(([, [name]]) => name.toLowerCase().includes(q))
-      .slice(0, 40);
-  }, [sysInput, systems]);
-
-  function pickType(v: string) {
-    setTypeInput(v);
-    const hit = buildables.find(([, name]) => name.toLowerCase() === v.trim().toLowerCase());
-    if (hit) patch({ t: hit[0] });
-  }
-  function pickSystem(v: string) {
-    setSysInput(v);
-    const hit = Object.entries(systems).find(
-      ([, [name]]) => name.toLowerCase() === v.trim().toLowerCase(),
-    );
-    if (hit) patch({ sys: hit[0] });
-  }
-
-  if (error)
+  if (bootError)
     return (
       <div className="wrap">
-        <div className="error">Error: {error}</div>
+        {header}
+        <div className="banner">No se pudo arrancar el motor: {bootError}</div>
       </div>
     );
 
-  if (!engine || !r || !st)
+  // Sin ningún resultado todavía. Si además el cálculo falló, es una URL
+  // compartida con parámetros malos: no hay estado parseado con el que pintar el
+  // formulario, así que al menos se ofrece una salida en vez de un spinner
+  // eterno.
+  if (!out && calcError)
     return (
       <div className="wrap">
-        <h1>Calculadora de industria — EVE Online</h1>
-        <div className="loading">
+        {header}
+        <div className="banner">
+          No se pudo calcular con los parámetros de la URL: {calcError}
+        </div>
+        <button className="btn" onClick={() => setQuery(DEFAULT_QUERY)}>
+          empezar con el cálculo por defecto
+        </button>
+      </div>
+    );
+
+  // Shell durante la carga: sin motor no hay estado parseado que enseñar, pero
+  // al menos la página no es un spinner a pantalla completa.
+  if (!out)
+    return (
+      <div className="wrap">
+        {header}
+        <div className={s.boot}>
           <span className="spinner" />
           {status || "Cargando…"}
         </div>
+        <div className={s.app}>
+          <div className={s.controls}>
+            <div className={s.skeleton} />
+          </div>
+          <div className={s.detail}>
+            <div className={s.skeleton} />
+          </div>
+        </div>
       </div>
     );
 
-  const marginClass = r.margin == null ? "" : r.margin >= 0 ? "good" : "bad";
+  const r = out.result;
+  const st = out.state;
 
   return (
     <div className="wrap">
-      <h1>Calculadora de industria — EVE Online</h1>
-      <p className="sub">
-        Coste real make-or-buy, con el coste de instalación acumulado en cada nivel del árbol.
-      </p>
+      {header}
 
-      <div className="grid">
-        {/* ------------ inputs ------------ */}
-        <div>
-          <div className="panel">
-            <div className="field">
-              <label>Item</label>
-              <input
-                type="text"
-                list="types"
-                value={typeInput}
-                onChange={(e) => setTypeInput(e.target.value)}
-                onBlur={(e) => pickType(e.target.value)}
-                placeholder="Providence, Damage Control II…"
-              />
-              <datalist id="types">
-                {typeMatches.map(([id, name]) => (
-                  <option key={id} value={name} />
-                ))}
-              </datalist>
-            </div>
+      <div className={s.app}>
+        <SummaryBar r={r} stale={calcError != null} />
 
-            <div className="field">
-              <label>
-                ME por defecto <span className="me-value">{st.default_me}</span>
-              </label>
-              <div className="row">
-                <input
-                  type="range"
-                  min={0}
-                  max={10}
-                  step={1}
-                  value={st.default_me}
-                  onChange={(e) => patch({ me: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className="field">
-              <label>Unidades</label>
-              <input
-                type="number"
-                min={1}
-                value={st.demand}
-                onChange={(e) => patch({ d: Math.max(1, +e.target.value || 1) })}
-              />
-            </div>
-
-            <div className="field">
-              <label>Sistema (índice de coste)</label>
-              <input
-                type="text"
-                list="systems"
-                value={sysInput}
-                onChange={(e) => setSysInput(e.target.value)}
-                onBlur={(e) => pickSystem(e.target.value)}
-                placeholder="Jita, Sakht…"
-              />
-              <datalist id="systems">
-                {sysMatches.map(([id, [name, sec]]) => (
-                  <option key={id} value={name}>
-                    {name} ({sec.toFixed(1)})
-                  </option>
-                ))}
-              </datalist>
-            </div>
-
-            <div className="field">
-              <label>Estructura</label>
-              <select
-                value={st.structure_type_id ?? ""}
-                onChange={(e) => patch({ struct: e.target.value || null })}
-              >
-                <option value="">Estación NPC (sin bonus)</option>
-                {rigsDoc &&
-                  Object.entries(rigsDoc.structures).map(([id, s]) => (
-                    <option key={id} value={id}>
-                      {s.n}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            <div className="field">
-              <label>
-                Rigs de ME{" "}
-                <button
-                  type="button"
-                  className="copy"
-                  style={{ marginLeft: 4, padding: "1px 6px" }}
-                  onClick={() => setAllRigs((v) => !v)}
-                >
-                  {allRigs ? "solo relevantes" : "ver todos"}
-                </button>
-              </label>
-              <div className="riglist">
-                {rigList.length === 0 && (
-                  <span className="muted">
-                    {rigsDoc ? "ningún rig relevante para este cálculo" : "cargando…"}
-                  </span>
-                )}
-                {rigList.map(([id, rig]) => (
-                  <label key={id} className="inline rigrow">
-                    <input
-                      type="checkbox"
-                      checked={st.rig_type_ids.map(String).includes(id)}
-                      onChange={() => toggleRig(id)}
-                    />
-                    <span>
-                      {rig.n}{" "}
-                      <span className="muted">
-                        −{(rig.meBonus * 100).toFixed(1)}%
-                      </span>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div className="field">
-              <label>
-                Seguridad{" "}
-                <span className="muted">
-                  {st.security == null
-                    ? `derivada${sysInput ? ` de ${sysInput}` : ""}`
-                    : "manual"}
-                  {st.security != null && (
-                    <button
-                      type="button"
-                      className="copy"
-                      style={{ marginLeft: 6, padding: "1px 6px" }}
-                      onClick={() => patch({ sec: null })}
-                    >
-                      usar la del sistema
-                    </button>
-                  )}
-                </span>
-              </label>
-              <select
-                value={st.security ?? st.security_effective}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  patch({ sec: v === st.security_effective ? null : v });
-                }}
-              >
-                <option value="highsec">Highsec ×1.0</option>
-                <option value="lowsec">Lowsec ×1.9</option>
-                <option value="nullsec">Null / WH ×2.1</option>
-              </select>
-            </div>
-
-            <div className="field">
-              <label>Tax de instalación %</label>
-              <input
-                type="number"
-                min={0}
-                step={0.1}
-                value={st.facility_tax != null ? +(st.facility_tax * 100).toFixed(3) : ""}
-                placeholder="0.25 (NPC)"
-                onChange={(e) => {
-                  const v = e.target.value;
-                  patch({ tax: v === "" ? null : (+v / 100).toString() });
-                }}
-              />
-            </div>
-
-            <div className="field">
-              <label>Make-or-buy global</label>
-              <select
-                value={st.global_policy}
-                onChange={(e) => patch({ pol: e.target.value === "auto" ? null : e.target.value })}
-              >
-                <option value="auto">Auto (decide el coste)</option>
-                <option value="build">Construir todo lo posible</option>
-                <option value="minerals">Vertical de minerales (comprar reacciones)</option>
-                <option value="buy">Comprar todo</option>
-              </select>
-            </div>
-
-            <div className="field inline">
-              <input
-                id="inv"
-                type="checkbox"
-                checked={st.invention}
-                onChange={(e) => patch({ inv: e.target.checked ? 1 : null })}
-              />
-              <label htmlFor="inv" style={{ margin: 0 }}>
-                Capa de invención (elige decryptor por item T2)
-              </label>
-            </div>
-          </div>
-
-          <div className="panel">
-            <label style={{ marginBottom: 8 }}>Minado propio</label>
-            <p className="muted" style={{ fontSize: 11, marginTop: 0 }}>
-              Marca el ore que puedes minar. Lo que tus ores no cubran se compra.
-            </p>
-
-            <div className="field">
-              <label>
-                Ore disponible{" "}
-                {["highsec", "lowsec", "nullsec"].map((b) => (
-                  <button
-                    key={b}
-                    type="button"
-                    className="copy"
-                    style={{ marginLeft: 4, padding: "1px 6px" }}
-                    onClick={() => applyOrePreset(b)}
-                  >
-                    {b}
-                  </button>
-                ))}
-                {st.ore_families.length > 0 && (
-                  <button
-                    type="button"
-                    className="copy"
-                    style={{ marginLeft: 4, padding: "1px 6px" }}
-                    onClick={() => patch({ ore: null })}
-                  >
-                    ninguno
-                  </button>
-                )}
-              </label>
-              <div className="riglist">
-                {oreFamilies.length === 0 && <span className="muted">cargando…</span>}
-                {oreFamilies.map(([id, name]) => (
-                  <label key={id} className="inline rigrow">
-                    <input
-                      type="checkbox"
-                      checked={st.ore_families.map(String).includes(id)}
-                      onChange={() => toggleOre(id)}
-                    />
-                    <span>{name}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {st.ore_families.length > 0 && (
-              <>
-                <div className="field">
-                  <label>Grado del ore</label>
-                  <select
-                    value={st.ore_grade}
-                    onChange={(e) =>
-                      patch({ ograde: e.target.value === "1" ? null : e.target.value })
-                    }
-                  >
-                    <option value="0">0-Grade</option>
-                    <option value="1">Base</option>
-                    <option value="2">II-Grade (+5%)</option>
-                    <option value="3">III-Grade (+10%)</option>
-                    <option value="4">IV-Grade (+15%)</option>
-                  </select>
-                </div>
-
-                <div className="field">
-                  <label>Rendimiento de reprocesado %</label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={100}
-                    step={0.1}
-                    value={+(st.reprocess_yield * 100).toFixed(2)}
-                    onChange={(e) => {
-                      const v = +e.target.value / 100;
-                      patch({ ry: v === 0.876 ? null : String(v) });
-                    }}
-                  />
-                </div>
-
-                <div className="field">
-                  <label>Cuánto valen tus minerales</label>
-                  <select
-                    value={st.mineral_basis}
-                    onChange={(e) =>
-                      patch({ mval: e.target.value === "ore" ? null : e.target.value })
-                    }
-                  >
-                    <option value="ore">Lo que valdría el ore (coste de oportunidad)</option>
-                    <option value="zero">Cero (mi tiempo es gratis)</option>
-                    <option value="buy">Jita buy del mineral</option>
-                  </select>
-                </div>
-
-                <div className="field">
-                  <label>m³/hora de tu setup (opcional)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    step={100}
-                    value={st.mining_rate ?? ""}
-                    placeholder="p. ej. 1200"
-                    onChange={(e) =>
-                      patch({ mrate: e.target.value === "" ? null : e.target.value })
-                    }
-                  />
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className="linkbar">
-            <div>
-              <code>?{out!.query}</code>
-              <button
-                className="copy"
-                onClick={() =>
-                  navigator.clipboard?.writeText(`${location.origin}${location.pathname}?${out!.query}`)
-                }
-              >
-                copiar enlace
-              </button>
-            </div>
-          </div>
+        <div className={s.controls}>
+          <Sidebar
+            st={st}
+            patch={patch}
+            buildables={buildables}
+            systems={systems}
+            rigsDoc={rigsDoc}
+            oresDoc={oresDoc}
+            rootName={r.root_name}
+            treeGroups={out.tree_groups}
+            treeCategories={out.tree_categories}
+          />
+          <ActiveOverrides ov={overrides} r={r} onPatch={patch} />
+          <ShareLink query={out.query} />
         </div>
 
-        {/* ------------ resultados ------------ */}
-        <div>
-          <div className="panel">
-            <div className="kpi">
-              <span className="muted">
-                {r.root_name} ×{r.root_demand}
-              </span>
-              {r.margin != null && (
-                <>
-                  <span className={`big ${marginClass}`}>{isk(r.margin)}</span>
-                  <span className="pct">
-                    {r.margin_pct != null
-                      ? `${(r.margin_pct * 100).toFixed(1)}% margen`
-                      : ""}
-                  </span>
-                </>
-              )}
+        <div className={s.detail}>
+          {calcError && (
+            <div className="banner">
+              El cálculo falló y se muestra el anterior: {calcError}
             </div>
+          )}
 
-            <table className="breakdown">
-              <tbody>
-                <tr>
-                  <td className="muted">Material (comprado + raw)</td>
-                  <td>{isk(r.total_material_cost)}</td>
-                </tr>
-                <tr>
-                  <td className="muted">Instalación (acumulada)</td>
-                  <td>{isk(r.total_install_cost)}</td>
-                </tr>
-                {r.total_invention_cost > 0 && (
-                  <tr>
-                    <td className="muted">Invención</td>
-                    <td>{isk(r.total_invention_cost)}</td>
-                  </tr>
-                )}
-                {r.mining_plan && (
-                  <>
-                    <tr>
-                      <td className="muted" style={{ paddingLeft: 12 }}>
-                        · de tu ore
-                      </td>
-                      <td>{isk(r.cost_self_mined)}</td>
-                    </tr>
-                    <tr>
-                      <td className="muted" style={{ paddingLeft: 12 }}>
-                        · minerales comprados
-                      </td>
-                      <td>{isk(r.cost_bought_minerals)}</td>
-                    </tr>
-                    <tr>
-                      <td className="muted" style={{ paddingLeft: 12 }}>
-                        · resto comprado
-                      </td>
-                      <td>{isk(r.cost_bought_other)}</td>
-                    </tr>
-                  </>
-                )}
-                <tr className="total">
-                  <td>Coste total</td>
-                  <td>{isk(r.total_cost)}</td>
-                </tr>
-                <tr>
-                  <td className="muted">Coste unitario</td>
-                  <td>{isk(r.unit_cost)}</td>
-                </tr>
-                <tr>
-                  <td className="muted">Comprar el item (Jita sell)</td>
-                  <td>{isk(r.root_buy_price)}</td>
-                </tr>
-                {r.revenue != null && (
-                  <tr>
-                    <td className="muted">Ingreso neto (Jita buy − fees)</td>
-                    <td>{isk(r.revenue)}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-
-            {r.root_should_buy && (
-              <p className="warns">
-                A estos precios sale más barato comprar el item entero que fabricarlo.
-              </p>
-            )}
-            <p className="muted" style={{ marginTop: 10, fontSize: 12 }}>
-              {Object.values(r.nodes).filter((n: any) => n.decision === "build").length} construir ·{" "}
-              {Object.values(r.nodes).filter((n: any) => n.decision === "buy").length} comprar ·{" "}
-              {Object.keys(r.leaves).length} hojas · {r.flips.length} flips ·{" "}
-              {r.fixpoint_iterations} iteraciones
-            </p>
-          </div>
-
-          {r.mining_plan && <MiningPanel result={r} />}
-
-          <div className="panel">
-            <label style={{ marginBottom: 8 }}>Árbol de decisiones</label>
-            <Tree result={r} />
-            {r.warnings.length > 0 && (
-              <ul className="warns">
-                {r.warnings.slice(0, 15).map((w: string, i: number) => (
-                  <li key={i}>{w}</li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <CostBreakdown r={r} />
+          <ShoppingList r={r} />
+          {r.mining_plan && <MiningPanel r={r} miningRate={st.mining_rate} />}
+          <DecisionTree r={r} ov={overrides} onPatch={patch} />
+          <Warnings warnings={r.warnings} />
+          <DataFreshness meta={meta} />
         </div>
       </div>
     </div>
   );
-}
-
-function MiningPanel({ result }: { result: ResolveResult }) {
-  const mp = result.mining_plan;
-  const nodes: Record<string, any> = result.nodes;
-  const name = (id: string | number) => nodes[String(id)]?.name ?? `#${id}`;
-  const m3 = (n: number) => Math.round(n).toLocaleString("en-US");
-  const hours =
-    result.margin_per_hour != null && result.margin != null
-      ? result.margin / result.margin_per_hour
-      : null;
-
-  return (
-    <div className="panel">
-      <label style={{ marginBottom: 8 }}>
-        Plan de minado — {m3(mp.total_m3)} m³ ({m3(mp.total_m3_compressed)} m³ comprimido)
-        {hours != null && ` · ${hours.toFixed(1)} h`}
-      </label>
-
-      <table className="breakdown">
-        <tbody>
-          {mp.lines.map((l: any) => (
-            <tr key={l.ore_type_id}>
-              <td>
-                {l.ore_name}{" "}
-                <span className="muted">{l.units.toLocaleString("en-US")} ud</span>
-              </td>
-              <td>{m3(l.m3)} m³</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {Object.keys(mp.shortfall).length > 0 && (
-        <p className="warns" style={{ marginTop: 10 }}>
-          Tus ores no cubren (se compran):{" "}
-          {Object.entries(mp.shortfall)
-            .map(([id, q]) => `${name(id)} ${(q as number).toLocaleString("en-US")}`)
-            .join(" · ")}
-        </p>
-      )}
-
-      {Object.keys(mp.surplus).length > 0 && (
-        <p className="muted" style={{ marginTop: 6, fontSize: 12 }}>
-          Excedente:{" "}
-          {Object.entries(mp.surplus)
-            .sort((a, b) => (b[1] as number) - (a[1] as number))
-            .slice(0, 4)
-            .map(([id, q]) => `${name(id)} ${(q as number).toLocaleString("en-US")}`)
-            .join(" · ")}
-        </p>
-      )}
-
-      <table className="breakdown" style={{ marginTop: 10 }}>
-        <tbody>
-          {result.margin_per_hour != null && (
-            <tr>
-              <td className="muted">Margen por hora de minado</td>
-              <td>{isk(result.margin_per_hour)} /h</td>
-            </tr>
-          )}
-          {result.margin_per_m3 != null && (
-            <tr>
-              <td className="muted">Margen por m³</td>
-              <td>{result.margin_per_m3.toFixed(1)} /m³</td>
-            </tr>
-          )}
-          {result.ore_market_value ? (
-            <tr className="total">
-              <td>Vender ese ore en vez de construir</td>
-              <td>{isk(result.ore_market_value)}</td>
-            </tr>
-          ) : null}
-        </tbody>
-      </table>
-
-      {!result.ore_market_value && (
-        <p className="muted" style={{ marginTop: 8, fontSize: 11 }}>
-          Sin precios de ore en el snapshot actual: la valoración por ore y la
-          comparación &ldquo;vender vs construir&rdquo; aparecerán cuando el
-          workflow de datos publique precios de ore comprimido.
-        </p>
-      )}
-    </div>
-  );
-}
-
-function Tree({ result }: { result: ResolveResult }) {
-  // dataclasses.asdict + json.dumps deja las claves de dicts como strings.
-  const nodes: Record<string, any> = result.nodes;
-  const rows: React.ReactNode[] = [];
-  const seen = new Set<string>();
-
-  const walk = (id: string, depth: number) => {
-    const n = nodes[id];
-    if (!n || seen.has(id)) return;
-    seen.add(id);
-    rows.push(
-      <div className="node" key={id} style={{ paddingLeft: depth * 16 }}>
-        <span className="name">{n.name}</span>
-        <span className={`tag ${n.decision}`}>{n.decision}</span>
-        {n.flipped_to_buy && <span className="tag flip">flip→buy</span>}
-        {n.invention_decryptor && (
-          <span className="tag inv">
-            {n.invention_decryptor} · P{(n.invention_probability * 100).toFixed(0)}% · ME
-            {n.effective_me}
-          </span>
-        )}
-        <div className="meta">
-          {n.decision === "build"
-            ? `jobs ${JSON.stringify(n.jobs)} · install ${isk(n.install_cost)}${
-                n.real_unit_cost != null ? ` · ud ${isk(n.real_unit_cost)}` : ""
-              }${
-                n.structure_factor != null && n.structure_factor < 0.9999
-                  ? ` · rig ×${n.structure_factor.toFixed(3)}`
-                  : ""
-              }`
-            : n.marginal_unit_cost != null && isFinite(n.marginal_unit_cost)
-            ? `ud ${isk(n.marginal_unit_cost)}`
-            : ""}
-        </div>
-      </div>,
-    );
-    if (depth > 6) return;
-    for (const childId of Object.keys(n.children || {})) walk(childId, depth + 1);
-  };
-
-  walk(String(result.root_type_id), 0);
-  return <div className="tree">{rows}</div>;
 }

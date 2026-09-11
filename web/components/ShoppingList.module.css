@@ -1,0 +1,30 @@
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-bottom: var(--s2);
+  font-size: var(--fs-xs);
+}
+
+/* Listas largas (un Providence trae 57 materiales) sin empujar el resto de la
+   página hasta el infinito. */
+.scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.scroll table {
+  min-width: 340px;
+}
+
+.scroll thead th {
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+  z-index: 1;
+}
+
+.row:hover {
+  background: var(--panel-3);
+}

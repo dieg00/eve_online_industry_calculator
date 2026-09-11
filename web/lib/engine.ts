@@ -2,9 +2,9 @@
 // calc(query) -> ResolveResult. Una sola instancia por pestaña.
 
 import { base, getPyodide } from "./pyodide";
+import type { DataMeta, ResolveResult } from "./types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ResolveResult = any;
+export type { ResolveResult } from "./types";
 
 const BOOTSTRAP = `
 import json, dataclasses
@@ -58,6 +58,12 @@ def normalize(query):
     st = State.parse(query)
     return json.dumps({"state": _state_dict(st), "query": st.to_query()}, default=str)
 
+def meta():
+    return json.dumps({
+        "prices": _PRICES_DOC.get("meta", {}),
+        "indices": _INDICES_DOC.get("meta", {}),
+    })
+
 def buildables():
     rows = []
     for pid, bpid in _DS.blueprint_by_product.items():
@@ -109,6 +115,7 @@ export type Engine = {
   calc: (query: string) => CalcOut;
   normalize: (query: string) => { state: FormState; query: string };
   buildables: () => Buildable[];
+  meta: () => DataMeta;
 };
 
 let cached: Engine | null = null;
@@ -143,11 +150,13 @@ export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
     const pyCalc = py.globals.get("calc");
     const pyNorm = py.globals.get("normalize");
     const pyBuildables = py.globals.get("buildables");
+    const pyMeta = py.globals.get("meta");
 
     cached = {
       calc: (q: string) => JSON.parse(pyCalc(q)),
       normalize: (q: string) => JSON.parse(pyNorm(q)),
       buildables: () => JSON.parse(pyBuildables()),
+      meta: () => JSON.parse(pyMeta()),
     };
     return cached;
   })();

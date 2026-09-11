@@ -1,0 +1,111 @@
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.scroll {
+  max-height: 70vh;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.scroll table {
+  min-width: 540px;
+}
+
+.scroll thead th {
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+  z-index: 2;
+}
+
+.row:hover {
+  background: var(--panel-3);
+}
+
+/* Nodo con override activo. */
+.forced {
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.nameCell {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s1);
+  flex-wrap: wrap;
+}
+
+.toggle {
+  flex: 0 0 auto;
+  width: 14px;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--faint);
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+.toggle:hover {
+  color: var(--text);
+}
+
+.name {
+  font-weight: 550;
+}
+
+.meta {
+  /* línea propia dentro de la celda indentada, alineada bajo el nombre */
+  flex: 0 0 100%;
+  margin-left: 15px;
+  color: var(--faint);
+  font-size: var(--fs-xs);
+}
+
+.repeat,
+.shared {
+  font-size: var(--fs-xs);
+  color: var(--faint);
+}
+.repeat {
+  font-style: italic;
+}
+
+.forcedTag {
+  font-size: var(--fs-xs);
+  padding: 0 5px;
+  border-radius: var(--r1);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.actions {
+  width: 28px;
+  text-align: right;
+  padding-right: 0;
+}
+
+.ovBtn {
+  background: none;
+  border: 0;
+  color: var(--faint);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+  padding: 0 var(--s2);
+  border-radius: var(--r1);
+}
+.ovBtn:hover {
+  color: var(--text);
+  background: var(--panel-3);
+}
+
+.ovBtnOn {
+  color: var(--accent);
+  background: var(--accent-soft);
+}

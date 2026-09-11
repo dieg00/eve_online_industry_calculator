@@ -1,0 +1,25 @@
+.wrap {
+  padding: var(--s3) var(--s4);
+}
+
+.summary {
+  cursor: pointer;
+  color: var(--warn);
+  font-size: var(--fs-sm);
+  user-select: none;
+}
+.summary:hover {
+  text-decoration: underline;
+}
+
+.list {
+  margin: var(--s2) 0 0;
+  padding-left: var(--s4);
+  max-height: 320px;
+  overflow-y: auto;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.list li {
+  margin: 2px 0;
+}
