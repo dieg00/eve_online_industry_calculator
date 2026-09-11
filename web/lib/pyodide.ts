@@ -47,13 +47,19 @@ export async function getPyodide(onStatus?: (s: string) => void): Promise<Pyodid
 
     // Bajamos el wheel nosotros (no micropip) para dar un error claro si la ruta
     // devuelve HTML/404 en vez del binario, y para evitarnos su fetch interno.
-    let v = "";
+    // El nombre real del wheel (con su versión) y el hash de cache-busting los
+    // publica sync-assets.mjs en este manifiesto — nada hardcodeado aquí.
+    type Manifest = { wheel: string; hash: string };
+    let manifest: Manifest | null = null;
     try {
-      v = "?v=" + (await (await fetch(`${base()}/engine/version.txt`)).text()).trim();
+      manifest = await (await fetch(`${base()}/engine/manifest.json`)).json();
     } catch {
-      /* sin manifiesto */
+      /* se valida abajo */
     }
-    const wheelUrl = `${base()}/engine/eveindustry-0.1.0-py3-none-any.whl${v}`;
+    if (!manifest?.wheel) {
+      throw new Error("manifiesto del motor no disponible (engine/manifest.json)");
+    }
+    const wheelUrl = `${base()}/engine/${manifest.wheel}?v=${manifest.hash}`;
     const resp = await fetch(wheelUrl);
     if (!resp.ok) throw new Error(`wheel del motor: HTTP ${resp.status} en ${wheelUrl}`);
     const bytes = new Uint8Array(await resp.arrayBuffer());
@@ -63,7 +69,7 @@ export async function getPyodide(onStatus?: (s: string) => void): Promise<Pyodid
       );
     }
     // micropip parsea la versión/tags del nombre: tiene que ser el nombre PEP 427.
-    const fsPath = "/tmp/eveindustry-0.1.0-py3-none-any.whl";
+    const fsPath = `/tmp/${manifest.wheel}`;
     pyodide.FS.writeFile(fsPath, bytes);
     await micropip.install(`emfs:${fsPath}`);
 

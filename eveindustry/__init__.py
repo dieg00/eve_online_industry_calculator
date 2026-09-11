@@ -9,4 +9,12 @@ El paquete se divide en:
 - ``eveindustry.invention`` capa de invencion (probabilidad, decryptors).
 """
 
-__version__ = "0.1.0"
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    # Fuente única: `pyproject.toml` [project].version. Tras subirla en local
+    # hace falta `pip install -e .` para que se refleje aquí — si no,
+    # tests/test_version.py falla con un mensaje que lo explica.
+    __version__ = version("eveindustry")
+except PackageNotFoundError:  # pragma: no cover - paquete no instalado (raro)
+    __version__ = "0.0.0-dev"

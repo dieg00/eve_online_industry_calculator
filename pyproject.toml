@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "eveindustry"
-version = "0.1.0"
+version = "0.2.0"
 description = "Calculadora make-or-buy de margenes de industria de EVE Online"
 requires-python = ">=3.10"
 dependencies = []

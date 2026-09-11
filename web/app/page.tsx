@@ -6,7 +6,7 @@ import { errorCause } from "@/lib/format";
 import { base } from "@/lib/pyodide";
 import { patchQuery } from "@/lib/query";
 import { readOverrides } from "@/lib/overrides";
-import type { DataMeta, OresDoc, RigsDoc, SystemsMap } from "@/lib/types";
+import type { ChangelogEntry, DataMeta, OresDoc, RigsDoc, SystemsMap } from "@/lib/types";
 import ActiveOverrides from "@/components/ActiveOverrides";
 import CostBreakdown from "@/components/CostBreakdown";
 import DataFreshness from "@/components/DataFreshness";
@@ -16,6 +16,7 @@ import Sidebar from "@/components/Sidebar";
 import ShareLink from "@/components/ShareLink";
 import ShoppingList from "@/components/ShoppingList";
 import SummaryBar from "@/components/SummaryBar";
+import VersionBadge from "@/components/VersionBadge";
 import Warnings from "@/components/Warnings";
 import s from "./page.module.css";
 
@@ -41,6 +42,7 @@ export default function Page() {
   const [rigsDoc, setRigsDoc] = useState<RigsDoc | null>(null);
   const [oresDoc, setOresDoc] = useState<OresDoc | null>(null);
   const [meta, setMeta] = useState<DataMeta | null>(null);
+  const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
 
   useEffect(() => {
     let alive = true;
@@ -63,6 +65,7 @@ export default function Page() {
     grab<{ systems: SystemsMap }>("systems.json", (d) => setSystems(d.systems));
     grab<RigsDoc>("rigs.json", setRigsDoc);
     grab<OresDoc>("ores.json", setOresDoc);
+    grab<ChangelogEntry[]>("changelog.json", setChangelog);
 
     return () => {
       alive = false;
@@ -182,6 +185,7 @@ export default function Page() {
           <DecisionTree r={r} ov={overrides} onPatch={patch} />
           <Warnings warnings={r.warnings} />
           <DataFreshness meta={meta} />
+          <VersionBadge entries={changelog} />
         </div>
       </div>
     </div>

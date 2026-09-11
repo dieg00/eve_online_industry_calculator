@@ -1,0 +1,77 @@
+/* Discreto por defecto, igual peso visual que DataFreshness: texto pequeño y
+   apagado, sin caja. Solo al abrir el panel aparece un contenedor. */
+.wrap {
+  margin-top: var(--s2);
+}
+
+.summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  cursor: pointer;
+  color: var(--faint);
+  font-size: var(--fs-xs);
+  list-style: none;
+  user-select: none;
+}
+.summary::-webkit-details-marker {
+  display: none;
+}
+.summary:hover {
+  color: var(--muted);
+}
+
+.badge {
+  position: relative;
+  font-family: var(--mono);
+}
+
+/* marca sutil de "versión no vista" — nunca modal ni popup */
+.dot {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.panel {
+  margin-top: var(--s2);
+  padding: var(--s3) var(--s4);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r3);
+  max-height: 320px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.entry + .entry {
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--line);
+}
+
+.entryHead {
+  margin: 0 0 var(--s1);
+  font-weight: 650;
+  font-family: var(--mono);
+  font-size: var(--fs-sm);
+}
+
+.date {
+  color: var(--faint);
+  font-weight: 400;
+}
+
+.highlights {
+  margin: 0;
+  padding-left: var(--s4);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.highlights li {
+  margin: 2px 0;
+}

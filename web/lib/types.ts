@@ -132,3 +132,14 @@ export type OresDoc = {
 
 /** systems.json: systemID -> [nombre, security] */
 export type SystemsMap = Record<string, [string, number]>;
+
+/**
+ * changelog.json: derivado de CHANGELOG.md por sync-assets.mjs, más reciente
+ * primero. `entries[0].version` es la versión que corre ahora mismo — nunca
+ * hay una entrada "Unreleased" que rompa esa asunción.
+ */
+export type ChangelogEntry = {
+  version: string;
+  date: string;
+  highlights: string[];
+};
