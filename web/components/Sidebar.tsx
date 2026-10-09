@@ -93,7 +93,7 @@ export default function Sidebar({
         <QuickPicks
           buildables={buildables}
           recent={recent}
-          currentId={st.type_id}
+          currentName={rootName}
           onPick={(id) => patch({ t: id })}
         />
 

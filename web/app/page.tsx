@@ -87,7 +87,6 @@ export default function Page() {
       const res = engine.calc(query);
       setOut(res);
       setCalcError(null);
-      setRecent(pushRecentItem({ id: res.result.root_type_id, name: res.result.root_name }));
       window.history.replaceState(null, "", `?${res.query}`);
     } catch (x) {
       // Se conserva el último resultado bueno: el formulario sigue usable para
@@ -95,6 +94,13 @@ export default function Page() {
       setCalcError(errorCause(x));
     }
   }, [engine, query]);
+
+  // solo cuando cambia el item, no en cada recálculo
+  const rootId = out?.result.root_type_id;
+  const rootName = out?.result.root_name;
+  useEffect(() => {
+    if (rootId != null && rootName) setRecent(pushRecentItem({ id: rootId, name: rootName }));
+  }, [rootId, rootName]);
 
   const patch = (p: Record<string, string | number | boolean | null>) =>
     setQuery((q) => patchQuery(q, p));
