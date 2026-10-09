@@ -69,4 +69,8 @@ recortado a `data/{blueprints,types,systems,rigs,ores}.json` (versionados);
 `prices.json` / `indices.json` los publica la GitHub Action `data.yml` en la rama
 `data` y el frontend los lee en runtime (`NEXT_PUBLIC_DATA_URL`).
 
+La web se describe en `web/README.md` (mapa de `lib/` y `components/`). El estado
+del cálculo vive entero en la URL (`eveindustry/state.py` es la autoridad del
+formato); la UI solo parchea parámetros con `web/lib/query.ts`.
+
 Diseño completo: `~/.claude/plans/calculadora-de-industria-de-glimmering-sutton.md`.

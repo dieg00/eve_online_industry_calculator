@@ -6,6 +6,7 @@ import { errorCause } from "@/lib/format";
 import { base } from "@/lib/pyodide";
 import { patchQuery } from "@/lib/query";
 import { readOverrides } from "@/lib/overrides";
+import { getRecentItems, pushRecentItem, type RecentItem } from "@/lib/recentItems";
 import type { ChangelogEntry, DataMeta, OreFamily, OresDoc, RigsDoc, SystemsMap } from "@/lib/types";
 import ActiveOverrides from "@/components/ActiveOverrides";
 import CostBreakdown from "@/components/CostBreakdown";
@@ -45,6 +46,7 @@ export default function Page() {
   const [oresDoc, setOresDoc] = useState<OresDoc | null>(null);
   const [meta, setMeta] = useState<DataMeta | null>(null);
   const [oreFamilies, setOreFamilies] = useState<OreFamily[]>([]);
+  const [recent, setRecent] = useState<RecentItem[]>([]);
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
 
   useEffect(() => {
@@ -76,12 +78,16 @@ export default function Page() {
     };
   }, []);
 
+  // localStorage se lee tras montar: el export estático no puede hidratar con él
+  useEffect(() => setRecent(getRecentItems()), []);
+
   useEffect(() => {
     if (!engine) return;
     try {
       const res = engine.calc(query);
       setOut(res);
       setCalcError(null);
+      setRecent(pushRecentItem({ id: res.result.root_type_id, name: res.result.root_name }));
       window.history.replaceState(null, "", `?${res.query}`);
     } catch (x) {
       // Se conserva el último resultado bueno: el formulario sigue usable para
@@ -167,12 +173,13 @@ export default function Page() {
             rigsDoc={rigsDoc}
             oresDoc={oresDoc}
             oreFamilies={oreFamilies}
+            recent={recent}
             rootName={r.root_name}
             treeGroups={out.tree_groups}
             treeCategories={out.tree_categories}
           />
           <ActiveOverrides ov={overrides} r={r} onPatch={patch} />
-          <ShareLink query={out.query} />
+          <ShareLink query={out.query} onReset={() => setQuery(DEFAULT_QUERY)} />
         </div>
 
         <div className={s.detail}>
