@@ -12,11 +12,11 @@
   color: var(--text);
   font-weight: 650;
 }
-.good {
-  color: var(--good) !important;
+.sentence .good {
+  color: var(--good);
 }
-.bad {
-  color: var(--bad) !important;
+.sentence .bad {
+  color: var(--bad);
 }
 .tail {
   color: var(--muted);

@@ -43,8 +43,13 @@ export default function Verdict({
       <>
         Fabricar {what}
         {where} deja{" "}
-        <strong className={`num ${s.good}`}>{iskShort(r.margin)} ISK</strong> de beneficio (
-        <span className="num">{pct(r.margin_pct)}</span> sobre el coste).
+        <strong className={`num ${s.good}`}>{iskShort(r.margin)} ISK</strong> de beneficio
+        {r.margin_pct != null && (
+          <>
+            {" "}(<span className="num">{pct(r.margin_pct)}</span> sobre el coste)
+          </>
+        )}
+        .
       </>
     );
   } else {
@@ -52,20 +57,27 @@ export default function Verdict({
       <>
         Fabricar {what}
         {where}{" "}
-        <strong className={`num ${s.bad}`}>pierde {iskShort(-r.margin)} ISK</strong> (
-        <span className="num">{pct(r.margin_pct)}</span>).
+        <strong className={`num ${s.bad}`}>pierde {iskShort(-r.margin)} ISK</strong>
+        {r.margin_pct != null && (
+          <>
+            {" "}(<span className="num">{pct(r.margin_pct)}</span>)
+          </>
+        )}
+        .
       </>
     );
   }
 
   const tail: string[] = [];
   if (r.root_should_buy) tail.push("A estos precios sale más barato comprarlo hecho.");
-  if (mining && r.cost_self_mined > 0)
+  if (mining && r.mining_plan!.lines.length > 0) {
+    const when = hours != null ? `, ${hoursLabel(hours)} de minado` : "";
     tail.push(
-      `${iskShort(r.cost_self_mined)} ISK del coste son minerales de tu ore` +
-        (hours != null ? ` (${hoursLabel(hours)} de minado)` : "") +
-        ".",
+      r.cost_self_mined > 0
+        ? `Tu ore cubre ${iskShort(r.cost_self_mined)} ISK del coste${when}.`
+        : `Los minerales de tu ore van a coste cero${when}.`,
     );
+  }
 
   // Barras: coste apilado por origen frente al ingreso neto, a la misma escala.
   const scale = Math.max(r.total_cost, r.revenue ?? 0, 1);
