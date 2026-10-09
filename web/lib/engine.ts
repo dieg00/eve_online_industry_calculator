@@ -3,8 +3,80 @@
 
 import { base, getPyodide } from "./pyodide";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ResolveResult = any;
+// Espejo de eveindustry.engine.resolve.ResolveResult tras dataclasses.asdict +
+// json.dumps: las claves de los dicts indexados por typeID llegan como strings.
+export type NodeResult = {
+  type_id: number;
+  name: string;
+  decision: "build" | "buy";
+  policy_source: string;
+  marginal_unit_cost: number | null;
+  blueprint_type_id: number | null;
+  demand: number;
+  jobs: number[];
+  produced: number;
+  install_cost: number;
+  real_unit_cost: number | null;
+  structure_factor: number;
+  children: Record<string, number>;
+  flipped_to_buy: boolean;
+  invention_decryptor: string | null;
+  invention_probability: number | null;
+  invention_cost_per_unit: number | null;
+  effective_me: number | null;
+};
+
+export type MiningLine = {
+  ore_type_id: number;
+  ore_name: string;
+  family_name: string;
+  batches: number;
+  units: number;
+  m3: number;
+  m3_compressed: number;
+  compressed_type_id: number | null;
+  minerals: Record<string, number>;
+};
+
+export type MiningPlan = {
+  yield_rate: number;
+  lines: MiningLine[];
+  targets: Record<string, number>;
+  covered: Record<string, number>;
+  surplus: Record<string, number>;
+  shortfall: Record<string, number>;
+  total_m3: number;
+  total_m3_compressed: number;
+};
+
+export type ResolveResult = {
+  root_type_id: number;
+  root_name: string;
+  root_demand: number;
+  total_cost: number;
+  unit_cost: number;
+  total_install_cost: number;
+  total_material_cost: number;
+  total_invention_cost: number;
+  revenue: number | null;
+  margin: number | null;
+  margin_pct: number | null;
+  root_should_buy: boolean;
+  root_buy_price: number | null;
+  nodes: Record<string, NodeResult>;
+  leaves: Record<string, number>;
+  leaf_cost: Record<string, number>;
+  flips: number[];
+  warnings: string[];
+  fixpoint_iterations: number;
+  mining_plan: MiningPlan | null;
+  cost_self_mined: number;
+  cost_bought_minerals: number;
+  cost_bought_other: number;
+  ore_market_value: number | null;
+  margin_per_hour: number | null;
+  margin_per_m3: number | null;
+};
 
 const BOOTSTRAP = `
 import json, dataclasses
@@ -172,7 +244,7 @@ export type FormState = {
   mining_rate: number | null;
   security_effective: "highsec" | "lowsec" | "nullsec";
   facility_tax: number | null;
-  global_policy: "auto" | "build" | "buy";
+  global_policy: "auto" | "build" | "buy" | "minerals";
   policy_by_type: Record<string, string>;
   policy_by_category: Record<string, string>;
   policy_by_activity: Record<string, string>;
