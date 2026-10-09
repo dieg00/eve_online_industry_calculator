@@ -65,6 +65,9 @@ def _state_from_args(args: argparse.Namespace) -> State:
         st.mineral_basis = args.mineral_basis
     if args.mining_rate is not None:
         st.mining_rate = args.mining_rate
+    for mid in args.buy_mineral or []:
+        if mid not in st.exclude_minerals:
+            st.exclude_minerals = (*st.exclude_minerals, mid)
     if args.demand is not None:
         st.demand = args.demand
     if args.invention:
@@ -299,6 +302,8 @@ def _add_common(sp: argparse.ArgumentParser) -> None:
                     help="como valorar los minerales que minas tu (def: ore)")
     sp.add_argument("--mining-rate", type=float, metavar="M3H",
                     help="m3/hora de tu setup, para estimar horas de minado")
+    sp.add_argument("--buy-mineral", action="append", type=int, metavar="TYPEID",
+                    help="mineral que compras aunque tu ore lo produzca (repetible)")
     sp.add_argument("--demand", type=int, help="unidades a producir (def 1)")
     sp.add_argument("--invention", action="store_true", help="activa la capa de invención")
     sp.add_argument(

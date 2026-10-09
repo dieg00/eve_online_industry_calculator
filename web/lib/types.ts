@@ -5,6 +5,7 @@
 // número. Los tipos de abajo lo reflejan a propósito.
 
 export type Decision = "build" | "buy";
+export type LeafSource = "mined" | "bought";
 
 export type PolicySource =
   | "type"
@@ -90,6 +91,8 @@ export type ResolveResult = {
   leaves: Record<string, number>;
   /** typeID (string) -> coste total de esa hoja */
   leaf_cost: Record<string, number>;
+  /** typeID (string) -> de dónde sale: minado por ti o comprado */
+  leaf_source: Record<string, LeafSource>;
   flips: number[];
   warnings: string[];
   fixpoint_iterations: number;

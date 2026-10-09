@@ -70,6 +70,7 @@ class ResolveResult:
     nodes: dict[int, NodeResult] = field(default_factory=dict)
     leaves: dict[int, int] = field(default_factory=dict)          # comprado/raw -> qty
     leaf_cost: dict[int, float] = field(default_factory=dict)     # comprado/raw -> coste total
+    leaf_source: dict[int, str] = field(default_factory=dict)     # hoja -> "mined" | "bought"
     flips: list[int] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     fixpoint_iterations: int = 1
@@ -99,6 +100,8 @@ def resolve(
     if mining is not None and mining.active:
         mining_ores = assumptions.ore_catalog.pick(mining.ore_families, mining.grade)
         mineable = assumptions.ore_catalog.mineable_minerals(mining_ores)
+        # "este lo compro": fuera de lo minable y del plan de ore
+        mineable = mineable - frozenset(mining.exclude_minerals)
         prices = SelfMinedPriceProvider(
             prices, mineable, mining.basis, mining_ores,
             mining.reprocess_yield, mining.fixed_price,
@@ -161,9 +164,11 @@ def resolve(
 
     # --- minado: reparto del coste por fuente + plan de ore ---
     cost_self_mined = cost_bought_minerals = cost_bought_other = 0.0
+    leaf_source: dict[int, str] = {}
     for t, c in leaf_cost.items():
         info = dataset.types.get(t)
         is_mineral = info is not None and info.group_id == MINERAL_GROUP_ID
+        leaf_source[t] = "mined" if (is_mineral and t in mineable) else "bought"
         if is_mineral and t in mineable:
             cost_self_mined += c
         elif is_mineral:
@@ -178,6 +183,7 @@ def resolve(
             t: q for t, q in p2.leaves.items()
             if (info := dataset.types.get(t)) is not None
             and info.group_id == MINERAL_GROUP_ID
+            and t not in mining.exclude_minerals
         }
         mining_plan = ore_mix_for(targets, mining_ores, mining.reprocess_yield)
         # F5: lo que valdria vender ese ore comprimido en vez de construir.
@@ -241,6 +247,7 @@ def resolve(
         nodes=nodes,
         leaves=dict(p2.leaves),
         leaf_cost=leaf_cost,
+        leaf_source=leaf_source,
         flips=list(mob.flips),
         warnings=warnings,
         fixpoint_iterations=mob.iterations,

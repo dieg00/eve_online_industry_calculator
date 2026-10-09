@@ -180,7 +180,7 @@ export default function Page() {
           )}
 
           <CostBreakdown r={r} />
-          <ShoppingList r={r} />
+          <ShoppingList r={r} st={st} mineable={out.mineable} patch={patch} />
           {r.mining_plan && <MiningPanel r={r} miningRate={st.mining_rate} />}
           <DecisionTree r={r} ov={overrides} onPatch={patch} />
           <Warnings warnings={r.warnings} />

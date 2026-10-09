@@ -193,3 +193,25 @@ def test_build_assumptions_wires_ore_catalog():
     a = build_assumptions(State.parse("t=641&ore=462"), ores_doc=ores_doc)
     assert a.mining is not None and a.mining.active
     assert len(a.ore_catalog.ores) == 1
+
+
+def test_exclude_minerals_round_trip():
+    st = State.parse("t=641&ore=462,460&nomine=38,39")
+    assert st.exclude_minerals == (38, 39)
+    assert st.to_query() == "t=641&ore=462,460&nomine=38,39"
+    assert State.parse(st.to_query()).exclude_minerals == (38, 39)
+    assert st.to_dict()["exclude_minerals"] == [38, 39]
+
+
+def test_exclude_minerals_only_serialized_with_ores():
+    # sin ores marcados la exclusión no significa nada y no se emite
+    st = State.parse("t=641&nomine=38")
+    assert st.exclude_minerals == (38,)
+    assert st.to_query() == "t=641"
+
+
+def test_build_mining_passes_exclusions():
+    from eveindustry.state import build_mining
+
+    m = build_mining(State.parse("t=641&ore=462&nomine=34,35"))
+    assert m is not None and m.exclude_minerals == (34, 35)

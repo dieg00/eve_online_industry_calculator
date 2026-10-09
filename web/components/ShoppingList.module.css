@@ -28,3 +28,40 @@
 .row:hover {
   background: var(--panel-3);
 }
+
+.hint {
+  margin: 0 0 var(--s2);
+  font-size: var(--fs-xs);
+  color: var(--faint);
+}
+
+/* Origen del material: minado (sale de tu ore) o comprado (va al multibuy). */
+.srcCell {
+  white-space: nowrap;
+}
+.src {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  padding: 0 5px;
+  border-radius: var(--r1);
+  line-height: 1.6;
+}
+.mined {
+  background: rgba(76, 195, 138, 0.15);
+  color: var(--good);
+}
+.bought {
+  background: rgba(139, 151, 165, 0.15);
+  color: var(--muted);
+}
+.toggle {
+  margin-left: var(--s1);
+}
+
+.sub td {
+  border-top: 1px solid var(--line);
+  font-size: var(--fs-sm);
+}
+.sub + .sub td {
+  border-top: 0;
+}

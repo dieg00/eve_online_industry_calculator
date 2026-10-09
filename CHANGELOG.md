@@ -5,6 +5,12 @@ Una sola versión para todo el proyecto (motor + web) — ver `## Versionado` en
 `CLAUDE.md`. Nunca una sección `## [Unreleased]`: la web asume que la primera
 entrada de este fichero es la versión que corre ahora mismo.
 
+## [0.3.0] - 2026-10-09
+
+### Added
+- Minar o comprar, mineral a mineral: en la lista de la compra cada mineral que tus ores producen sale como «minado» y se puede pasar a «lo compro» (parámetro `nomine` en la URL, `--buy-mineral` en la CLI); el margen y el plan de minado se recalculan.
+- El motor devuelve `leaf_source` (minado / comprado) por cada material; la lista de la compra separa lo que sale de tu ore de lo que va al mercado y el multibuy copia solo lo que se compra.
+
 ## [0.2.0] - 2026-09-11
 
 ### Added

@@ -42,6 +42,9 @@ class MiningConfig:
     basis: MineralBasis = MineralBasis.ORE
     fixed_price: float | None = None            # solo con basis FIXED
     m3_per_hour: float | None = None            # para estimar horas de minado
+    # minerales que, aunque tus ores los produzcan, prefieres comprar
+    # ("este lo compro"): salen de `mineable` y del plan de ore.
+    exclude_minerals: tuple[int, ...] = ()
 
     @property
     def active(self) -> bool:
