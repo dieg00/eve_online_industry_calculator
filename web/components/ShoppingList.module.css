@@ -56,17 +56,6 @@
 }
 .toggle {
   margin-left: var(--s1);
-  /* solo se revela al pasar por la fila: la tabla no se llena de botones */
-  opacity: 0;
-}
-.row:hover .toggle,
-.toggle:focus-visible {
-  opacity: 1;
-}
-@media (hover: none) {
-  .toggle {
-    opacity: 1;
-  }
 }
 
 .sub td {

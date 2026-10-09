@@ -7,8 +7,12 @@
 preguntar cada vez.
 
 - Mensajes de commit descriptivos y en presente.
-- Acabar cada mensaje con `Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>`.
-- Trabajo en `main` directamente (proyecto de una persona).
+- Acabar cada mensaje con el trailer `Co-Authored-By: <modelo en uso> <noreply@anthropic.com>`
+  (p. ej. `Claude Fable 5.1`).
+- Cambios pequeños: en `main` directamente (proyecto de una persona).
+- Fases de trabajo grandes (acordado 2026-10-09): rama `feat/<tema>` + PR por
+  fase, revisión adversarial (`/code-review`) y, si está limpia y la CI en verde,
+  squash-merge a `main` sin esperar; después, el tag de versión sobre `main`.
 
 ## Comandos
 

@@ -155,3 +155,8 @@ def test_calc_without_ores_has_no_mining_plan(capsys):
     doc = json.loads(capsys.readouterr().out)
     assert doc["mining_plan"] is None
     assert doc["cost_self_mined"] == 0.0
+
+
+def test_link_buy_mineral_adds_nomine(capsys):
+    main(["link", "20184", "--ore", "462", "--buy-mineral", "34", "--buy-mineral", "35"])
+    assert capsys.readouterr().out.strip() == "t=20184&ore=462&nomine=34,35"

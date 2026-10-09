@@ -129,7 +129,6 @@ export type RigsDoc = {
 };
 
 export type OresDoc = {
-  ores?: Record<string, { n: string; fam: number; grade: number; m: [number, number][] }>;
   families: Record<string, { n: string; grades: Record<string, number> }>;
   secPresets: Record<string, number[]>;
 };
