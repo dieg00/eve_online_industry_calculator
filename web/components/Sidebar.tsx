@@ -356,7 +356,8 @@ export default function Sidebar({
                 step={0.1}
                 onCommit={(raw) => {
                   const v = +raw / 100;
-                  if (!(v > 0 && v <= 1)) return;
+                  // vacío o fuera de rango: vuelve al 87,6 % por defecto
+                  if (raw === "" || !(v > 0 && v <= 1)) return patch({ ry: null });
                   patch({ ry: Math.abs(v - 0.876) < 1e-9 ? null : String(v) });
                 }}
               />

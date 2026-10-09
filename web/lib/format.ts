@@ -25,6 +25,14 @@ export function iskShort(n: number | null | undefined): string {
   return `${sign}${Math.round(abs).toLocaleString("en-US")}`;
 }
 
+/** Horas legibles: "45 min", "3.5 h", "1,298 h (54 d)". */
+export function hoursLabel(h: number | null | undefined): string {
+  if (h == null || !isFinite(h) || h < 0) return "—";
+  if (h < 1) return `${Math.round(h * 60)} min`;
+  if (h < 48) return `${h.toFixed(1)} h`;
+  return `${qty(h)} h (${(h / 24).toFixed(0)} d)`;
+}
+
 /** "hace 3 h" a partir de un ISO8601. Para la antigüedad de precios/índices. */
 export function relTime(iso: string | undefined): { text: string; hours: number } | null {
   if (!iso) return null;

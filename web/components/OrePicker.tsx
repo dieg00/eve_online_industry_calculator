@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { OreFamily } from "@/lib/types";
 import s from "./OrePicker.module.css";
 
@@ -43,7 +43,7 @@ export default function OrePicker({
   onSet: (ids: number[]) => void;
 }) {
   const [showOthers, setShowOthers] = useState(false);
-  const on = useMemo(() => new Set(selected), [selected]);
+  const on = new Set(selected);
 
   const asteroid = families.filter((f) => f.asteroid);
   const others = families.filter((f) => !f.asteroid);
@@ -55,12 +55,12 @@ export default function OrePicker({
   };
 
   // qué minerales cubre la selección actual, para el resumen de abajo
-  const covered = useMemo(() => {
+  const covered = (() => {
     const seen = new Map<number, string>();
     for (const f of families)
       if (on.has(String(f.id))) for (const [id, name] of f.minerals) seen.set(id, name);
     return [...seen.entries()].sort((a, b) => a[0] - b[0]);
-  }, [families, on]);
+  })();
 
   const row = (f: OreFamily) => (
     <label key={f.id} className={`${s.fam} ${on.has(String(f.id)) ? s.on : ""}`}>

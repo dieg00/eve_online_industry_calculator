@@ -1,14 +1,8 @@
 "use client";
 
-import { isk, qty } from "@/lib/format";
+import { hoursLabel, isk, qty } from "@/lib/format";
 import type { ResolveResult } from "@/lib/types";
 import s from "./MiningPanel.module.css";
-
-function hoursLabel(h: number): string {
-  if (h < 1) return `${Math.round(h * 60)} min`;
-  if (h < 48) return `${h.toFixed(1)} h`;
-  return `${qty(h)} h (${(h / 24).toFixed(0)} d)`;
-}
 
 export default function MiningPanel({
   r,
@@ -28,7 +22,8 @@ export default function MiningPanel({
 
   // Antes las horas se derivaban de rebote (`margin / margin_per_hour`), así que
   // poner m³/h sin precio de venta del root no producía nada visible.
-  const hours = miningRate && miningRate > 0 ? mp.total_m3 / miningRate : null;
+  const rate = miningRate && miningRate > 0 ? miningRate : null;
+  const hours = rate != null ? mp.total_m3 / rate : null;
 
   const shortfall = Object.entries(mp.shortfall).sort((a, b) => b[1] - a[1]);
   const surplus = Object.entries(mp.surplus).sort((a, b) => b[1] - a[1]);
@@ -56,7 +51,7 @@ export default function MiningPanel({
                 <th className="r">Unidades</th>
                 <th className="r">m³</th>
                 <th className="r">m³ comp.</th>
-                {hours != null && <th className="r">Horas</th>}
+                {rate != null && <th className="r">Horas</th>}
               </tr>
             </thead>
             <tbody>
@@ -76,9 +71,7 @@ export default function MiningPanel({
                   <td className="r num">{qty(l.units)}</td>
                   <td className="r num">{qty(l.m3)}</td>
                   <td className="r num faint">{qty(l.m3_compressed)}</td>
-                  {hours != null && miningRate && (
-                    <td className="r num faint">{hoursLabel(l.m3 / miningRate)}</td>
-                  )}
+                  {rate != null && <td className="r num faint">{hoursLabel(l.m3 / rate)}</td>}
                 </tr>
               ))}
             </tbody>
