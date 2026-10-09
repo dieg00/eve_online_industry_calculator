@@ -133,6 +133,16 @@ export type OresDoc = {
   secPresets: Record<string, number[]>;
 };
 
+/** Familia de ore para el selector (del bridge `ore_families()`). */
+export type OreFamily = {
+  id: number;
+  name: string;
+  /** grupos 450–469: las 16 familias clásicas de asteroide */
+  asteroid: boolean;
+  /** [mineralTypeID, nombre, unidades por lote del ore base], de más a menos */
+  minerals: [number, string, number][];
+};
+
 /** systems.json: systemID -> [nombre, security] */
 export type SystemsMap = Record<string, [string, number]>;
 

@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import type { Buildable, FormState } from "@/lib/engine";
-import type { OresDoc, RigsDoc, SystemsMap } from "@/lib/types";
+import type { OreFamily, OresDoc, RigsDoc, SystemsMap } from "@/lib/types";
+import OrePicker from "./OrePicker";
 import Combobox, { type ComboOption } from "./Combobox";
 import NumberField from "./NumberField";
 import Section from "./Section";
@@ -17,6 +18,7 @@ type Props = {
   systems: SystemsMap;
   rigsDoc: RigsDoc | null;
   oresDoc: OresDoc | null;
+  oreFamilies: OreFamily[];
   rootName: string;
   treeGroups: number[];
   treeCategories: number[];
@@ -29,6 +31,7 @@ export default function Sidebar({
   systems,
   rigsDoc,
   oresDoc,
+  oreFamilies,
   rootName,
   treeGroups,
   treeCategories,
@@ -63,13 +66,6 @@ export default function Sidebar({
       )
       .sort((a, b) => a[1].n.localeCompare(b[1].n));
   }, [rigsDoc, treeGroups, treeCategories, allRigs]);
-
-  const oreFamilies = useMemo(() => {
-    if (!oresDoc) return [] as [string, string][];
-    return Object.entries(oresDoc.families)
-      .map(([id, f]) => [id, f.n] as [string, string])
-      .sort((a, b) => a[1].localeCompare(b[1]));
-  }, [oresDoc]);
 
   const rigsOn = st.rig_type_ids.map(String);
   const oresOn = st.ore_families.map(String);
@@ -323,70 +319,48 @@ export default function Sidebar({
         badge={oresOn.length > 0 ? `${oresOn.length} ores` : undefined}
       >
         <p className={s.hint}>
-          Marca el ore que puedes minar. Lo que tus ores no cubran se compra.
+          Marca el ore que puedes minar. Sus minerales salen de tu ore; el resto se compra. En la
+          lista de la compra puedes pasar cualquier mineral a «lo compro».
         </p>
 
-        <div className="field">
-          <label>
-            Ore disponible{" "}
-            {["highsec", "lowsec", "nullsec"].map((b) => (
-              <button
-                key={b}
-                className="btn btn-xs"
-                onClick={() => patch({ ore: (oresDoc?.secPresets?.[b] ?? []).join(",") || null })}
-              >
-                {b}
-              </button>
-            ))}
-            {oresOn.length > 0 && (
-              <button className="btn btn-xs" onClick={() => patch({ ore: null })}>
-                ninguno
-              </button>
-            )}
-          </label>
-          <div className={s.list}>
-            {oreFamilies.length === 0 && <span className="faint">cargando…</span>}
-            {oreFamilies.map(([id, name]) => (
-              <label key={id} className={`inline ${s.check}`}>
-                <input
-                  type="checkbox"
-                  checked={oresOn.includes(id)}
-                  onChange={() => toggleIn(oresOn, id, "ore")}
-                />
-                <span>{name}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+        <OrePicker
+          selected={oresOn}
+          families={oreFamilies}
+          presets={oresDoc?.secPresets ?? {}}
+          onToggle={(id) => toggleIn(oresOn, id, "ore")}
+          onSet={(ids) => patch({ ore: ids.join(",") || null })}
+        />
 
         {oresOn.length > 0 && (
           <>
-            <div className="field">
-              <label htmlFor="ograde">Grado del ore</label>
-              <select
-                id="ograde"
-                value={st.ore_grade}
-                onChange={(e) => patch({ ograde: e.target.value === "1" ? null : e.target.value })}
-              >
-                <option value="0">0-Grade</option>
-                <option value="1">Base</option>
-                <option value="2">II-Grade (+5%)</option>
-                <option value="3">III-Grade (+10%)</option>
-                <option value="4">IV-Grade (+15%)</option>
-              </select>
+            <div className="row">
+              <div className="field">
+                <label htmlFor="ograde">Grado del ore</label>
+                <select
+                  id="ograde"
+                  value={st.ore_grade}
+                  onChange={(e) => patch({ ograde: e.target.value === "1" ? null : e.target.value })}
+                >
+                  <option value="0">0-Grade</option>
+                  <option value="1">Base</option>
+                  <option value="2">II-Grade (+5%)</option>
+                  <option value="3">III-Grade (+10%)</option>
+                  <option value="4">IV-Grade (+15%)</option>
+                </select>
+              </div>
+              <NumberField
+                label="Reprocesado %"
+                value={+(st.reprocess_yield * 100).toFixed(2)}
+                min={1}
+                max={100}
+                step={0.1}
+                onCommit={(raw) => {
+                  const v = +raw / 100;
+                  if (!(v > 0 && v <= 1)) return;
+                  patch({ ry: Math.abs(v - 0.876) < 1e-9 ? null : String(v) });
+                }}
+              />
             </div>
-
-            <NumberField
-              label="Rendimiento de reprocesado %"
-              value={+(st.reprocess_yield * 100).toFixed(2)}
-              min={1}
-              max={100}
-              step={0.1}
-              onCommit={(raw) => {
-                const v = +raw / 100;
-                patch({ ry: v === 0.876 ? null : String(v) });
-              }}
-            />
 
             <div className="field">
               <label htmlFor="mval">Cuánto valen tus minerales</label>

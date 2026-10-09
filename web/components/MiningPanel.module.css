@@ -2,10 +2,27 @@
   background: var(--panel-3);
 }
 
-.short {
-  margin: var(--s3) 0 0;
-  color: var(--warn);
-  font-size: var(--fs-sm);
+/* Barra de m³ relativa al ore más voluminoso: una regla, no un gráfico. */
+.barCol {
+  width: 28%;
+  min-width: 80px;
+}
+.track {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--panel-3);
+  overflow: hidden;
+}
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--good);
+  opacity: 0.8;
+}
+
+.buy {
+  margin-top: var(--s3);
 }
 
 .surplus {

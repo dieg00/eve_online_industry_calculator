@@ -4,13 +4,22 @@ import { isk, qty } from "@/lib/format";
 import type { ResolveResult } from "@/lib/types";
 import s from "./MiningPanel.module.css";
 
+function hoursLabel(h: number): string {
+  if (h < 1) return `${Math.round(h * 60)} min`;
+  if (h < 48) return `${h.toFixed(1)} h`;
+  return `${qty(h)} h (${(h / 24).toFixed(0)} d)`;
+}
+
 export default function MiningPanel({
   r,
   miningRate,
+  excluded,
 }: {
   r: ResolveResult;
   /** m³/h del setup, para estimar horas aunque no haya margen */
   miningRate: number | null;
+  /** typeIDs de minerales que podrías minar pero has decidido comprar (nomine) */
+  excluded: number[];
 }) {
   const mp = r.mining_plan;
   if (!mp) return null;
@@ -21,8 +30,9 @@ export default function MiningPanel({
   // poner m³/h sin precio de venta del root no producía nada visible.
   const hours = miningRate && miningRate > 0 ? mp.total_m3 / miningRate : null;
 
-  const shortfall = Object.entries(mp.shortfall);
+  const shortfall = Object.entries(mp.shortfall).sort((a, b) => b[1] - a[1]);
   const surplus = Object.entries(mp.surplus).sort((a, b) => b[1] - a[1]);
+  const maxM3 = Math.max(...mp.lines.map((l) => l.m3), 1);
 
   return (
     <div className="panel">
@@ -30,46 +40,83 @@ export default function MiningPanel({
         Plan de minado
         <span className="faint num">
           {qty(mp.total_m3)} m³ · {qty(mp.total_m3_compressed)} m³ comprimido
-          {hours != null && ` · ${hours.toFixed(1)} h`}
+          {hours != null && ` · ${hoursLabel(hours)}`}
         </span>
       </h2>
 
-      <table className="data">
-        <thead>
-          <tr>
-            <th>Ore</th>
-            <th className="r">Unidades</th>
-            <th className="r">m³</th>
-            <th className="r">m³ comp.</th>
-          </tr>
-        </thead>
-        <tbody>
-          {mp.lines.map((l) => (
-            <tr key={l.ore_type_id} className={s.row}>
-              <td>
-                {l.ore_name}
-                {l.family_name && l.family_name !== l.ore_name && (
-                  <span className="faint"> · {l.family_name}</span>
-                )}
-              </td>
-              <td className="r num">{qty(l.units)}</td>
-              <td className="r num">{qty(l.m3)}</td>
-              <td className="r num faint">{qty(l.m3_compressed)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {mp.lines.length === 0 ? (
+        <p className={s.note}>Ninguno de tus ores produce los minerales que hacen falta.</p>
+      ) : (
+        <div className="tablewrap">
+          <table className="data">
+            <thead>
+              <tr>
+                <th>Ore</th>
+                <th className={s.barCol} />
+                <th className="r">Unidades</th>
+                <th className="r">m³</th>
+                <th className="r">m³ comp.</th>
+                {hours != null && <th className="r">Horas</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {mp.lines.map((l) => (
+                <tr key={l.ore_type_id} className={s.row}>
+                  <td>
+                    {l.ore_name}
+                    {l.family_name && l.family_name !== l.ore_name && (
+                      <span className="faint"> · {l.family_name}</span>
+                    )}
+                  </td>
+                  <td className={s.barCol}>
+                    <span className={s.track} aria-hidden="true">
+                      <span className={s.fill} style={{ width: `${(l.m3 / maxM3) * 100}%` }} />
+                    </span>
+                  </td>
+                  <td className="r num">{qty(l.units)}</td>
+                  <td className="r num">{qty(l.m3)}</td>
+                  <td className="r num faint">{qty(l.m3_compressed)}</td>
+                  {hours != null && miningRate && (
+                    <td className="r num faint">{hoursLabel(l.m3 / miningRate)}</td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      {shortfall.length > 0 && (
-        <p className={s.short}>
-          Tus ores no cubren (se compran):{" "}
-          {shortfall.map(([id, q]) => `${name(id)} ${qty(q)}`).join(" · ")}
-        </p>
+      {(shortfall.length > 0 || excluded.length > 0) && (
+        <table className={`data ${s.buy}`}>
+          <thead>
+            <tr>
+              <th>Se compra en el mercado</th>
+              <th className="r">Unidades</th>
+              <th>Por qué</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shortfall.map(([id, q]) => (
+              <tr key={id}>
+                <td>{name(id)}</td>
+                <td className="r num">{qty(q)}</td>
+                <td className="warn">tus ores no lo dan</td>
+              </tr>
+            ))}
+            {excluded.map((id) => (
+              <tr key={`x-${id}`}>
+                <td>{name(String(id))}</td>
+                <td className="r num faint">{qty(r.leaves[String(id)] ?? null)}</td>
+                <td className="muted">has elegido comprarlo</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
 
       {surplus.length > 0 && (
         <p className={s.surplus}>
-          Excedente: {surplus.slice(0, 4).map(([id, q]) => `${name(id)} ${qty(q)}`).join(" · ")}
+          Te sobrará: {surplus.slice(0, 4).map(([id, q]) => `${name(id)} ${qty(q)}`).join(" · ")}
           {surplus.length > 4 && ` · y ${surplus.length - 4} más`}
         </p>
       )}
