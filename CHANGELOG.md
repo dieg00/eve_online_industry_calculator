@@ -5,6 +5,12 @@ Una sola versión para todo el proyecto (motor + web) — ver `## Versionado` en
 `CLAUDE.md`. Nunca una sección `## [Unreleased]`: la web asume que la primera
 entrada de este fichero es la versión que corre ahora mismo.
 
+## [0.5.0] - 2026-10-09
+
+### Added
+- Veredicto arriba del resultado: una frase («Fabricar Providence en Jita pierde 131 M ISK (−8,6 %). Sale más barato comprarlo hecho.»), con cuánto del coste sale de tu ore y las horas de minado, y dos barras coste (por origen) frente a ingreso neto.
+- Arranque por pasos (runtime, motor, datos, compilar) con la nota de que la descarga solo ocurre la primera vez.
+
 ## [0.4.0] - 2026-10-09
 
 ### Added

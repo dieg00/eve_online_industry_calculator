@@ -87,12 +87,6 @@ export default function CostBreakdown({ r }: { r: ResolveResult }) {
         </tbody>
         </table>
       </div>
-
-      {r.root_should_buy && (
-        <p className={s.note}>
-          A estos precios sale más barato comprar el item entero que fabricarlo.
-        </p>
-      )}
     </div>
   );
 }

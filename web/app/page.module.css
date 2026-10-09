@@ -61,14 +61,6 @@
 
 /* --- arranque --- */
 
-.boot {
-  display: flex;
-  align-items: center;
-  gap: var(--s2);
-  padding: var(--s5) var(--s4);
-  color: var(--muted);
-  font-size: var(--fs-sm);
-}
 
 .skeleton {
   height: 220px;
