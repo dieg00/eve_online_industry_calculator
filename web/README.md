@@ -18,7 +18,10 @@ npm run dev        # predev copia data/ y dist/*.whl a public/
 
 - `public/data/*.json` — SDE recortado (`blueprints`, `types`, `systems`, `rigs`)
   desde `../data`, más `prices.json` / `indices.json`.
-- `public/engine/eveindustry-0.1.0-py3-none-any.whl` + `version.txt` (cache-bust).
+- `public/engine/eveindustry-<versión>-py3-none-any.whl` + `manifest.json` (nombre
+  real del wheel + hash de cache-busting; `pyodide.ts` lo lee en runtime).
+- `public/data/changelog.json`, derivado de `../CHANGELOG.md` (ver `## Versionado`
+  en el `CLAUDE.md` de la raíz).
 
 `prices.json` / `indices.json` los publica la GitHub Action (`.github/workflows/
 data.yml`) en la rama `data`. El frontend los lee **en tiempo de ejecución**
@@ -42,11 +45,30 @@ El repo debe ser público para que el navegador pueda leer el raw.
 ## Arquitectura
 
 ```
-lib/pyodide.ts   carga diferida de Pyodide (CDN) + micropip install del wheel
-lib/engine.ts    bootstrap Python: dataset_from_docs + resolve; expone calc()/buildables()
-lib/query.ts     edición del query-string de estado (el formato lo define eveindustry/state.py)
-app/page.tsx     UI: inputs -> query -> engine.calc(query) -> render; estado en la URL
+lib/pyodide.ts      carga diferida de Pyodide (CDN) + micropip install del wheel
+lib/engine.ts       bootstrap Python: dataset_from_docs + resolve; expone calc(),
+                    buildables(), meta() y ore_families()
+lib/query.ts        edición del query-string de estado (el formato lo define eveindustry/state.py)
+lib/types.ts        espejo TS de los dataclasses del motor (claves de dict = string)
+lib/format.ts       isk / qty / pct / iskShort / hoursLabel / relTime
+lib/overrides.ts    lectura/escritura de pol.<id>, me.<bp>, px.<id>
+lib/prefs.ts, lastSeenVersion.ts, recentItems.ts   localStorage (UI, no estado del cálculo)
+app/page.tsx        orquesta: query -> engine.calc(query) -> render; estado en la URL
 ```
+
+Componentes (`components/`), de arriba abajo en la página:
+
+| | |
+|---|---|
+| `SummaryBar` | barra fija: item, coste unitario, margen |
+| `Sidebar` | secciones plegables: qué construyes (`Combobox`, `QuickPicks`), dónde, estrategia, mercado, minado propio (`OrePicker`) |
+| `ActiveOverrides`, `ShareLink` | overrides activos; copiar enlace / restablecer |
+| `Verdict` | el resultado en una frase + barras coste vs ingreso |
+| `CostBreakdown` | desglose del coste con barras de proporción |
+| `ShoppingList` | materiales: origen (minado / comprado), toggle «lo compro», multibuy, CSV |
+| `MiningPanel` | plan de ore con m³ y horas, lo que se compra y por qué |
+| `DecisionTree`, `NodeOverride` | árbol de fabricación con overrides por nodo |
+| `Warnings`, `DataFreshness`, `VersionBadge`, `BootSteps` | avisos, antigüedad de precios, versión y novedades, arranque |
 
 El primer arranque descarga ~6–8 MB de runtime (cacheado luego); cada recálculo
 posterior es local e instantáneo.

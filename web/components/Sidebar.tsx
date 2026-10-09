@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import type { Buildable, FormState } from "@/lib/engine";
 import type { OreFamily, OresDoc, RigsDoc, SystemsMap } from "@/lib/types";
 import OrePicker from "./OrePicker";
+import QuickPicks from "./QuickPicks";
+import type { RecentItem } from "@/lib/recentItems";
 import Combobox, { type ComboOption } from "./Combobox";
 import NumberField from "./NumberField";
 import Section from "./Section";
@@ -19,6 +21,7 @@ type Props = {
   rigsDoc: RigsDoc | null;
   oresDoc: OresDoc | null;
   oreFamilies: OreFamily[];
+  recent: RecentItem[];
   rootName: string;
   treeGroups: number[];
   treeCategories: number[];
@@ -32,6 +35,7 @@ export default function Sidebar({
   rigsDoc,
   oresDoc,
   oreFamilies,
+  recent,
   rootName,
   treeGroups,
   treeCategories,
@@ -85,6 +89,12 @@ export default function Sidebar({
           options={itemOptions}
           onPick={(id) => patch({ t: id })}
           placeholder="Providence, Damage Control II…"
+        />
+        <QuickPicks
+          buildables={buildables}
+          recent={recent}
+          currentName={rootName}
+          onPick={(id) => patch({ t: id })}
         />
 
         <NumberField

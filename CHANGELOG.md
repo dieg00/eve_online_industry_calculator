@@ -5,6 +5,15 @@ Una sola versión para todo el proyecto (motor + web) — ver `## Versionado` en
 `CLAUDE.md`. Nunca una sección `## [Unreleased]`: la web asume que la primera
 entrada de este fichero es la versión que corre ahora mismo.
 
+## [0.6.0] - 2026-10-09
+
+### Added
+- Atajos bajo el buscador de item: los últimos calculados en este navegador y unos ejemplos fijos (Providence, Damage Control II, Hulk, Rifter, Hobgoblin II, Fullerides).
+- Botón «restablecer» junto a «copiar enlace» para volver al cálculo por defecto.
+
+### Changed
+- `web/README.md` documenta el mapa actual de `lib/` y `components/`; el `CLAUDE.md` de la raíz apunta a él.
+
 ## [0.5.0] - 2026-10-09
 
 ### Added

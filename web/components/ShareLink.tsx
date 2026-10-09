@@ -4,7 +4,7 @@ import { useState } from "react";
 import s from "./ShareLink.module.css";
 
 /** El estado entero vive en la URL, así que compartirla es compartir el cálculo. */
-export default function ShareLink({ query }: { query: string }) {
+export default function ShareLink({ query, onReset }: { query: string; onReset: () => void }) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -24,6 +24,9 @@ export default function ShareLink({ query }: { query: string }) {
       <code className={s.code}>?{query}</code>
       <button className="btn btn-xs" onClick={copy}>
         {copied ? "copiado ✓" : "copiar enlace"}
+      </button>
+      <button className="btn btn-xs" onClick={onReset} title="Vuelve al cálculo por defecto">
+        restablecer
       </button>
     </div>
   );
