@@ -1,0 +1,88 @@
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1);
+  margin-bottom: var(--s2);
+}
+
+.list {
+  max-height: 300px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  padding: var(--s1) var(--s2);
+  background: var(--panel-2);
+}
+
+.fam {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "box name"
+    "box mins";
+  column-gap: var(--s2);
+  align-items: center;
+  padding: 3px 0;
+  margin: 0;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  border-bottom: 1px solid var(--line);
+}
+.fam:last-child {
+  border-bottom: 0;
+}
+.fam:hover,
+.fam.on {
+  color: var(--text);
+}
+.fam input {
+  grid-area: box;
+  margin: 0;
+}
+.name {
+  grid-area: name;
+  font-weight: 550;
+}
+.mins {
+  grid-area: mins;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  line-height: 1;
+}
+.min {
+  font-size: var(--fs-xs);
+  padding: 1px 5px;
+  border-radius: var(--r1);
+  background: rgba(139, 151, 165, 0.14);
+  color: var(--faint);
+  font-family: var(--mono);
+}
+.fam.on .min {
+  background: rgba(76, 195, 138, 0.14);
+  color: var(--good);
+}
+
+.more {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: var(--s2) 0 var(--s1);
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.more:hover {
+  color: var(--text);
+}
+
+.summary {
+  margin: var(--s2) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--faint);
+}

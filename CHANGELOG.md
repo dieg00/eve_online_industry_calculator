@@ -5,6 +5,12 @@ Una sola versión para todo el proyecto (motor + web) — ver `## Versionado` en
 `CLAUDE.md`. Nunca una sección `## [Unreleased]`: la web asume que la primera
 entrada de este fichero es la versión que corre ahora mismo.
 
+## [0.4.0] - 2026-10-09
+
+### Added
+- Selector de ore nuevo: las 16 familias de asteroide primero, cada una con los minerales que da; el ore de lunas, Triglavian y otros queda plegado. Presets por banda de seguridad como botones de estado y resumen de qué minerales cubre tu selección.
+- Plan de minado: barra de m³ por ore, horas por ore con tu ritmo, y una tabla de lo que se compra en el mercado con el motivo (tus ores no lo dan / has elegido comprarlo).
+
 ## [0.3.0] - 2026-10-09
 
 ### Added

@@ -6,7 +6,7 @@ import { errorCause } from "@/lib/format";
 import { base } from "@/lib/pyodide";
 import { patchQuery } from "@/lib/query";
 import { readOverrides } from "@/lib/overrides";
-import type { ChangelogEntry, DataMeta, OresDoc, RigsDoc, SystemsMap } from "@/lib/types";
+import type { ChangelogEntry, DataMeta, OreFamily, OresDoc, RigsDoc, SystemsMap } from "@/lib/types";
 import ActiveOverrides from "@/components/ActiveOverrides";
 import CostBreakdown from "@/components/CostBreakdown";
 import DataFreshness from "@/components/DataFreshness";
@@ -42,6 +42,7 @@ export default function Page() {
   const [rigsDoc, setRigsDoc] = useState<RigsDoc | null>(null);
   const [oresDoc, setOresDoc] = useState<OresDoc | null>(null);
   const [meta, setMeta] = useState<DataMeta | null>(null);
+  const [oreFamilies, setOreFamilies] = useState<OreFamily[]>([]);
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function Page() {
         setEngine(e);
         setBuildables(e.buildables());
         setMeta(e.meta());
+        setOreFamilies(e.oreFamilies());
         setStatus("");
       })
       .catch((x) => alive && setBootError(errorCause(x)));
@@ -164,6 +166,7 @@ export default function Page() {
             systems={systems}
             rigsDoc={rigsDoc}
             oresDoc={oresDoc}
+            oreFamilies={oreFamilies}
             rootName={r.root_name}
             treeGroups={out.tree_groups}
             treeCategories={out.tree_categories}
@@ -181,7 +184,13 @@ export default function Page() {
 
           <CostBreakdown r={r} />
           <ShoppingList r={r} st={st} mineable={out.mineable} patch={patch} />
-          {r.mining_plan && <MiningPanel r={r} miningRate={st.mining_rate} />}
+          {r.mining_plan && (
+            <MiningPanel
+              r={r}
+              miningRate={st.mining_rate}
+              excluded={st.exclude_minerals.filter((id) => String(id) in r.leaves)}
+            />
+          )}
           <DecisionTree r={r} ov={overrides} onPatch={patch} />
           <Warnings warnings={r.warnings} />
           <DataFreshness meta={meta} />

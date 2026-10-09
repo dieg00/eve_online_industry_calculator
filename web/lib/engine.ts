@@ -2,7 +2,7 @@
 // calc(query) -> ResolveResult. Una sola instancia por pestaña.
 
 import { base, getPyodide } from "./pyodide";
-import type { DataMeta, ResolveResult } from "./types";
+import type { DataMeta, OreFamily, ResolveResult } from "./types";
 
 export type { ResolveResult } from "./types";
 
@@ -15,6 +15,7 @@ from eveindustry.state import (
 from eveindustry.engine.resolve import resolve
 from eveindustry.prices.static_json import StaticJsonPriceProvider
 from eveindustry.prices.overrides import OverridePriceProvider
+from eveindustry.model.ores import OreCatalog
 
 _DS = dataset_from_docs(json.loads(_BP_JSON), json.loads(_TYPES_JSON))
 _PRICES_DOC = json.loads(_PRICES_JSON)
@@ -71,6 +72,29 @@ def meta():
         "indices": _INDICES_DOC.get("meta", {}),
     })
 
+_ASTEROID_FAMILIES = range(450, 470)   # las 16 familias clásicas del SDE
+
+def ore_families():
+    """Catálogo de familias de ore para el selector: qué minerales da cada una
+    (del ore de grado base, por lote), y si es de asteroide o de luna/trig/otros."""
+    cat = OreCatalog.from_doc(_ORES_DOC)
+    rows = []
+    for fid, name in cat.families.items():
+        grades = cat.grades_by_family.get(fid) or {}
+        if not grades:
+            continue
+        base = grades.get(1, grades[min(grades)])
+        ore = cat.ores.get(base)
+        minerals = sorted(ore.minerals, key=lambda mq: -mq[1]) if ore else []
+        rows.append({
+            "id": fid,
+            "name": name,
+            "asteroid": fid in _ASTEROID_FAMILIES,
+            "minerals": [[m, _DS.type_name(m), q] for m, q in minerals],
+        })
+    rows.sort(key=lambda r: r["name"])
+    return json.dumps(rows)
+
 def buildables():
     rows = []
     for pid, bpid in _DS.blueprint_by_product.items():
@@ -125,6 +149,7 @@ export type Engine = {
   normalize: (query: string) => { state: FormState; query: string };
   buildables: () => Buildable[];
   meta: () => DataMeta;
+  oreFamilies: () => OreFamily[];
 };
 
 let cached: Engine | null = null;
@@ -160,12 +185,14 @@ export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
     const pyNorm = py.globals.get("normalize");
     const pyBuildables = py.globals.get("buildables");
     const pyMeta = py.globals.get("meta");
+    const pyOreFamilies = py.globals.get("ore_families");
 
     cached = {
       calc: (q: string) => JSON.parse(pyCalc(q)),
       normalize: (q: string) => JSON.parse(pyNorm(q)),
       buildables: () => JSON.parse(pyBuildables()),
       meta: () => JSON.parse(pyMeta()),
+      oreFamilies: () => JSON.parse(pyOreFamilies()),
     };
     return cached;
   })();
