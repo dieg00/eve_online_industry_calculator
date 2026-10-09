@@ -24,11 +24,3 @@
   width: 44px;
 }
 
-.note {
-  margin: var(--s3) 0 0;
-  padding: var(--s2) var(--s3);
-  border-left: 2px solid var(--warn);
-  background: rgba(231, 185, 85, 0.08);
-  color: var(--warn);
-  font-size: var(--fs-sm);
-}

@@ -16,7 +16,9 @@ import Sidebar from "@/components/Sidebar";
 import ShareLink from "@/components/ShareLink";
 import ShoppingList from "@/components/ShoppingList";
 import SummaryBar from "@/components/SummaryBar";
+import Verdict from "@/components/Verdict";
 import VersionBadge from "@/components/VersionBadge";
+import BootSteps from "@/components/BootSteps";
 import Warnings from "@/components/Warnings";
 import s from "./page.module.css";
 
@@ -133,10 +135,7 @@ export default function Page() {
     return (
       <div className="wrap">
         {header}
-        <div className={s.boot}>
-          <span className="spinner" />
-          {status || "Cargando…"}
-        </div>
+        <BootSteps status={status} />
         <div className={s.app}>
           <div className={s.controls}>
             <div className={s.skeleton} />
@@ -150,6 +149,7 @@ export default function Page() {
 
   const r = out.result;
   const st = out.state;
+  const systemName = st.system_id != null ? systems[String(st.system_id)]?.[0] ?? "" : "";
 
   return (
     <div className="wrap">
@@ -182,6 +182,7 @@ export default function Page() {
             </div>
           )}
 
+          <Verdict r={r} systemName={systemName} miningRate={st.mining_rate} />
           <CostBreakdown r={r} />
           <ShoppingList r={r} st={st} mineable={out.mineable} patch={patch} />
           {r.mining_plan && (
