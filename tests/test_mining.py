@@ -108,3 +108,90 @@ def test_catalog_pick_falls_back_to_a_lower_grade():
     assert [o.type_id for o in picked] == [1]
     assert cat.mineable_minerals(picked) == frozenset({TRIT})
     assert cat.sec_presets["highsec"] == (462,)
+
+
+# --- "este lo compro": exclusión por mineral -------------------------------
+def _mine_or_buy_setup():
+    """Producto P = 100 Tritanium + 100 Pyerite; solo Veldspar (da Tritanium)."""
+    from eveindustry.model.assumptions import Assumptions, MiningConfig
+    from eveindustry.model.dataset import dataset_from_docs
+    from eveindustry.model.types import MINERAL_GROUP_ID
+
+    P, BP = 500, 501
+    bp_doc = {
+        "blueprints": {str(BP): {"a": 1, "p": P, "pr": 1, "ml": 100, "m": [[TRIT, 100], [PYE, 100]], "t": 0}},
+        "productIndex": {str(P): BP},
+    }
+    types = {
+        str(P): {"n": "P", "g": 1, "c": 1, "v": 0.0},
+        str(TRIT): {"n": "Tritanium", "g": MINERAL_GROUP_ID, "c": 4, "v": 0.01},
+        str(PYE): {"n": "Pyerite", "g": MINERAL_GROUP_ID, "c": 4, "v": 0.01},
+    }
+    ds = dataset_from_docs(bp_doc, {"types": types})
+    ores_doc = {
+        "ores": {
+            "1": {"n": "Veldspar", "fam": 462, "famName": "Veldspar", "grade": 1,
+                  "v": 0.1, "portion": 100, "comp": None, "m": [[TRIT, 400]]},
+        },
+        "families": {"462": {"n": "Veldspar", "grades": {"1": 1}}},
+        "secPresets": {},
+    }
+
+    class Prices:
+        table = {P: 10_000.0, TRIT: 5.0, PYE: 10.0}
+
+        def buy(self, t):
+            return self.table.get(t)
+
+        def sell(self, t):
+            return self.table.get(t)
+
+        def adjusted(self, t):
+            return self.table.get(t)
+
+        def average(self, t):
+            return self.table.get(t)
+
+    def assumptions(exclude=()):
+        return Assumptions(
+            mining=MiningConfig(ore_families=(462,), reprocess_yield=1.0,
+                                basis="zero", exclude_minerals=exclude),
+            ore_catalog=OreCatalog.from_doc(ores_doc),
+        )
+
+    return ds, P, Prices(), assumptions
+
+
+def test_leaf_source_marks_mined_vs_bought():
+    from eveindustry.engine.resolve import resolve
+
+    ds, P, prices, assumptions = _mine_or_buy_setup()
+    r = resolve(ds, P, assumptions(), prices)
+    assert r.leaf_source == {TRIT: "mined", PYE: "bought"}
+    assert r.cost_self_mined == 0.0            # basis zero
+    assert r.cost_bought_minerals == pytest.approx(100 * 10.0)
+    assert r.mining_plan.shortfall == {PYE: 100}
+    assert [l.ore_name for l in r.mining_plan.lines] == ["Veldspar"]
+
+
+def test_excluded_mineral_is_bought_and_leaves_the_ore_plan():
+    from eveindustry.engine.resolve import resolve
+
+    ds, P, prices, assumptions = _mine_or_buy_setup()
+    r = resolve(ds, P, assumptions(exclude=(TRIT,)), prices)
+    assert r.leaf_source == {TRIT: "bought", PYE: "bought"}
+    assert r.cost_self_mined == 0.0
+    assert r.cost_bought_minerals == pytest.approx(100 * 5.0 + 100 * 10.0)
+    # el Tritanium ya no es objetivo del plan: ni líneas de ore ni shortfall por él
+    assert r.mining_plan.lines == []
+    assert r.mining_plan.shortfall == {PYE: 100}
+
+
+def test_leaf_source_without_mining_is_all_bought():
+    from eveindustry.engine.resolve import resolve
+    from eveindustry.model.assumptions import Assumptions
+
+    ds, P, prices, _ = _mine_or_buy_setup()
+    r = resolve(ds, P, Assumptions(), prices)
+    assert r.leaf_source == {TRIT: "bought", PYE: "bought"}
+    assert r.mining_plan is None

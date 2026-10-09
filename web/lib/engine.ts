@@ -40,6 +40,12 @@ def calc(query):
         systems_doc=_SYSTEMS_DOC, ores_doc=_ORES_DOC,
     )
     r = resolve(_DS, st.type_id, a, _prices_for(st))
+    # minerales que tus ores marcados producen, ANTES de aplicar "este lo compro":
+    # es lo que la lista de la compra necesita para ofrecer el toggle.
+    mineable = []
+    if a.mining is not None and a.mining.active:
+        picked = a.ore_catalog.pick(a.mining.ore_families, a.mining.grade)
+        mineable = sorted(a.ore_catalog.mineable_minerals(picked))
     groups, cats = set(), set()
     for tid in r.nodes:
         info = _DS.types.get(tid)
@@ -52,6 +58,7 @@ def calc(query):
         "query": st.to_query(),
         "tree_groups": sorted(groups),
         "tree_categories": sorted(cats),
+        "mineable": mineable,
     }, default=str)
 
 def normalize(query):
@@ -109,6 +116,8 @@ export type CalcOut = {
   query: string;
   tree_groups: number[];
   tree_categories: number[];
+  /** minerales que tus ores marcados producen (antes de excluir); vacío sin minado */
+  mineable: number[];
 };
 
 export type Engine = {
@@ -179,9 +188,10 @@ export type FormState = {
   reprocess_yield: number;
   mineral_basis: string;
   mining_rate: number | null;
+  exclude_minerals: number[];   // minerales que compras aunque tu ore los dé (nomine)
   security_effective: "highsec" | "lowsec" | "nullsec";
   facility_tax: number | null;
-  global_policy: "auto" | "build" | "buy";
+  global_policy: "auto" | "build" | "buy" | "minerals";
   policy_by_type: Record<string, string>;
   policy_by_category: Record<string, string>;
   policy_by_activity: Record<string, string>;

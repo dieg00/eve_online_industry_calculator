@@ -9,7 +9,7 @@ Formato (todo opcional salvo ``t``):
     t=20183 d=1 me=10 me.2049=2 sys=30000142 struct=35825 rigs=37180,37181
     sec=nullsec tax=0.001 pol=auto pol.34562=buy polact.reaction=buy
     inv=1 enc=5 sci1=5 sci2=5 pin=sell pout=buy broker=0.03 stax=0.045
-    ore=462,460,450 ograde=1 ry=0.876 mval=ore mrate=1200
+    ore=462,460,450 ograde=1 ry=0.876 mval=ore mrate=1200 nomine=38,39
     px.34=6.10
 
 Los ``px.<typeID>`` son overrides de precio (se aplican con ``OverridePriceProvider``).
@@ -90,6 +90,7 @@ class State:
     reprocess_yield: float = 0.876
     mineral_basis: str = "ore"      # ore | zero | buy | <ISK/ud>
     mining_rate: float | None = None  # m3/h, para estimar horas
+    exclude_minerals: tuple[int, ...] = ()  # minerales que compras aunque los pudieras minar
 
     price_overrides: dict[int, float] = field(default_factory=dict)  # typeID -> ISK
 
@@ -153,6 +154,8 @@ class State:
         st.reprocess_yield = float(pairs.get("ry", 0.876))
         st.mineral_basis = pairs.get("mval", "ore")
         st.mining_rate = float(pairs["mrate"]) if "mrate" in pairs else None
+        if pairs.get("nomine"):
+            st.exclude_minerals = tuple(int(x) for x in pairs["nomine"].split(","))
 
         st.price_overrides = {
             int(k): float(v) for k, v in multi.get("px", {}).items()
@@ -212,6 +215,8 @@ class State:
                 p.append(("mval", self.mineral_basis))
             if self.mining_rate is not None:
                 p.append(("mrate", _num(self.mining_rate)))
+            if self.exclude_minerals:
+                p.append(("nomine", ",".join(str(m) for m in self.exclude_minerals)))
         for tid, px in sorted(self.price_overrides.items()):
             p.append((f"px.{tid}", _num(px)))
         return urlencode(p, safe=",")
@@ -251,6 +256,7 @@ class State:
             "reprocess_yield": self.reprocess_yield,
             "mineral_basis": self.mineral_basis,
             "mining_rate": self.mining_rate,
+            "exclude_minerals": list(self.exclude_minerals),
             "price_overrides": {str(k): v for k, v in self.price_overrides.items()},
         }
 
@@ -293,6 +299,7 @@ def build_mining(state: State) -> MiningConfig | None:
         basis=basis,
         fixed_price=fixed,
         m3_per_hour=state.mining_rate,
+        exclude_minerals=state.exclude_minerals,
     )
 
 
