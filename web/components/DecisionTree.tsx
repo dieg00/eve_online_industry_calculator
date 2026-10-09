@@ -36,7 +36,7 @@ export function DecisionTree({ r }: { r: ResolveResult }) {
       const n = r.nodes[id];
       if (!n) return;
       const kids = n.decision === "build" ? Object.keys(n.children) : [];
-      const isOpen = open.has(id);
+      const isOpen = id === rootId || open.has(id);
       out.push(
         <div className="node" key={path} style={{ paddingLeft: depth * 18 }}>
           <button

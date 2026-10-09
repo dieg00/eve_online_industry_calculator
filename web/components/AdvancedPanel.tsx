@@ -4,38 +4,9 @@
 
 import type { FormState } from "@/lib/engine";
 import type { Patch } from "@/lib/hooks/useCalculator";
+import { PctField } from "./NumField";
 
 const LEVELS = [0, 1, 2, 3, 4, 5];
-
-function pctField(
-  id: string,
-  label: string,
-  value: number | null,
-  def: number | null,
-  placeholder: string,
-  onChange: (frac: number | null) => void,
-  step = 0.1,
-) {
-  return (
-    <div className="field">
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        type="number"
-        min={0}
-        step={step}
-        value={value != null ? +(value * 100).toFixed(3) : ""}
-        placeholder={placeholder}
-        onChange={(e) => {
-          const v = e.target.value;
-          if (v === "") return onChange(null);
-          const frac = +v / 100;
-          onChange(def != null && Math.abs(frac - def) < 1e-9 ? null : frac);
-        }}
-      />
-    </div>
-  );
-}
 
 export function AdvancedPanel({ st, patch }: { st: FormState; patch: (p: Patch) => void }) {
   return (
@@ -43,14 +14,16 @@ export function AdvancedPanel({ st, patch }: { st: FormState; patch: (p: Patch) 
       <summary>Ajustes avanzados (impuestos, precios, seguridad, skills)</summary>
       <div className="body">
         <div className="field-row">
-          {pctField(
-            "tax",
-            "Tax de la instalación %",
-            st.facility_tax,
-            null,
-            "0,25 (NPC)",
-            (f) => patch({ tax: f == null ? null : String(f) }),
-          )}
+          <div className="field">
+            <label htmlFor="tax">Tax de la instalación %</label>
+            <PctField
+              id="tax"
+              value={st.facility_tax}
+              def={null}
+              placeholder="0,25 (NPC)"
+              onCommit={(f) => patch({ tax: f == null ? null : String(f) })}
+            />
+          </div>
           <div className="field">
             <label htmlFor="sec">
               Seguridad para los rigs
@@ -104,12 +77,24 @@ export function AdvancedPanel({ st, patch }: { st: FormState; patch: (p: Patch) 
         </div>
 
         <div className="field-row">
-          {pctField("broker", "Broker fee %", st.broker_fee, 0.03, "3", (f) =>
-            patch({ broker: f == null ? null : String(f) }),
-          )}
-          {pctField("stax", "Sales tax %", st.sales_tax, 0.045, "4,5", (f) =>
-            patch({ stax: f == null ? null : String(f) }),
-          )}
+          <div className="field">
+            <label htmlFor="broker">Broker fee %</label>
+            <PctField
+              id="broker"
+              value={st.broker_fee}
+              def={0.03}
+              onCommit={(f) => patch({ broker: f == null ? null : String(f) })}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="stax">Sales tax %</label>
+            <PctField
+              id="stax"
+              value={st.sales_tax}
+              def={0.045}
+              onCommit={(f) => patch({ stax: f == null ? null : String(f) })}
+            />
+          </div>
         </div>
 
         {st.invention && (

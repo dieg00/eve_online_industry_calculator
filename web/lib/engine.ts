@@ -222,7 +222,10 @@ export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
       buildables: () => JSON.parse(pyBuildables()),
     };
     return cached;
-  })();
+  })().catch((e) => {
+    inflight = null; // que un reintento vuelva a arrancar en vez de reusar el fallo
+    throw e;
+  });
 
   return inflight;
 }

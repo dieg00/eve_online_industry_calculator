@@ -7,7 +7,8 @@
 preguntar cada vez.
 
 - Mensajes de commit descriptivos y en presente.
-- Acabar cada mensaje con `Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>`.
+- Acabar cada mensaje con el trailer `Co-Authored-By: <modelo en uso> <noreply@anthropic.com>`
+  (p. ej. `Claude Fable 5.1`).
 - Trabajo en `main` directamente (proyecto de una persona).
 
 ## Comandos

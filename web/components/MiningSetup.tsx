@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import type { FormState } from "@/lib/engine";
 import { isAsteroidFamily, type OresDoc } from "@/lib/data";
 import type { Patch } from "@/lib/hooks/useCalculator";
+import { NumField } from "./NumField";
 
 const PRESETS: [string, string][] = [
   ["highsec", "Highsec"],
@@ -127,17 +128,17 @@ export function MiningSetup({
             </div>
             <div className="field">
               <label htmlFor="ry">Rendimiento de reprocesado %</label>
-              <input
+              <NumField
                 id="ry"
-                type="number"
                 min={1}
                 max={100}
                 step={0.1}
-                value={+(st.reprocess_yield * 100).toFixed(2)}
-                onChange={(e) => {
-                  const v = +e.target.value / 100;
-                  if (!(v > 0 && v <= 1)) return;
-                  patch({ ry: Math.abs(v - 0.876) < 1e-9 ? null : String(v) });
+                digits={2}
+                value={st.reprocess_yield * 100}
+                onCommit={(v) => {
+                  if (v == null) return patch({ ry: null });
+                  const frac = v / 100;
+                  patch({ ry: Math.abs(frac - 0.876) < 1e-9 ? null : String(frac) });
                 }}
               />
             </div>
@@ -147,9 +148,12 @@ export function MiningSetup({
             <label htmlFor="mval">Cuánto te cuestan tus minerales</label>
             <select
               id="mval"
-              value={["ore", "zero", "buy"].includes(st.mineral_basis) ? st.mineral_basis : "ore"}
+              value={st.mineral_basis}
               onChange={(e) => patch({ mval: e.target.value === "ore" ? null : e.target.value })}
             >
+              {!["ore", "zero", "buy"].includes(st.mineral_basis) && (
+                <option value={st.mineral_basis}>Precio fijo: {st.mineral_basis} ISK/ud</option>
+              )}
               <option value="ore">Lo que valdría vender el ore (coste de oportunidad)</option>
               <option value="zero">Nada: mi tiempo es gratis</option>
               <option value="buy">El precio Jita buy del mineral</option>
@@ -160,14 +164,13 @@ export function MiningSetup({
             <label htmlFor="mrate">
               Tu ritmo de minado <span className="muted">(m³/h, opcional)</span>
             </label>
-            <input
+            <NumField
               id="mrate"
-              type="number"
               min={0}
               step={100}
-              value={st.mining_rate ?? ""}
+              value={st.mining_rate}
               placeholder="p. ej. 1200"
-              onChange={(e) => patch({ mrate: e.target.value === "" ? null : e.target.value })}
+              onCommit={(v) => patch({ mrate: v == null || v <= 0 ? null : v })}
             />
             <p className="help">Sirve para estimar horas de minado y margen por hora.</p>
           </div>

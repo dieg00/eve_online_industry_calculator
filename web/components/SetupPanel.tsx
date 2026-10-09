@@ -9,6 +9,7 @@ import { SEC_LABEL, type RigInfo, type RigsDoc, type SystemsDoc } from "@/lib/da
 import type { Patch } from "@/lib/hooks/useCalculator";
 import { ItemPicker, SystemPicker } from "./Pickers";
 import { AdvancedPanel } from "./AdvancedPanel";
+import { NumField } from "./NumField";
 
 export function BuildPanel({
   st,
@@ -40,12 +41,12 @@ export function BuildPanel({
       <div className="field-row">
         <div className="field">
           <label htmlFor="units">Unidades</label>
-          <input
+          <NumField
             id="units"
-            type="number"
             min={1}
+            step={1}
             value={st.demand}
-            onChange={(e) => patch({ d: Math.max(1, Math.floor(+e.target.value) || 1) })}
+            onCommit={(v) => patch({ d: v == null ? null : Math.max(1, Math.floor(v)) })}
           />
         </div>
         <div className="field">
@@ -162,13 +163,13 @@ export function PlacePanel({
       </div>
 
       <div className="field">
-        <label>
+        <div className="label">
           Rigs de eficiencia de material
           <span className="spacer" />
           <button type="button" className="btn ghost sm" onClick={() => setAllRigs((v) => !v)}>
             {allRigs ? "solo los que aplican" : "ver todos"}
           </button>
-        </label>
+        </div>
         <div className="scroll-list">
           {rigList.length === 0 && (
             <span className="empty">

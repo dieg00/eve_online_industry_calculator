@@ -69,7 +69,10 @@ export async function getPyodide(onStatus?: (s: string) => void): Promise<Pyodid
 
     cached = pyodide;
     return pyodide;
-  })();
+  })().catch((e) => {
+    inflight = null;
+    throw e;
+  });
 
   return inflight;
 }

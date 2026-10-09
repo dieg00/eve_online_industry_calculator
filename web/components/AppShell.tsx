@@ -21,7 +21,9 @@ export function AppShell({
   function share() {
     if (!query) return;
     const url = `${location.origin}${location.pathname}?${query}`;
-    navigator.clipboard?.writeText(url).then(() => setCopied(true));
+    const fallback = () => window.prompt("Copia el enlace de este cálculo:", url);
+    if (!navigator.clipboard) return fallback();
+    navigator.clipboard.writeText(url).then(() => setCopied(true), fallback);
   }
 
   return (

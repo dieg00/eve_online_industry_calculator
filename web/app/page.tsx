@@ -66,7 +66,7 @@ export default function Page() {
           )}
           <ResultSummary r={r} st={st} systemName={systemName} />
           <MiningPlanCard r={r} />
-          <DecisionTree r={r} />
+          <DecisionTree key={r.root_type_id} r={r} />
         </div>
       </div>
       <MobileBar r={r} />
