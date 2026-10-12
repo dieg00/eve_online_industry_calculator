@@ -5,6 +5,11 @@ Una sola versión para todo el proyecto (motor + web) — ver `## Versionado` en
 `CLAUDE.md`. Nunca una sección `## [Unreleased]`: la web asume que la primera
 entrada de este fichero es la versión que corre ahora mismo.
 
+## [0.6.1] - 2026-10-12
+
+### Fixed
+- La web vuelve a leer a diario los precios e índices de la rama `data`: `next.config.ts` toma la URL de `DATA_BRANCH_RAW_BASE` si falta `NEXT_PUBLIC_DATA_URL`, que nunca estuvo definida en Vercel. Hasta ahora se servían los precios empaquetados en el último deploy.
+
 ## [0.6.0] - 2026-10-09
 
 ### Added
