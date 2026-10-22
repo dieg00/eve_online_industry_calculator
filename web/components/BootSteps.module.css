@@ -125,3 +125,13 @@
   margin: 0;
   flex: 1 1 280px;
 }
+
+/* solo para lectores de pantalla */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

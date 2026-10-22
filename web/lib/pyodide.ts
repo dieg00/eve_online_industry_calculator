@@ -31,6 +31,11 @@ const RUNTIME_FILES: Record<string, number> = {
   "micropip-0.10.1-py3-none-any.whl": 115_174,
 };
 const RUNTIME_BYTES = Object.values(RUNTIME_FILES).reduce((a, b) => a + b, 0);
+// Lo que se compara al llegar (aviso en desarrollo). micropip no: su tamaño es
+// el del wheel de PyPI y el del CDN es otro, así que avisaría siempre.
+const SIZE_CHECK = Object.fromEntries(
+  Object.entries(RUNTIME_FILES).filter(([f]) => !f.startsWith("micropip-")),
+);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Pyodide = any;
@@ -81,7 +86,7 @@ export async function getPyodide(): Promise<Pyodide> {
     let pyodide: Pyodide;
     // loadPyodide baja el lock, la stdlib, el .wasm y micropip por dentro, en
     // paralelo y sin emitir progreso: se cuentan parcheando fetch mientras dura.
-    const untap = tapFetch(cdnFile, RUNTIME_FILES);
+    const untap = tapFetch(cdnFile, SIZE_CHECK);
     try {
       if (!window.loadPyodide)
         await loadScript(`${CDN}pyodide.js`, "pyodide.js", RUNTIME_FILES["pyodide.js"]);

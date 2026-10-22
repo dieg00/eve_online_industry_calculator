@@ -98,7 +98,8 @@ function Detail({ snap, now }: { snap: BootSnapshot; now: number }) {
   if (snap.step === "compile") {
     text = "Cargando los datos dentro de Python; la pestaña puede no responder un momento.";
   } else if (allIn) {
-    text = "Datos recibidos; iniciando Python…";
+    // en el runtime, tras los bytes queda arrancar el intérprete (CPU)
+    text = snap.step === "runtime" ? "Datos recibidos; iniciando Python…" : "Datos recibidos…";
   } else if (known) {
     text = `${mb(snap.received)} de ≈${mb(snap.expected)} MB`;
     if (bps > 0) text += ` · ${rate(bps)}`;
@@ -139,22 +140,26 @@ function Detail({ snap, now }: { snap: BootSnapshot; now: number }) {
         </span>
       </p>
 
-      <div aria-live="polite">
-        {stalled && (
-          <div className={s.stall}>
-            <p>
-              Sin datos de la red desde hace {Math.round((now - snap.lastActivityAt) / 1000)} s
-              {snap.waiting.length > 0 && <> (esperando {snap.waiting.join(", ")})</>}.{" "}
-              {snap.step === "data"
-                ? "Puede ser la conexión, o que no responda GitHub (de ahí salen los precios del día)."
-                : "Puede ser la conexión, o un bloqueador de contenido que impide cargar cdn.jsdelivr.net."}
-            </p>
-            <button className="btn" onClick={() => location.reload()}>
-              Reintentar
-            </button>
-          </div>
-        )}
+      {/* La región viva solo lleva una frase fija: el aviso visible cambia cada
+          segundo ("desde hace 11 s") y un lector de pantalla lo repetiría sin
+          parar. Se anuncia una vez al atascarse. */}
+      <div aria-live="polite" className={s.sr}>
+        {stalled && "La descarga se ha detenido. Puedes reintentar con el botón Reintentar."}
       </div>
+      {stalled && (
+        <div className={s.stall}>
+          <p>
+            Sin datos de la red desde hace {Math.round((now - snap.lastActivityAt) / 1000)} s
+            {snap.waiting.length > 0 && <> (esperando {snap.waiting.join(", ")})</>}.{" "}
+            {snap.step === "data"
+              ? "Puede ser la conexión, o que no responda GitHub (de ahí salen los precios del día)."
+              : "Puede ser la conexión, o un bloqueador de contenido que impide cargar cdn.jsdelivr.net."}
+          </p>
+          <button className="btn" onClick={() => location.reload()}>
+            Reintentar
+          </button>
+        </div>
+      )}
     </div>
   );
 }
