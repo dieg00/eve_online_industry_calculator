@@ -1,8 +1,16 @@
 // Puente JS <-> motor Python. Carga los datos, arranca el intérprete y expone
 // calc(query) -> ResolveResult. Una sola instancia por pestaña.
 
+import { bootDone, bootStep, nextPaint, trackedFetch } from "./bootProgress";
 import { base, getPyodide } from "./pyodide";
-import type { DataMeta, OreFamily, ResolveResult } from "./types";
+import type {
+  DataMeta,
+  OreFamily,
+  OresDoc,
+  ResolveResult,
+  RigsDoc,
+  SystemsMap,
+} from "./types";
 
 export type { ResolveResult } from "./types";
 
@@ -114,14 +122,43 @@ def buildables():
 const RUNTIME_DATA =
   process.env.NEXT_PUBLIC_DATA_URL?.replace(/\/+$/, "") || "";
 
-async function grab(...urls: string[]): Promise<string> {
+// Hash y tamaño de cada JSON de public/data/, calculados en build por
+// next.config.ts. El hash va en la URL (`?v=`): así el navegador puede cachear
+// los datos estáticos sin arriesgarse a servir el SDE de un deploy anterior.
+// El tamaño alimenta la barra de progreso del arranque.
+type DataEntry = { v: string; bytes: number };
+const DATA_MANIFEST: Record<string, DataEntry> = (() => {
+  try {
+    return JSON.parse(process.env.NEXT_PUBLIC_DATA_MANIFEST ?? "{}");
+  } catch {
+    return {};
+  }
+})();
+
+type Source = { url: string; cache: RequestCache };
+
+/** URL de un JSON de /data/ y cómo pedirlo: versionado → caché normal del
+ *  navegador; sin versión (manifiesto ausente) → revalidar siempre. */
+export function bundledData(name: string): Source {
+  const v = DATA_MANIFEST[name]?.v;
+  return {
+    url: `${base()}/data/${name}${v ? `?v=${v}` : ""}`,
+    cache: v ? "default" : "no-cache",
+  };
+}
+
+// Los precios del día se piden siempre frescos.
+const fresh = (name: string): Source | null =>
+  RUNTIME_DATA ? { url: `${RUNTIME_DATA}/${name}`, cache: "no-store" } : null;
+
+async function grab(name: string, ...sources: (Source | null)[]): Promise<string> {
   let lastErr: unknown;
-  for (const u of urls) {
-    if (!u) continue;
+  for (const src of sources) {
+    if (!src) continue;
     try {
-      const r = await fetch(u, { cache: "no-store" });
+      const r = await trackedFetch(src.url, { cache: src.cache }, name);
       if (r.ok) return r.text();
-      lastErr = new Error(`${u}: HTTP ${r.status}`);
+      lastErr = new Error(`${src.url}: HTTP ${r.status}`);
     } catch (e) {
       lastErr = e;
     }
@@ -129,8 +166,15 @@ async function grab(...urls: string[]): Promise<string> {
   throw lastErr ?? new Error("sin URLs");
 }
 
-const bundled = (name: string) => `${base()}/data/${name}`;
-const fresh = (name: string) => (RUNTIME_DATA ? `${RUNTIME_DATA}/${name}` : "");
+const DATA_FILES = [
+  "blueprints.json",
+  "types.json",
+  "prices.json",
+  "indices.json",
+  "rigs.json",
+  "systems.json",
+  "ores.json",
+];
 
 export type Buildable = [id: number, name: string, activityId: number, bpId: number];
 
@@ -150,26 +194,31 @@ export type Engine = {
   buildables: () => Buildable[];
   meta: () => DataMeta;
   oreFamilies: () => OreFamily[];
+  /** Los mismos JSON que recibe Python, ya parseados para la UI: así la página
+   *  no los descarga una segunda vez. */
+  docs: { systems: SystemsMap; rigs: RigsDoc; ores: OresDoc };
 };
 
 let cached: Engine | null = null;
 let inflight: Promise<Engine> | null = null;
 
-export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
+export function getEngine(): Promise<Engine> {
   if (cached) return Promise.resolve(cached);
   if (inflight) return inflight;
 
   inflight = (async () => {
-    const py = await getPyodide(onStatus);
-    onStatus?.("Cargando datos del SDE y precios…");
+    const py = await getPyodide();
+    // los precios frescos de la rama `data` pesan como su copia empaquetada
+    const expected = DATA_FILES.reduce((a, f) => a + (DATA_MANIFEST[f]?.bytes ?? 0), 0);
+    bootStep("data", expected);
     const [bp, types, prices, indices, rigs, systems, ores] = await Promise.all([
-      grab(bundled("blueprints.json")),
-      grab(bundled("types.json")),
-      grab(fresh("prices.json"), bundled("prices.json")),
-      grab(fresh("indices.json"), bundled("indices.json")),
-      grab(bundled("rigs.json")),
-      grab(bundled("systems.json")),
-      grab(bundled("ores.json")),
+      grab("blueprints.json", bundledData("blueprints.json")),
+      grab("types.json", bundledData("types.json")),
+      grab("prices.json", fresh("prices.json"), bundledData("prices.json")),
+      grab("indices.json", fresh("indices.json"), bundledData("indices.json")),
+      grab("rigs.json", bundledData("rigs.json")),
+      grab("systems.json", bundledData("systems.json")),
+      grab("ores.json", bundledData("ores.json")),
     ]);
     py.globals.set("_BP_JSON", bp);
     py.globals.set("_TYPES_JSON", types);
@@ -179,7 +228,10 @@ export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
     py.globals.set("_SYSTEMS_JSON", systems);
     py.globals.set("_ORES_JSON", ores);
 
-    onStatus?.("Compilando el motor…");
+    // runPython es síncrono y bloquea la pestaña: sin ceder un frame antes, el
+    // paso "Preparar el motor" nunca llega a pintarse.
+    bootStep("compile");
+    await nextPaint();
     py.runPython(BOOTSTRAP);
     const pyCalc = py.globals.get("calc");
     const pyNorm = py.globals.get("normalize");
@@ -193,7 +245,13 @@ export function getEngine(onStatus?: (s: string) => void): Promise<Engine> {
       buildables: () => JSON.parse(pyBuildables()),
       meta: () => JSON.parse(pyMeta()),
       oreFamilies: () => JSON.parse(pyOreFamilies()),
+      docs: {
+        systems: JSON.parse(systems).systems,
+        rigs: JSON.parse(rigs),
+        ores: JSON.parse(ores),
+      },
     };
+    bootDone();
     return cached;
   })();
 

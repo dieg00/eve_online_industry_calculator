@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getEngine, type Buildable, type CalcOut, type Engine } from "@/lib/engine";
+import { bundledData, getEngine, type Buildable, type CalcOut, type Engine } from "@/lib/engine";
 import { errorCause } from "@/lib/format";
-import { base } from "@/lib/pyodide";
 import { patchQuery } from "@/lib/query";
 import { readOverrides } from "@/lib/overrides";
 import { getRecentItems, pushRecentItem, type RecentItem } from "@/lib/recentItems";
@@ -27,7 +26,6 @@ const DEFAULT_QUERY = "t=20184&me=10&sys=30000142";
 
 export default function Page() {
   const [engine, setEngine] = useState<Engine | null>(null);
-  const [status, setStatus] = useState("Iniciando…");
   // Arranque y cálculo son fallos distintos: sin motor no hay nada que hacer,
   // pero un cálculo malo no puede llevarse por delante el formulario.
   const [bootError, setBootError] = useState<string | null>(null);
@@ -51,27 +49,25 @@ export default function Page() {
 
   useEffect(() => {
     let alive = true;
-    getEngine(setStatus)
+    getEngine()
       .then((e) => {
         if (!alive) return;
         setEngine(e);
+        // los mismos documentos que ya bajó el motor, sin segunda descarga
+        setSystems(e.docs.systems);
+        setRigsDoc(e.docs.rigs);
+        setOresDoc(e.docs.ores);
         setBuildables(e.buildables());
         setMeta(e.meta());
         setOreFamilies(e.oreFamilies());
-        setStatus("");
       })
       .catch((x) => alive && setBootError(errorCause(x)));
 
-    const grab = <T,>(name: string, set: (v: T) => void) =>
-      fetch(`${base()}/data/${name}`)
-        .then((r) => r.json())
-        .then((d) => alive && set(d))
-        .catch(() => {});
-
-    grab<{ systems: SystemsMap }>("systems.json", (d) => setSystems(d.systems));
-    grab<RigsDoc>("rigs.json", setRigsDoc);
-    grab<OresDoc>("ores.json", setOresDoc);
-    grab<ChangelogEntry[]>("changelog.json", setChangelog);
+    const changelog = bundledData("changelog.json");
+    fetch(changelog.url, { cache: changelog.cache })
+      .then((r) => r.json())
+      .then((d: ChangelogEntry[]) => alive && setChangelog(d))
+      .catch(() => {});
 
     return () => {
       alive = false;
@@ -121,6 +117,10 @@ export default function Page() {
       <div className="wrap">
         {header}
         <div className="banner">No se pudo arrancar el motor: {bootError}</div>
+        {/* recargar: la promesa del arranque fallido se queda guardada */}
+        <button className="btn" onClick={() => location.reload()}>
+          Reintentar
+        </button>
       </div>
     );
 
@@ -147,7 +147,7 @@ export default function Page() {
     return (
       <div className="wrap">
         {header}
-        <BootSteps status={status} />
+        <BootSteps />
         <div className={s.app}>
           <div className={s.controls}>
             <div className={s.skeleton} />

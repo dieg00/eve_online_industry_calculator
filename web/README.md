@@ -47,7 +47,9 @@ El repo debe ser público para que el navegador pueda leer el raw.
 ```
 lib/pyodide.ts      carga diferida de Pyodide (CDN) + micropip install del wheel
 lib/engine.ts       bootstrap Python: dataset_from_docs + resolve; expone calc(),
-                    buildables(), meta() y ore_families()
+                    buildables(), meta(), ore_families() y docs (systems/rigs/ores)
+lib/bootProgress.ts progreso del arranque: pasos, bytes, velocidad, atascos; cuenta
+                    las descargas internas de Pyodide parcheando fetch mientras dura
 lib/query.ts        edición del query-string de estado (el formato lo define eveindustry/state.py)
 lib/types.ts        espejo TS de los dataclasses del motor (claves de dict = string)
 lib/format.ts       isk / qty / pct / iskShort / hoursLabel / relTime
@@ -70,5 +72,12 @@ Componentes (`components/`), de arriba abajo en la página:
 | `DecisionTree`, `NodeOverride` | árbol de fabricación con overrides por nodo |
 | `Warnings`, `DataFreshness`, `VersionBadge`, `BootSteps` | avisos, antigüedad de precios, versión y novedades, arranque |
 
-El primer arranque descarga ~6–8 MB de runtime (cacheado luego); cada recálculo
-posterior es local e instantáneo.
+El primer arranque baja el runtime (~12 MB descomprimidos, ~5 MB por la red) y
+los datos; `BootSteps` enseña el progreso real y avisa si la red se para. Las
+visitas siguientes los reutilizan desde la caché: el runtime va versionado en la
+URL del CDN, y los JSON de `/data/` llevan `?v=<hash>` (el manifiesto lo calcula
+`next.config.ts` en build), salvo precios e índices, que se piden frescos. Cada
+recálculo posterior es local e instantáneo.
+
+`NEXT_PUBLIC_PYODIDE_URL` permite servir Pyodide desde otra URL (auto-alojarlo,
+o probar en local sin jsDelivr).

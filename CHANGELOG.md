@@ -5,6 +5,17 @@ Una sola versión para todo el proyecto (motor + web) — ver `## Versionado` en
 `CLAUDE.md`. Nunca una sección `## [Unreleased]`: la web asume que la primera
 entrada de este fichero es la versión que corre ahora mismo.
 
+## [0.7.0] - 2026-10-22
+
+### Added
+- La pantalla de arranque enseña el progreso real: barra, megas recibidos de los esperados, velocidad, fichero que se está bajando, tiempo restante y cuánto tardó cada paso. Antes el paso «Runtime de Python» era un spinner fijo sin más información, que en una conexión lenta parecía colgado.
+- Si la red deja de mandar datos 10 s, un aviso dice desde cuándo y qué fichero se espera, con un botón «Reintentar». El banner de error de arranque también tiene «Reintentar».
+
+### Fixed
+- Si la descarga del runtime de Python fallaba (bloqueador de contenido, CDN caído, red cortada), Pyodide se tragaba el error y la página se quedaba cargando para siempre. Ahora sale el error con la causa al momento.
+- El paso «Preparar el motor» no llegaba a verse: la pestaña se bloqueaba compilando antes de pintarlo.
+- Las visitas repetidas reutilizan los datos de la caché del navegador (blueprints, tipos, sistemas, rigs, ores) en vez de volver a bajarlos; precios e índices se siguen pidiendo frescos. La página tampoco descarga ya dos veces sistemas, rigs y ores.
+
 ## [0.6.1] - 2026-10-12
 
 ### Fixed

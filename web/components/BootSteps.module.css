@@ -60,3 +60,68 @@
   color: var(--faint);
   font-size: var(--fs-xs);
 }
+
+/* duración de un paso ya hecho */
+.time {
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+}
+
+/* detalle del paso activo: barra + línea de cifras */
+.detail {
+  margin-top: var(--s3);
+  max-width: 640px;
+}
+
+.track {
+  height: 3px;
+  background: var(--panel-2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}
+
+.line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  margin: var(--s2) 0 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+.clock {
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+}
+
+/* la red dejó de mandar datos: sobrio, sin modal */
+.stall {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  margin-top: var(--s3);
+  padding: var(--s2) var(--s3);
+  border-left: 2px solid var(--warn);
+  background: rgba(231, 185, 85, 0.08);
+  color: var(--warn);
+  font-size: var(--fs-sm);
+}
+.stall p {
+  margin: 0;
+  flex: 1 1 280px;
+}
